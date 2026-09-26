@@ -16,10 +16,15 @@ export function HeroPage() {
   const carousel = useHeroCarousel(HERO_SLIDES.length);
 
   return (
-    <div className="min-h-screen w-full bg-navy-900">
+    <div className="w-full bg-navy-900">
       <Navbar hidden={hidden} solid={solid} />
       <main>
-        <div className="flex h-[100vh] min-h-[624px] flex-col">
+        {/* Exactly one viewport tall — 90dvh carousel + 10dvh scroll
+            invitation — never more, so there is no dead scroll zone below
+            the hero for the browser's momentum scrolling to rubber-band
+            against. dvh (not vh) keeps this stable while mobile browser
+            chrome shows/hides during a scroll. */}
+        <div className="flex h-[100dvh] flex-col overflow-hidden">
           <HeroCarousel carousel={carousel} />
           <div className="bg-navy-900">
             <ScrollInvitation visible={scrollY < 80} />

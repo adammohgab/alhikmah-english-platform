@@ -1,46 +1,50 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, PenLine, ClipboardCheck } from "lucide-react";
+import { BookOpen, ClipboardCheck, PenLine } from "lucide-react";
+import { HeroSlideCopy } from "@/pages/hero/components/HeroSlideCopy";
 
 interface CourseSlideProps {
   active: boolean;
 }
 
-/** Slide 04 — New Course / Lesson: Unit 04 Stories and Ideas. */
+const UNIT_STATS = [
+  { icon: BookOpen, label: "Lessons", value: "12" },
+  { icon: PenLine, label: "Practice activities", value: "4" },
+  { icon: ClipboardCheck, label: "Assessment", value: "1" },
+];
+
+/** Slide 04 — New Course / Lesson. Copy on the left; lesson list and unit
+ * stats on the right. */
 export function CourseSlide({ active }: CourseSlideProps) {
   return (
-    <div className="grid h-full w-full grid-cols-1 items-center gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-12">
-      <div className="max-w-xl">
-        <p className="font-sans text-[12px] font-semibold uppercase tracking-[0.18em] text-gold-500">
-          New this week
-        </p>
-        <h2 className="mt-3 font-serif text-4xl font-semibold leading-[1.1] text-white sm:text-5xl lg:text-6xl">
-          Unit 04<br />
-          Stories and Ideas.
-        </h2>
-        <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-sans text-[13px] font-semibold uppercase tracking-[0.08em] text-white/70">
-          <div>12 lessons</div>
-          <div>4 practice activities</div>
-          <div>1 assessment</div>
-        </dl>
-        <Link
-          to="/courses"
-          tabIndex={active ? 0 : -1}
-          className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-md bg-gold-500 px-5 font-sans text-[15px] font-semibold text-navy-900 transition-colors duration-100 hover:bg-gold-600"
-        >
-          Start lesson
-          <ArrowRight size={20} strokeWidth={1.5} aria-hidden="true" />
-        </Link>
+    <div className="grid h-full w-full grid-cols-1 items-center gap-6 px-4 pt-16 sm:px-6 lg:grid-cols-10 lg:gap-6 lg:px-8 lg:pt-12">
+      <div className="lg:col-span-5">
+        <HeroSlideCopy
+          active={active}
+          eyebrow="New this week"
+          heading={
+            <>
+              Unit 04
+              <br />
+              Stories and Ideas.
+            </>
+          }
+          body="12 lessons · 4 practice activities · 1 assessment."
+          ctaLabel="Start lesson"
+          ctaHref="/courses"
+        />
       </div>
 
-      <div className="flex items-center justify-center" aria-hidden={!active}>
-        <div className="w-full max-w-[440px] rounded-lg border border-white/12 bg-white p-5 text-ink-900 shadow-elevation-3">
-          <p className="font-sans text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+      <div
+        className="grid grid-cols-1 items-stretch gap-5 lg:col-span-5 lg:grid-cols-2"
+        aria-hidden={!active}
+      >
+        <div className="w-full rounded-lg bg-surface-0 p-6 text-ink-900 shadow-elevation-3">
+          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
             Course — Unit 04
           </p>
           <p className="mt-2 font-serif text-[22px] font-semibold">Stories and Ideas</p>
-          <ul className="mt-4 space-y-3">
+          <ul className="mt-5 space-y-4">
             <li className="flex items-center gap-3">
-              <BookOpen size={20} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
+              <BookOpen size={18} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
               <div className="flex-1">
                 <p className="font-sans text-[14px] font-medium">Lesson 01 — Reading: Short stories</p>
                 <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-surface-100">
@@ -50,7 +54,7 @@ export function CourseSlide({ active }: CourseSlideProps) {
               <span className="font-sans text-[12px] font-semibold text-ink-500">Done</span>
             </li>
             <li className="flex items-center gap-3">
-              <PenLine size={20} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
+              <PenLine size={18} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
               <div className="flex-1">
                 <p className="font-sans text-[14px] font-medium">Lesson 02 — Writing: Your own ending</p>
                 <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-surface-100">
@@ -60,7 +64,7 @@ export function CourseSlide({ active }: CourseSlideProps) {
               <span className="font-sans text-[12px] font-semibold text-ink-500">50%</span>
             </li>
             <li className="flex items-center gap-3">
-              <ClipboardCheck size={20} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
+              <ClipboardCheck size={18} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
               <div className="flex-1">
                 <p className="font-sans text-[14px] font-medium">Assessment — Unit 04 review</p>
                 <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-surface-100">
@@ -70,6 +74,30 @@ export function CourseSlide({ active }: CourseSlideProps) {
               <span className="font-sans text-[12px] font-semibold text-ink-500">Locked</span>
             </li>
           </ul>
+        </div>
+
+        <div className="hidden w-full flex-col justify-center rounded-lg bg-navy-700 p-6 text-white shadow-elevation-3 lg:flex">
+          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55">
+            Unit 04 at a glance
+          </p>
+          <ul className="mt-4 space-y-3.5">
+            {UNIT_STATS.map(({ icon: Icon, label, value }) => (
+              <li key={label} className="flex items-center gap-3 font-sans text-[14px]">
+                <Icon size={18} strokeWidth={1.5} className="shrink-0 text-white/55" aria-hidden="true" />
+                <span className="text-white/80">{label}</span>
+                <span className="ms-auto font-semibold tabular-nums">{value}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-5 border-t border-white/10 pt-4">
+            <div className="flex items-baseline justify-between font-sans text-[13px]">
+              <span className="text-white/60">Overall progress</span>
+              <span className="font-semibold tabular-nums text-gold-500">Getting started</span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/15">
+              <div className="h-full w-1/4 rounded-full bg-gold-500" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

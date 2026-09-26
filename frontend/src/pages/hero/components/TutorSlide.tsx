@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { BookOpen, GraduationCap, Languages, MessageCircle } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
+import { HeroSlideCopy } from "@/pages/hero/components/HeroSlideCopy";
 
 interface TutorSlideProps {
   active: boolean;
@@ -9,9 +9,17 @@ interface TutorSlideProps {
 
 type TutorPhase = 0 | 1 | 2 | 3;
 
+const TUTOR_CAPABILITIES = [
+  { icon: BookOpen, label: "Grammar explanations" },
+  { icon: Languages, label: "Vocabulary practice" },
+  { icon: MessageCircle, label: "Instant answers" },
+  { icon: GraduationCap, label: "Tuned to Grade 10" },
+];
+
 /**
- * Slide 03 — AI Tutor. Alive conversation interface: question appears,
- * thinking indicator, response reveals, key phrase highlights.
+ * Slide 03 — AI Tutor. Copy on the left; on the right, a conversation that
+ * plays out live (question → thinking → response → highlighted phrase)
+ * next to a short list of what the tutor actually does.
  */
 export function TutorSlide({ active }: TutorSlideProps) {
   const [phase, setPhase] = useState<TutorPhase>(0);
@@ -34,39 +42,36 @@ export function TutorSlide({ active }: TutorSlideProps) {
   }, [active]);
 
   return (
-    <div className="grid h-full w-full grid-cols-1 items-center gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-12">
-      <div className="max-w-xl">
-        <p className="font-sans text-[12px] font-semibold uppercase tracking-[0.18em] text-gold-500">
-          Meet your AI tutor
-        </p>
-        <h2 className="mt-3 font-serif text-4xl font-semibold leading-[1.1] text-white sm:text-5xl lg:text-6xl">
-          Ask questions.
-          <br />
-          Keep learning.
-        </h2>
-        <p className="mt-4 max-w-md font-sans text-[15px] leading-6 text-white/75">
-          Practice English and get instant guidance — grammar, vocabulary and explanations
-          tuned to your grade.
-        </p>
-        <Link
-          to="/ai-tutor"
-          tabIndex={active ? 0 : -1}
-          className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-md bg-gold-500 px-5 font-sans text-[15px] font-semibold text-navy-900 transition-colors duration-100 hover:bg-gold-600"
-        >
-          Start practicing
-          <ArrowRight size={20} strokeWidth={1.5} aria-hidden="true" />
-        </Link>
+    <div className="grid h-full w-full grid-cols-1 items-center gap-6 px-4 pt-16 sm:px-6 lg:grid-cols-10 lg:gap-6 lg:px-8 lg:pt-12">
+      <div className="lg:col-span-5 flex flex-col justify-center">
+        <HeroSlideCopy
+          active={active}
+          eyebrow="Meet your AI tutor"
+          heading={
+            <>
+              Ask questions.
+              <br />
+              Keep learning.
+            </>
+          }
+          body="Practice English and get instant guidance — grammar, vocabulary and explanations tuned to your grade."
+          ctaLabel="Start practicing"
+          ctaHref="/ai-tutor"
+        />
       </div>
 
-      <div className="flex items-center justify-center" aria-hidden={!active}>
-        <div className="w-full max-w-[440px] rounded-lg border border-white/12 bg-white p-5 text-ink-900 shadow-elevation-3">
-          <p className="font-sans text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+      <div
+        className="grid grid-cols-1 gap-5 lg:col-span-5 lg:grid-cols-2"
+        aria-hidden={!active}
+      >
+        <div className="flex h-full w-full flex-col rounded-lg bg-surface-0 p-6 text-ink-900 shadow-elevation-3">
+          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
             AI Tutor — Grade 10
           </p>
-          <div className="mt-3 space-y-3" aria-live="polite">
+          <div className="mt-4 flex-1 space-y-3 overflow-y-auto" aria-live="polite">
             <div
               className={cn(
-                "ml-auto w-fit max-w-[90%] rounded-md rounded-br-sm bg-navy-900 px-3 py-2.5 font-sans text-[14px] text-white transition-all duration-300",
+                "ml-auto w-fit max-w-[90%] rounded-md rounded-br-sm bg-navy-900 px-4 py-3 font-sans text-[14px] text-white transition-all duration-300",
                 phase >= 0 && active ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
               )}
             >
@@ -74,7 +79,7 @@ export function TutorSlide({ active }: TutorSlideProps) {
             </div>
 
             {phase === 1 && (
-              <div className="flex w-fit items-center gap-1.5 rounded-md rounded-bl-sm border border-line-200 bg-surface-50 px-3 py-2.5">
+              <div className="flex w-fit items-center gap-1.5 rounded-md rounded-bl-sm border border-line-200 bg-surface-50 px-4 py-3">
                 <span className="hero-thinking-dot" />
                 <span className="hero-thinking-dot" />
                 <span className="hero-thinking-dot" />
@@ -83,7 +88,7 @@ export function TutorSlide({ active }: TutorSlideProps) {
             )}
 
             {phase >= 2 && (
-              <div className="w-fit max-w-[95%] rounded-md rounded-bl-sm border border-line-200 bg-surface-50 px-3 py-2.5 font-sans text-[14px] leading-6 text-ink-900">
+              <div className="w-fit max-w-[95%] rounded-md rounded-bl-sm border border-line-200 bg-surface-50 px-4 py-3 font-sans text-[14px] leading-6 text-ink-900">
                 We use it to describe an action that continued up to another moment in the
                 past —{" "}
                 <mark
@@ -98,6 +103,20 @@ export function TutorSlide({ active }: TutorSlideProps) {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="hidden h-full w-full flex-col rounded-lg bg-surface-0 p-6 text-ink-900 shadow-elevation-3 lg:flex">
+          <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+            What the tutor does
+          </p>
+          <ul className="mt-4 flex-1 space-y-3.5 overflow-y-auto">
+            {TUTOR_CAPABILITIES.map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-3 font-sans text-[14px] font-medium">
+                <Icon size={18} strokeWidth={1.5} className="shrink-0 text-navy-500" aria-hidden="true" />
+                {label}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
