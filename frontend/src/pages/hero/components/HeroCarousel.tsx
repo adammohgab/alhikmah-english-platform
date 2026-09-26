@@ -180,21 +180,36 @@ export function HeroCarousel({ carousel }: HeroCarouselProps) {
   const { index, paused, setPaused, togglePause, goTo, next, prev } = carousel;
   const slideRefs = useRef<Array<HTMLDivElement | null>>([]);
   const reduced = usePrefersReducedMotion();
+  const prevIndexRef = useRef(index);
+  const isTransitioningRef = useRef(false);
 
   // Slide transitions: current moves/scales out, next settles in.
   useEffect(() => {
+    if (index === prevIndexRef.current) return;
+    if (isTransitioningRef.current) return;
+    
+    isTransitioningRef.current = true;
+    const fromIndex = prevIndexRef.current;
+    prevIndexRef.current = index;
+
     const ctx = gsap.context(() => {
       HERO_SLIDES.forEach((_, i) => {
         const el = slideRefs.current[i];
         if (!el) return;
+        
+        // Ensure all slides start in correct position
+        gsap.set(el, { clearProps: "transform,opacity" });
+        
         if (reduced) {
-          gsap.set(el, { autoAlpha: i === index ? 1 : 0, x: 0, scale: 1 });
+          gsap.set(el, { autoAlpha: i === index ? 1 : 0, x: 0, scale: 1, display: i === index ? "block" : "none" });
           return;
         }
+        
         if (i === index) {
+          // Incoming slide
           gsap.fromTo(
             el,
-            { autoAlpha: 0, x: i === 0 ? 48 : 64, scale: 0.985 },
+            { autoAlpha: 0, x: fromIndex < index ? 64 : -64, scale: 0.985, display: "block" },
             {
               autoAlpha: 1,
               x: 0,
@@ -204,22 +219,38 @@ export function HeroCarousel({ carousel }: HeroCarouselProps) {
               overwrite: "auto",
             },
           );
-        } else {
+        } else if (i === fromIndex) {
+          // Outgoing slide
           gsap.to(el, {
             autoAlpha: 0,
-            x: i < index ? -56 : 56,
+            x: fromIndex < index ? -56 : 56,
             scale: 0.985,
             duration: TRANSITION_MS / 1000,
             ease: "power3.out",
             overwrite: "auto",
+            onComplete: () => {
+              gsap.set(el, { display: "none" });
+            },
           });
+        } else {
+          // Other slides - ensure hidden
+          gsap.set(el, { autoAlpha: 0, display: "none" });
         }
       });
     });
-    return () => ctx.revert();
+    
+    const cleanupTimer = setTimeout(() => {
+      isTransitioningRef.current = false;
+    }, TRANSITION_MS + 100);
+    
+    return () => {
+      clearTimeout(cleanupTimer);
+      ctx.revert();
+    };
   }, [index, reduced]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (isTransitioningRef.current) return;
     if (e.key === "ArrowRight") {
       e.preventDefault();
       next();
@@ -259,7 +290,7 @@ export function HeroCarousel({ carousel }: HeroCarouselProps) {
             }}
             aria-hidden={i !== index}
             className="absolute inset-0"
-            style={{ visibility: i === index ? "visible" : "hidden" }}
+            style={{ display: i === index ? "block" : "none" }}
           >
             {slide.id === "magazine" && <MagazineSlide active={i === index} />}
             {slide.id === "game" && <GameSlide active={i === index} />}

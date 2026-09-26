@@ -36,7 +36,7 @@ export function MagazineSlide({ active }: MagazineSlideProps) {
       <div className="lg:col-span-5">
         <div className="mb-4">
           <span className="inline-flex items-center rounded-full border border-gold-500/40 bg-gold-500/10 px-5 py-2 font-sans text-[16px] font-semibold uppercase tracking-[0.18em] text-gold-500">
-            English Weekly — magazine 024
+            English Weekly — magazine
           </span>
         </div>
         <HeroSlideCopy
@@ -49,8 +49,8 @@ export function MagazineSlide({ active }: MagazineSlideProps) {
               English, in print.
             </>
           }
-          body="Stories, vocabulary and ideas from across the school — the newest issue leads the platform this week."
-          ctaLabel="Read full issue"
+          body="Stories, vocabulary and ideas from across the school — the newest edition leads the platform this week."
+          ctaLabel="Read full magazine"
           ctaHref="/magazine"
         />
       </div>
