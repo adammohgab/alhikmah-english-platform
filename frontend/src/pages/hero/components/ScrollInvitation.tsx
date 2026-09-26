@@ -15,7 +15,7 @@ export function ScrollInvitation({ visible }: ScrollInvitationProps) {
     <div
       aria-hidden={!visible}
       className={cn(
-        "flex h-[10vh] min-h-[64px] flex-col items-center justify-center gap-1 transition-opacity duration-500",
+        "flex h-[10dvh] flex-col items-center justify-center gap-1 transition-opacity duration-500",
         visible ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
