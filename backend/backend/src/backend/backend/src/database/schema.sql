@@ -160,3 +160,26 @@ CREATE TABLE quiz_answers (
     points_earned NUMERIC(5,2),
     UNIQUE (attempt_id, question_id)
 );
+
+CREATE TABLE student_progress (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
+    lesson_id INTEGER REFERENCES lessons(id) ON DELETE CASCADE,
+    progress_percent NUMERIC(5,2) DEFAULT 0,
+    status VARCHAR(30) DEFAULT 'not_started',
+    last_accessed_at TIMESTAMP,
+    completed_at TIMESTAMP,
+    UNIQUE (student_id, lesson_id)
+);
+
+CREATE TABLE student_results (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
+    assessment_type VARCHAR(30) NOT NULL,
+    assessment_id INTEGER NOT NULL,
+    score NUMERIC(5,2),
+    max_score NUMERIC(5,2),
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
