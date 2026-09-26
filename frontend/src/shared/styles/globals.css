@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  @apply bg-surface-50 text-ink-900 font-sans antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible focus ring: 2px gold, 2px offset — all surfaces */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid #d4a02b;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: #0f1d45;
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
