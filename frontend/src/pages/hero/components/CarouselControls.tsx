@@ -9,11 +9,22 @@ interface CarouselControlsProps {
   onPrev: () => void;
   onNext: () => void;
   onTogglePause: () => void;
+  /** Horizontal, denser layout for below-lg, where the 20vw side column
+   * gets replaced by a single stacked column and there's no room for a
+   * left rail. */
+  compact?: boolean;
 }
 
 /**
- * Subtle progress + manual navigation. Active slide has a longer indicator
- * that fills over the autoplay period. Manual use pauses rotation.
+ * hero.md §11:
+ *   01 ━━━━━━━━━
+ *   02 ━━━━━
+ *   03 ━━━━━
+ *   04 ━━━━━
+ * A vertical stack, each row its own number + progress bar, the active
+ * row's bar longer and filling live over the autoplay period. Lives in the
+ * hero's left ~20vw column on desktop; collapses to a compact horizontal
+ * row under the slide on smaller screens.
  */
 export function CarouselControls({
   index,
@@ -22,10 +33,15 @@ export function CarouselControls({
   onPrev,
   onNext,
   onTogglePause,
+  compact = false,
 }: CarouselControlsProps) {
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-      <div className="flex items-center gap-2.5" role="tablist" aria-label="Featured slides">
+    <div className={cn("flex gap-4", compact ? "flex-row items-center" : "flex-row items-center")}>
+      <div
+        className={cn("flex", compact ? "flex-row items-center gap-4" : "flex-row items-center gap-4")}
+        role="tablist"
+        aria-label="Featured slides"
+      >
         {HERO_SLIDES.map((slide, i) => {
           const isActive = i === index;
           return (
@@ -36,20 +52,20 @@ export function CarouselControls({
               aria-selected={isActive}
               aria-label={`Show ${slide.title}`}
               onClick={() => onSelect(i)}
-              className="group flex min-h-[40px] min-w-[40px] items-center gap-2 rounded-sm px-1"
+              className="group flex min-h-[40px] items-center gap-3 rounded-sm py-1 pe-1"
             >
               <span
                 className={cn(
                   "font-sans text-[12px] font-semibold tabular-nums transition-colors duration-100",
-                  isActive ? "text-white" : "text-white/50 group-hover:text-white/80",
+                  isActive ? "text-white" : "text-white/45 group-hover:text-white/75",
                 )}
               >
                 {slide.indexLabel}
               </span>
               <span
                 className={cn(
-                  "relative h-[3px] overflow-hidden rounded-full bg-white/20",
-                  isActive ? "w-16" : "w-7",
+                  "relative h-[3px] overflow-hidden rounded-full bg-white/20 transition-[width] duration-300 ease-out",
+                  compact ? (isActive ? "w-16" : "w-6") : isActive ? "w-32" : "w-12",
                 )}
               >
                 {isActive && (
@@ -68,31 +84,31 @@ export function CarouselControls({
         })}
       </div>
 
-      <div className="ms-auto flex items-center gap-2">
+      <div className={cn("flex items-center gap-2", compact ? "ms-2" : "ms-2")}>
+        <button
+          type="button"
+          onClick={onPrev}
+          aria-label="Previous slide"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/20 text-white/80 transition-colors duration-100 hover:bg-white/10 hover:text-white"
+        >
+          <ArrowLeft size={18} strokeWidth={1.5} />
+        </button>
         <button
           type="button"
           onClick={onTogglePause}
           aria-label={paused ? "Resume automatic rotation" : "Pause automatic rotation"}
           aria-pressed={paused}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/20 text-white/85 transition-colors duration-100 hover:bg-white/10 hover:text-white"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/20 text-white/80 transition-colors duration-100 hover:bg-white/10 hover:text-white"
         >
-          {paused ? <Play size={20} strokeWidth={1.5} /> : <Pause size={20} strokeWidth={1.5} />}
-        </button>
-        <button
-          type="button"
-          onClick={onPrev}
-          aria-label="Previous slide"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/20 text-white/85 transition-colors duration-100 hover:bg-white/10 hover:text-white"
-        >
-          <ArrowLeft size={20} strokeWidth={1.5} />
+          {paused ? <Play size={18} strokeWidth={1.5} /> : <Pause size={18} strokeWidth={1.5} />}
         </button>
         <button
           type="button"
           onClick={onNext}
           aria-label="Next slide"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/20 text-white/85 transition-colors duration-100 hover:bg-white/10 hover:text-white"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/20 text-white/80 transition-colors duration-100 hover:bg-white/10 hover:text-white"
         >
-          <ArrowRight size={20} strokeWidth={1.5} />
+          <ArrowRight size={18} strokeWidth={1.5} />
         </button>
       </div>
     </div>
