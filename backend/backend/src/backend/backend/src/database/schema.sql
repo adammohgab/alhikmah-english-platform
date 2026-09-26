@@ -116,3 +116,47 @@ CREATE TABLE assignment_submissions (
     feedback TEXT,
     UNIQUE (assignment_id, student_id)
 );
+
+CREATE TABLE quizzes (
+    id SERIAL PRIMARY KEY,
+    course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
+    lesson_id INTEGER REFERENCES lessons(id) ON DELETE SET NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    quiz_type VARCHAR(30) DEFAULT 'quiz',
+    time_limit_minutes INTEGER,
+    passing_score NUMERIC(5,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE questions (
+    id SERIAL PRIMARY KEY,
+    quiz_id INTEGER NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(30) NOT NULL,
+    options JSONB,
+    correct_answer JSONB,
+    points NUMERIC(5,2) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE quiz_attempts (
+    id SERIAL PRIMARY KEY,
+    quiz_id INTEGER NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
+    student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    score NUMERIC(5,2),
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP,
+    UNIQUE (quiz_id, student_id, started_at)
+);
+
+CREATE TABLE quiz_answers (
+    id SERIAL PRIMARY KEY,
+    attempt_id INTEGER NOT NULL REFERENCES quiz_attempts(id) ON DELETE CASCADE,
+    question_id INTEGER NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
+    answer JSONB,
+    is_correct BOOLEAN,
+    points_earned NUMERIC(5,2),
+    UNIQUE (attempt_id, question_id)
+);
