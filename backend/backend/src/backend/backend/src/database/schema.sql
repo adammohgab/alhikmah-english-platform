@@ -205,3 +205,60 @@ CREATE TABLE notifications (
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_students_class_id
+ON students(class_id);
+
+CREATE INDEX idx_teachers_school_id
+ON teachers(school_id);
+
+CREATE INDEX idx_courses_teacher_id
+ON courses(teacher_id);
+
+CREATE INDEX idx_terms_course_id
+ON terms(course_id);
+
+CREATE INDEX idx_units_term_id
+ON units(term_id);
+
+CREATE INDEX idx_lessons_unit_id
+ON lessons(unit_id);
+
+CREATE INDEX idx_activities_lesson_id
+ON activities(lesson_id);
+
+CREATE INDEX idx_assignments_teacher_id
+ON assignments(teacher_id);
+
+CREATE INDEX idx_assignments_course_id
+ON assignments(course_id);
+
+CREATE INDEX idx_assignment_submissions_student_id
+ON assignment_submissions(student_id);
+
+CREATE INDEX idx_quizzes_course_id
+ON quizzes(course_id);
+
+CREATE INDEX idx_questions_quiz_id
+ON questions(quiz_id);
+
+CREATE INDEX idx_quiz_attempts_student_id
+ON quiz_attempts(student_id);
+
+CREATE INDEX idx_quiz_answers_attempt_id
+ON quiz_answers(attempt_id);
+
+CREATE INDEX idx_student_progress_student_id
+ON student_progress(student_id);
+
+CREATE INDEX idx_student_results_student_id
+ON student_results(student_id);
+
+CREATE INDEX idx_notifications_user_id
+ON notifications(user_id);
+
+CREATE INDEX idx_announcements_author_id
+ON announcements(author_id);
+
+CREATE INDEX idx_announcements_class_id
+ON announcements(class_id);
