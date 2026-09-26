@@ -10,7 +10,7 @@ product instead of a default AI-generated interface.
    trying to look funded. Reference points: a well-designed university LMS, a bank's
    client portal, a serious admissions system — not a Y-Combinator landing page.
 2. **Type does the work.** Hierarchy comes from a serif/sans pairing, weight, and
-   spacing — not from color, shadows, or icons. See `02-design-system/typography.md`.
+   spacing — not from color, shadows, or icons. See `02-design-system/design-system.md` (§1 Typography).
 3. **Restraint over decoration.** One accent color, used sparingly, on things the
    user acts on (primary buttons, active states, key numbers). Everything else is
    navy, ink, and neutral grays.
@@ -37,7 +37,7 @@ product instead of a default AI-generated interface.
 - **No oversized rounded corners.** Radius scale tops out at 12px (see design
   system). No pill-shaped cards, no `rounded-3xl` everything.
 - **No stock "AI dashboard" color palette** (violet/indigo primary + neon green
-  success + hot pink accent). Palette is defined once in `colors.md` and nothing
+   success + hot pink accent). Palette is defined once in `02-design-system/colors.md` and nothing
   else is introduced.
 - **No decorative icon-in-a-colored-circle pattern repeated on every single card.**
   Use it where it earns its place (role badges, step indicators) — not as generic
@@ -46,7 +46,7 @@ product instead of a default AI-generated interface.
   laptop and giant checkmark" SVG style). If an illustration is needed, it must be
   simple, geometric, and on-brand, or omitted in favor of typography and data.
 - **No excessive micro-copy or exclamation points.** "Test submitted." not "Awesome!
-  You crushed it! 🎉" — see `motion-and-interaction.md` for tone in transient
+   You crushed it! 🎉" — see `02-design-system/design-system.md` (§3 Motion) for tone in transient
   messages.
 - **No component reinvented per page.** If a table, card, or form field is needed,
   it comes from `04-components/`. Pages do not define their own one-off button

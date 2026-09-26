@@ -35,7 +35,7 @@ updating this file first.
   choice; anything with a strong default look fights the "not AI-slop" goal.
 - No animation library beyond Tailwind's transition utilities and, where truly
   needed, Framer Motion for a handful of specific interactions (see
-  `motion-and-interaction.md`). Framer Motion is not a default — it's opt-in per
+  `02-design-system/design-system.md` §3). Framer Motion is not a default — it's opt-in per
   interaction.
 
 ## AI integration (Gemini)
