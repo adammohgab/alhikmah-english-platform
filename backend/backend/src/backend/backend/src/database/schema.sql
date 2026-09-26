@@ -35,3 +35,41 @@ CREATE TABLE teachers (
     school_id INTEGER REFERENCES schools(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE courses (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    grade VARCHAR(50) NOT NULL,
+    description TEXT,
+    teacher_id INTEGER REFERENCES teachers(id) ON DELETE SET NULL,
+    status VARCHAR(30) DEFAULT 'draft',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE terms (
+    id SERIAL PRIMARY KEY,
+    course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+    title VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE units (
+    id SERIAL PRIMARY KEY,
+    term_id INTEGER NOT NULL REFERENCES terms(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    objectives TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE lessons (
+    id SERIAL PRIMARY KEY,
+    unit_id INTEGER NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    content TEXT,
+    audio_url TEXT,
+    video_url TEXT,
+    resources JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
