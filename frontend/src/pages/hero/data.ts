@@ -42,8 +42,8 @@ export const HERO_SLIDES: HeroSlideMeta[] = [
 ];
 
 export const MAGAZINE_PAGES = {
-  page1: "https://i.ibb.co/LXGkZtr6/magazine-1.png",
-  page2: "https://i.ibb.co/Z1vKngsH/magazine-2.png",
+  page1: "https://res.cloudinary.com/dhnakztqp/image/upload/v1790436109/magazine-1.png",
+  page2: "https://res.cloudinary.com/dhnakztqp/image/upload/v1790436113/magazine-2.png",
   alt1: "English Weekly magazine issue 24, page 1",
   alt2: "English Weekly magazine issue 24, page 2",
 };
