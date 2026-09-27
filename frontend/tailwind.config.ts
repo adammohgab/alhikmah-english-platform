@@ -13,6 +13,14 @@ export default {
         warning: { 600: "#A66A0A", 100: "#FBF1DD" },
         danger: { 600: "#B3261E", 100: "#FBE9E8" },
         info: { 600: "#1E5FA8", 100: "#E6F0FB" },
+        /* Bright student-facing accents — used only on the landing page's
+           energetic sections (skills identity, games, tutor) for variety
+           and read-at-a-glance color coding. Brand navy/gold remain the
+           structural colors everywhere else. */
+        spark: { 600: "#0C8F86", 500: "#12B3A6", 100: "#DFF7F3" },
+        coral: { 600: "#D94F3D", 500: "#FF6B52", 100: "#FFE7E2" },
+        sky: { 600: "#1F6FCB", 500: "#3D8BF2", 100: "#E4EFFE" },
+        violet: { 600: "#6C4FD9", 500: "#8B6CF0", 100: "#EFE9FE" },
       },
       fontFamily: {
         serif: ["'Source Serif 4'", "Lora", "Georgia", "'Times New Roman'", "serif"],

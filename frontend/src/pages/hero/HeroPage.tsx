@@ -1,14 +1,17 @@
 import { Navbar } from "@/shared/layout/Navbar";
+import { Footer } from "@/shared/layout/Footer";
 import { HeroCarousel } from "@/pages/hero/components/HeroCarousel";
 import { ScrollInvitation } from "@/pages/hero/components/ScrollInvitation";
+import { LandingSections } from "@/pages/hero/components/LandingSections";
 import { useHeroCarousel } from "@/pages/hero/hooks/useHeroCarousel";
 import { useLenis } from "@/pages/hero/hooks/useLenis";
 import { useScrollNavbar } from "@/pages/hero/hooks/useScrollNavbar";
 import { HERO_SLIDES } from "@/pages/hero/data";
 
 /**
- * Hero page — Section 01 only (100vh total: 90vh carousel + 10vh scroll
- * invitation). Thin composer: wires hooks + shared layout + hero components.
+ * Home page — hero (100vh: 90vh carousel + 10vh scroll invitation) followed
+ * by the full platform story (sections 02–12) and the footer. Thin composer:
+ * wires hooks + shared layout + page sections.
  */
 export function HeroPage() {
   useLenis();
@@ -30,7 +33,10 @@ export function HeroPage() {
             <ScrollInvitation visible={scrollY < 80} />
           </div>
         </div>
+
+        <LandingSections />
       </main>
+      <Footer />
     </div>
   );
 }

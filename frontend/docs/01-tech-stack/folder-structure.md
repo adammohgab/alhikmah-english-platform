@@ -62,6 +62,8 @@ src/
     │   ├── Sidebar.tsx
     │   ├── TopBar.tsx
     │   └── MobileTabBar.tsx
+    ├── assets/              # Shared static assets (logo, brand)
+    │   └── logo.png         # School logo, used by Navbar
     ├── domain/              # Product components shared by 2+ pages
     │   ├── course/          # e.g. CourseCard (used by hero + courses + dashboard)
     │   ├── test/            # e.g. QuestionRenderer, Timer
