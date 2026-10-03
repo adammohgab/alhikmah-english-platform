@@ -4,6 +4,10 @@
 
 Create the Admin Dashboard interface.
 
+## Branch
+
+main
+
 ## Scope
 
 Implement only this task in the frontend. Reuse existing approved components and follow the current project structure.
@@ -29,7 +33,7 @@ Implement only this task in the frontend. Reuse existing approved components and
 - Do not add real API integrations unless this task explicitly requires UI only.
 - Do not add unnecessary dependencies.
 - Do not modify the original logo.
-- Do not start another task.
+- Do not start another task until the current task has been tested and approved.
 
 ## Testing
 
