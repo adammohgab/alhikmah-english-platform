@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { MAGAZINE_PAGES } from "@/pages/hero/data";
-import { HeroSlideCopy } from "@/pages/hero/components/HeroSlideCopy";
+import { MAGAZINE_PAGES } from "@/pages/landing/data";
+import { HeroSlideCopy } from "@/pages/landing/components/HeroSlideCopy";
 
 interface MagazineSlideProps {
   active: boolean;

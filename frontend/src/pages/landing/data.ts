@@ -1,4 +1,4 @@
-import type { HeroSlideMeta } from "@/pages/hero/types";
+import type { HeroSlideMeta } from "@/pages/landing/types";
 
 /** 10 seconds per slide — enough time to understand before it changes. */
 export const AUTOPLAY_MS = 10_000;

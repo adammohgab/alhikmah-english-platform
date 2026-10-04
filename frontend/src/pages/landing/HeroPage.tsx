@@ -1,12 +1,12 @@
 import { Navbar } from "@/shared/layout/Navbar";
 import { Footer } from "@/shared/layout/Footer";
-import { HeroCarousel } from "@/pages/hero/components/HeroCarousel";
-import { ScrollInvitation } from "@/pages/hero/components/ScrollInvitation";
-import { LandingSections } from "@/pages/hero/components/LandingSections";
-import { useHeroCarousel } from "@/pages/hero/hooks/useHeroCarousel";
-import { useLenis } from "@/pages/hero/hooks/useLenis";
-import { useScrollNavbar } from "@/pages/hero/hooks/useScrollNavbar";
-import { HERO_SLIDES } from "@/pages/hero/data";
+import { HeroCarousel } from "@/pages/landing/components/HeroCarousel";
+import { ScrollInvitation } from "@/pages/landing/components/ScrollInvitation";
+import { LandingSections } from "@/pages/landing/components/LandingSections";
+import { useHeroCarousel } from "@/pages/landing/hooks/useHeroCarousel";
+import { useLenis } from "@/pages/landing/hooks/useLenis";
+import { useScrollNavbar } from "@/pages/landing/hooks/useScrollNavbar";
+import { HERO_SLIDES } from "@/pages/landing/data";
 
 /**
  * Home page — hero (100vh: 90vh carousel + 10vh scroll invitation) followed

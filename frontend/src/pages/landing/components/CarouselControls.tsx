@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
-import { AUTOPLAY_MS, HERO_SLIDES } from "@/pages/hero/data";
+import { AUTOPLAY_MS, HERO_SLIDES } from "@/pages/landing/data";
 import { cn } from "@/shared/lib/utils/cn";
 
 interface CarouselControlsProps {

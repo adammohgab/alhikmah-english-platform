@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { HERO_SLIDES, TRANSITION_MS } from "@/pages/hero/data";
-import { MagazineSlide } from "@/pages/hero/components/MagazineSlide";
-import { GameSlide } from "@/pages/hero/components/GameSlide";
-import { TutorSlide } from "@/pages/hero/components/TutorSlide";
-import { CourseSlide } from "@/pages/hero/components/CourseSlide";
-import { CarouselControls } from "@/pages/hero/components/CarouselControls";
-import type { useHeroCarousel } from "@/pages/hero/hooks/useHeroCarousel";
-import { usePrefersReducedMotion } from "@/pages/hero/hooks/usePrefersReducedMotion";
+import { HERO_SLIDES, TRANSITION_MS } from "@/pages/landing/data";
+import { MagazineSlide } from "@/pages/landing/components/MagazineSlide";
+import { GameSlide } from "@/pages/landing/components/GameSlide";
+import { TutorSlide } from "@/pages/landing/components/TutorSlide";
+import { CourseSlide } from "@/pages/landing/components/CourseSlide";
+import { CarouselControls } from "@/pages/landing/components/CarouselControls";
+import type { useHeroCarousel } from "@/pages/landing/hooks/useHeroCarousel";
+import { usePrefersReducedMotion } from "@/pages/landing/hooks/usePrefersReducedMotion";
 
 type CarouselApi = ReturnType<typeof useHeroCarousel>;
 

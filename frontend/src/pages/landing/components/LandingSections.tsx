@@ -19,8 +19,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
-import { useInView } from "@/pages/hero/hooks/useInView";
-import { MAGAZINE_PAGES } from "@/pages/hero/data";
+import { useInView } from "@/pages/landing/hooks/useInView";
+import { MAGAZINE_PAGES } from "@/pages/landing/data";
 
 /* ------------------------------------------------------------------ */
 /* Shared scroll-reveal wrapper                                        */

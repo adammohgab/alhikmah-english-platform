@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BookOpen, GraduationCap, Languages, MessageCircle } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
-import { HeroSlideCopy } from "@/pages/hero/components/HeroSlideCopy";
+import { HeroSlideCopy } from "@/pages/landing/components/HeroSlideCopy";
 
 interface TutorSlideProps {
   active: boolean;

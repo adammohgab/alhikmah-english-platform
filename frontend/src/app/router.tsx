@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { HeroPage } from "@/pages/hero/HeroPage";
+import { HeroPage } from "@/pages/landing/HeroPage";
 
 export const router = createBrowserRouter(
   [

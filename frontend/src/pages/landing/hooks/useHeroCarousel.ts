@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AUTOPLAY_MS } from "@/pages/hero/data";
+import { AUTOPLAY_MS } from "@/pages/landing/data";
 
 interface HeroCarouselApi {
   index: number;

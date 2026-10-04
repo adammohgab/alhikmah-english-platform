@@ -1,5 +1,5 @@
 import { BookOpen, ClipboardCheck, PenLine } from "lucide-react";
-import { HeroSlideCopy } from "@/pages/hero/components/HeroSlideCopy";
+import { HeroSlideCopy } from "@/pages/landing/components/HeroSlideCopy";
 
 interface CourseSlideProps {
   active: boolean;
