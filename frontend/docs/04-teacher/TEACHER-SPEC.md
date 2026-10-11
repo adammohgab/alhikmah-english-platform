@@ -13,6 +13,7 @@ Page IDs (TC-xx) are stable. The task-breakdown step will reference them. Do not
 Who the teacher is: an English teacher at the school who manages one or more classes, builds learning content, assigns work, grades it, and tracks student progress. Teachers work mostly on laptops during planning and grading, and occasionally on phones for quick checks.
 
 Locked decisions (from the owner):
+
 - Teachers can create FULL custom courses (units, lessons, activities, assessments), not just quizzes.
 - Teacher-created courses are private by default. A teacher can optionally publish a course to a school-wide library. Publishing to the library does NOT wait for Admin approval and goes live immediately. The Admin can unpublish it afterward.
 - Both teachers and Admins can create classes.
@@ -49,9 +50,11 @@ The token names, typography (Bricolage Grotesque headings, Figtree body), spacin
 ## 3. GLOBAL SHELL (TC-00)
 
 ### 3.1 Desktop (1200+)
+
 Left sidebar 264px (collapsible to a 72px icon rail, remembered). Top bar 64px. Content max width 1440px (wider than the student side because of tables), 32px side padding.
 
 Sidebar, top to bottom:
+
 1. Platform wordmark (placeholder). School logo small at the very bottom, unchanged.
 2. Dashboard.
 3. Teach group: Classes, Students, Courses.
@@ -63,18 +66,22 @@ Sidebar, top to bottom:
 Top bar, left to right: page title or breadcrumb; global search (students, classes, assignments, quizzes, questions); a Class switcher (All classes, or a single class: filters dashboard widgets and lists that support it); a "Create" button with a dropdown (New class, New course, Generate a course with AI, New assignment, New quiz, New announcement, Add question); an "Ask AI" button that opens the Copilot panel (shortcut Ctrl/Cmd+J); notification bell with unread dot; avatar menu.
 
 ### 3.2 Tablet (768 to 1199)
+
 Sidebar collapsed to the icon rail; expands as an overlay. Tables switch to horizontal scroll with the first column frozen.
 
 ### 3.3 Mobile (under 768)
+
 Bottom tab bar, 5 tabs: Home, Classes, Grading, Reports, More. "More" opens a list with Students, Courses, Assignments, Quizzes, Question bank, Announcements, Settings.
 Builders (course, quiz, assignment) show a banner "Best on a larger screen" but still work in a simplified single-column flow. Grading works on mobile in a stacked layout.
 Tables become stacked cards (one card per row with key fields and an expand). A floating "Ask AI" button opens the Copilot as a full-screen sheet.
 
 ### 3.4 Focused flows
+
 The quiz builder, assignment builder, course builder, lesson editor and grading screen use a builder layout: the sidebar collapses to the rail, a slim header shows breadcrumb, document title (inline editable), save status ("Saved 10:42" / "Unsaved changes"), Preview, and the main action (Publish / Save).
 Leaving with unsaved changes asks for confirmation.
 
 ### 3.5 Global behaviors
+
 - Toasts for all confirmations. Destructive actions (delete, archive, unpublish) always use a confirmation dialog stating what will happen, including how many students are affected.
 - A class switcher selection persists across pages during the session.
 - Search is global and keyboard accessible (press "/" to focus).
@@ -85,32 +92,39 @@ Leaving with unsaved changes asks for confirmation.
 ## 4. TEACHER-CONTROLLED RULES (shared logic that pages depend on)
 
 ### 4.1 Grading modes (set per assignment)
+
 When creating an assignment that contains writing questions, the teacher chooses one of:
+
 1. Review each answer: the grading screen shows every writing answer with the AI score and comment, and the teacher accepts or edits each one before the submission is confirmed.
 2. Overall grade with AI suggestions: the teacher sees one grade for the submission; AI suggestions appear in a side panel that the teacher can copy from. The teacher enters or accepts a single overall grade for the writing part.
 3. Bulk approve: after AI finishes, the teacher can accept all AI grades for the class in one action, then edit exceptions. The grading queue shows an "Approve all AI grades (24)" button and a list of flagged low-confidence ones to look at first.
 4. Manual only (AI off): no AI pre-grade; the teacher grades from scratch. (Assumption: this fourth option exists. See section 11.)
-Auto-gradable questions (multiple choice, true/false, fill-in-the-blank, matching, listening) are always auto-graded. The teacher can override any auto score.
+   Auto-gradable questions (multiple choice, true/false, fill-in-the-blank, matching, listening) are always auto-graded. The teacher can override any auto score.
 
 ### 4.2 Grade release
+
 Per assignment setting: "Release grades when I confirm each submission" or "Release all grades at once." Students see grades only after release. Until then, students see "Waiting for your teacher to confirm."
 
 ### 4.3 Class rules (set per class, can be overridden per quiz/assignment)
+
 - Quiz retakes: number of attempts (1, 2, 3, unlimited), which score counts (best, latest, average), and a minimum wait between attempts.
 - Unlock rules: the default hybrid rule is that quizzes and assessments unlock after the unit's lessons are completed. The teacher can: open a quiz early for the whole class, open it early for selected students, lock a unit/lesson until a date, or release content on a schedule.
 - Deadlines: default due time of day, default late policy (see below), and reminder timing before deadlines.
 - Late policy is chosen PER ASSIGNMENT. The three options are: (1) Not accepted after the due date, (2) Accepted with a penalty (a percentage per day late, with a maximum total penalty), (3) Accepted with no penalty until a close date. The class sets the default policy that prefills the assignment builder; the teacher can change it on each assignment. Quizzes close at their close time and have no late option.
 
 ### 4.4 Students needing attention (the detection rules)
+
 A student is flagged when any of these is true (thresholds are editable in Settings):
+
 - Average score on the last 3 assessments is below 50 percent.
 - No learning activity for 5 or more days.
 - Lost a streak of 7 or more days.
 - Missed 2 or more deadlines in 30 days.
 - Score dropped by 20 or more points compared with their own previous average.
-Each flagged student shows the reason(s) as chips (for example "Inactive 6 days", "Avg 41 percent", "Streak lost").
+  Each flagged student shows the reason(s) as chips (for example "Inactive 6 days", "Avg 41 percent", "Streak lost").
 
 ### 4.5 Bonus XP and coins
+
 - Teacher picks one student, several, or the whole class.
 - Amount of XP and/or coins, within a per-day cap per teacher per student (proposal: 100 XP and 50 coins).
 - A required reason (short text). The student receives a notification with the reason ("Ms. Rana gave you 30 XP: great participation").
@@ -118,29 +132,35 @@ Each flagged student shows the reason(s) as chips (for example "Inactive 6 days"
 - Bonus XP counts toward level and leaderboard like earned XP (assumption).
 
 ### 4.6 Custom class quests and challenges
+
 - Fields: title, description, target (choose a preset: complete N lessons, score at least X percent on a quiz, keep an N-day streak, learn N words, play N games, or a manual check "teacher confirms"), period (start and end date), reward (XP and/or coins), audience (whole class, selected students).
 - They appear in the student's quest page and dashboard under a "From your teacher" label.
 - Manual-check quests show the teacher a "Confirm completion" list.
 - Status: Draft, Active, Ended. Ended quests keep a results summary (who completed).
 
 ### 4.7 Publishing a course
+
 Course visibility states:
+
 - Draft: only the teacher sees it, not assignable.
 - Private: assigned to the teacher's own classes only. Students in those classes see it.
 - School library: visible to all teachers in the school (they can view and duplicate it, not edit the original). Publishing is immediate. Admin can unpublish at any time (the teacher sees "Removed from the library by an admin").
-Editing a course that students are already using: changes are held as "Unpublished changes" and applied when the teacher clicks "Publish changes". The dialog states how many students are in the course and warns that completed lessons stay completed.
+  Editing a course that students are already using: changes are held as "Unpublished changes" and applied when the teacher clicks "Publish changes". The dialog states how many students are in the course and warns that completed lessons stay completed.
 
 ### 4.8 AI question helper
+
 Where it appears: Question bank page (button "Generate with AI"), and the "Add question" menu inside the quiz builder, assignment builder, activity editor.
 Flow:
+
 1. A dialog asks for the source: a topic (free text), one of the teacher's lessons (picker), or pasted text.
 2. Settings: number of questions (1 to 20), question types allowed (in quizzes the writing type is hidden), skill, difficulty, grade level (7 to 12), and optional notes ("focus on past simple").
 3. A "Generating" state, then results appear as DRAFT question cards, each marked with an "AI draft" chip. Each card shows the full question as students would see it, the correct answer, and the explanation.
 4. For each draft the teacher can Accept (saves to the bank or adds to the quiz), Edit (opens the Question editor), Regenerate this one, or Discard. A bulk "Accept selected" exists.
 5. Nothing is saved or visible to students until the teacher accepts. Accepted questions keep a small "Created with AI" tag visible only to teachers.
-Error state: "The helper could not generate questions. Try a shorter source or different settings." with a retry. UI only, mock results, no real AI call.
+   Error state: "The helper could not generate questions. Try a shorter source or different settings." with a retry. UI only, mock results, no real AI call.
 
 ### 4.9 Co-teaching
+
 - A class has one or more teachers. All co-teachers have equal rights on that class: edit class rules, manage the roster, create and grade assignments and quizzes, post class announcements, award bonuses, and create class quests.
 - Any co-teacher can add another teacher from the school teacher list. Any co-teacher can remove another co-teacher, but the last teacher cannot be removed. Admins can also add or remove teachers. Deleting a class is Admin-only.
 - Authorship: courses, quizzes, assignments and questions remain owned by the teacher who created them. Co-teachers can assign any course already attached to the class, and can edit an assignment or quiz that belongs to this class. Editing the underlying course content is limited to its author (a co-teacher can duplicate it).
@@ -149,7 +169,9 @@ Error state: "The helper could not generate questions. Try a shorter source or d
 - Notifications: new submissions notify all co-teachers of the class. A grading queue filter "Assigned to me / All" is available (default: All).
 
 ### 4.10 AI-first workflow: principles and the AI action card
+
 Principles:
+
 1. AI prepares, the teacher approves. AI produces the first draft of almost every task. The teacher is the reviewer.
 2. Nothing AI-made is visible to students, graded as final, sent, or scheduled until the teacher presses Approve. This has no exceptions and cannot be turned off.
 3. Things that do not reach students are allowed to happen automatically: detecting students who need attention, preparing grading drafts, preparing suggested actions.
@@ -160,6 +182,7 @@ Principles:
 8. Everything is mock data and mock responses in this phase.
 
 AI action card (the shared pattern, build once):
+
 - Header: what the AI did in one sentence ("Created a 10-question quiz on present perfect for 8B").
 - Preview: the content itself (rendered the way students will see it) or, for multi-change actions, a plain list of exactly what will change ("Creates 1 quiz with 10 questions. Assigns it to 8B and 8C. Opens Thursday 08:00. Closes Friday 17:00. Notifies 46 students.").
 - "Based on": the sources AI used (lesson titles, class data, dates) as small links.
@@ -168,10 +191,12 @@ AI action card (the shared pattern, build once):
 - States: Generating (progress text), Ready, Approved, Edited, Discarded, Failed (explains what failed and offers retry).
 
 ### 4.11 AI Copilot (panel, available on every page)
+
 Opening: the "Ask AI" button in the top bar (or Ctrl/Cmd+J). A 420px right-side panel on desktop that pushes or overlays content; a full-screen sheet on mobile. It stays open while the teacher navigates.
 Context: a row of context chips at the top shows what the Copilot currently knows (page, selected class, student, assignment, quiz, or course). The teacher can remove or add chips. Example: "Class 8B" and "Assignment: Unit 3 essay."
 Conversation: the teacher writes plain-language requests. Copilot replies with a short sentence plus ACTION CARDS (4.10). Multi-step requests become a plan: a checklist of steps, each its own action card, with "Approve all" and per-step Approve. Steps that depend on others show "after step 1."
 Example requests it must support:
+
 - "Make a 10-question quiz on present perfect for 8B, open Thursday, due Friday 5pm."
 - "Draft an announcement telling 7A the exam moved to Tuesday."
 - "Who is struggling with writing in 9C and what should I do about it?" (answers with a summary and a support plan action card)
@@ -180,13 +205,14 @@ Example requests it must support:
 - "Build a 6-unit course on travel English for grade 8."
 - "Grade the Unit 3 essays and show me the ones I need to check."
 - "Open the grading queue."
-Also: suggested prompts that change by page (on the quiz builder: "Check my quiz", "Make it easier", "Add 5 questions on listening").
-History: a conversation list ("New chat," past chats, search) and a link to the AI activity log (Settings).
-What it cannot do: delete classes or content, change grades silently, send or publish anything without an approved action card, change settings without showing the change, or access other teachers' private data. When asked, it explains why in one sentence and offers the nearest allowed action.
-States: empty (suggested prompts), thinking, error ("The assistant could not complete that. Try rephrasing or breaking it into smaller steps."), and rate limit.
-Mobile: full-screen; context chips collapse to a single line.
+  Also: suggested prompts that change by page (on the quiz builder: "Check my quiz", "Make it easier", "Add 5 questions on listening").
+  History: a conversation list ("New chat," past chats, search) and a link to the AI activity log (Settings).
+  What it cannot do: delete classes or content, change grades silently, send or publish anything without an approved action card, change settings without showing the change, or access other teachers' private data. When asked, it explains why in one sentence and offers the nearest allowed action.
+  States: empty (suggested prompts), thinking, error ("The assistant could not complete that. Try rephrasing or breaking it into smaller steps."), and rate limit.
+  Mobile: full-screen; context chips collapse to a single line.
 
 ### 4.12 Suggested actions (dashboard AI list)
+
 - A list generated daily (and refreshed when data changes) of the most useful next steps, each shown as a small card: icon, one-line suggestion, a short "why" line, and a primary button that produces the matching action card (4.10).
 - Examples:
   - "9 AI-graded essays in 8B are ready. Review and approve." (opens the grading queue or prepares Approve all)
@@ -257,8 +283,9 @@ Purpose: tell the teacher what needs attention today.
 Desktop layout: 12-column grid. Main column (8) and side column (4). The class switcher in the top bar filters every widget.
 
 Sections in order:
+
 1. Greeting line: "Good morning, {name}" and a summary sentence ("12 submissions are waiting and 4 students need attention.").
-1b. Suggested actions (AI), full width, directly under the greeting. A strip of up to 4 action cards (horizontal on desktop, stacked on mobile) with a "See all (N)" link. Details in 4.12. It is slim by default (title and one button per card) so the grading queue stays prominent.
+   1b. Suggested actions (AI), full width, directly under the greeting. A strip of up to 4 action cards (horizontal on desktop, stacked on mobile) with a "See all (N)" link. Details in 4.12. It is slim by default (title and one button per card) so the grading queue stays prominent.
 2. Grading queue (main column, highest priority). A panel listing the assignments that have submissions waiting: assignment title, class chip, number waiting, number AI-graded and ready to confirm, oldest submission age, and a "Grade" button that opens the queue filtered to that assignment. A header button "Open grading queue." If there are AI grades ready for bulk approve, show "Approve all AI grades" there.
 3. Students needing attention (main column). A table of up to 6 students: avatar, name, class, reason chips, last active, and a "View student" action. "See all" opens the Students page filtered to flagged. A row action "Send announcement to this student".
 4. Recent activity feed (main column). A vertical timeline of the latest 12 events across the teacher's classes: submissions received, quiz completed, student joined by code, quiz closed, a streak milestone, new badge, assignment fully submitted. Each event: icon, sentence, class chip, time, link. Filter chips: All, Submissions, Quizzes, Students.
@@ -290,10 +317,11 @@ States: empty = "No classes yet. Create your first class."
 Purpose: the home of one class.
 Layout: header band: class name, grade, term, teacher(s), student count, join code (with copy button) and quick actions (Add students, New assignment, New quiz, New announcement, Award bonus).
 Tabs below: Overview, Students, Work, Progress, Rewards, Settings. (Students leads to TC-04, Settings leads to TC-05, Rewards leads to TC-06; Overview, Work and Progress are rendered here.)
+
 - Overview: four stat tiles (average score, completion rate, active students this week, assignments awaiting grading), a 4-week activity chart, upcoming deadlines for this class, needs-attention list for this class, and recent activity.
 - Work: a combined list of this class's assignments and quizzes with status (Draft, Scheduled, Open, Closed), due date, submissions (14 of 24), average score, and actions. "New assignment" and "New quiz" buttons.
 - Progress: a student-by-unit heat table (rows = students, columns = units, cell color = completion), plus a skills panel with average strength per skill (vocabulary, grammar, reading, writing, listening) and the 5 most missed questions across the class.
-Mobile: tabs become a scrollable segmented control; heat table scrolls horizontally with student names frozen.
+  Mobile: tabs become a scrollable segmented control; heat table scrolls horizontally with student names frozen.
 
 ---
 
@@ -304,11 +332,12 @@ Layout: left main: roster table. Right: enrollment panel.
 Roster table columns: checkbox, avatar and name, student ID, email, status (Active, Invited, Pending request), last active, progress, average score, actions menu (View progress, Remove from class).
 Bulk actions on selection: Remove from class, Send announcement to selected, Award bonus.
 Enrollment panel (three methods):
+
 1. Pick from school roster: opens a dialog with a searchable list of school students filtered by grade, with checkboxes, showing if a student is already in another of the teacher's classes. Button "Add N students."
 2. Invite by student ID or email: a text area accepting several IDs or emails (comma, space or new line), used only to find the student accounts. A validation preview shows found, not found, and already enrolled. Button "Send invites." The invite appears as an in-app notification for the student with Accept and Decline (no email is sent). Invited students appear with status "Invited" until accepted.
 3. Join code: displays the class code in large type with copy and regenerate buttons, an on/off toggle, an optional expiry date, and a toggle "Approve join requests manually" (on by default; proposal). Pending requests appear at the top of the roster as a "Requests" strip with Approve and Decline.
-Removal: a confirmation dialog explains that progress is kept in the student's record but the class content is no longer available to them.
-States: empty roster = three large buttons, one for each method.
+   Removal: a confirmation dialog explains that progress is kept in the student's record but the class content is no longer available to them.
+   States: empty roster = three large buttons, one for each method.
 
 ---
 
@@ -317,13 +346,14 @@ States: empty roster = three large buttons, one for each method.
 Purpose: set how this class behaves.
 Layout: a settings form in grouped sections with one Save bar fixed at the bottom ("Unsaved changes" with Save and Discard).
 Sections:
+
 - Quiz attempts: number of attempts (1, 2, 3, unlimited), which score counts (best, latest, average), minimum wait between attempts (none, 10 min, 1 hour, 1 day).
 - Content unlocking: default rule text ("Quizzes unlock after the unit's lessons are completed"); a table of units with per-unit controls (Open by default, Lock until date, Release on schedule); a table of quizzes with a toggle "Open early for the whole class" and "Open early for selected students" (opens a picker).
 - Deadlines: default due time, reminders (1 day before, 1 hour before), default late policy (see 4.3).
 - Answer visibility: whether students see correct answers after a quiz (Never, After submit, After the quiz closes).
 - Teachers: the list of teachers on this class (avatar, name, "Added by"), an "Add co-teacher" button (picker of school teachers), and a "Remove" action on each other teacher (disabled when only one teacher remains).
 - Per-assignment overrides note: "Individual quizzes and assignments can override these values."
-A line under the form shows "Rules last changed by {teacher} on {date}." Saving shows a toast and updates affected quizzes, listing the number affected in a confirmation dialog when a change alters already-open quizzes.
+  A line under the form shows "Rules last changed by {teacher} on {date}." Saving shows a toast and updates affected quizzes, listing the number affected in a confirmation dialog when a change alters already-open quizzes.
 
 ---
 
@@ -331,10 +361,11 @@ A line under the form shows "Rules last changed by {teacher} on {date}." Saving 
 
 Purpose: teacher-controlled gamification for a class.
 Layout: tabs: Leaderboard and streaks, Quests, Bonus awards.
+
 - Leaderboard and streaks: the class leaderboard (same layout as the student page but with more data: rank, student, level, XP this week, XP all-time, current streak, best streak, last active). Filter by period (This week, All-time). Sort by any column. A "Streaks" panel lists current streaks sorted with at-risk streaks (no activity today) highlighted. Teachers see names in full (no privacy initials).
 - Quests: list of custom class quests with status (Draft, Active, Ended), progress (11 of 24 completed), dates and reward; "New quest" opens the quest form from 4.6; manual-check quests show a "Confirm completion" list.
-- Bonus awards: a form (choose students, XP, coins, reason), cap indicator ("You have 70 XP left to award to this student today") and the award history table (date, students, amount, reason). 
-Mobile: tabs become a segmented control; tables become stacked cards.
+- Bonus awards: a form (choose students, XP, coins, reason), cap indicator ("You have 70 XP left to award to this student today") and the award history table (date, students, amount, reason).
+  Mobile: tabs become a segmented control; tables become stacked cards.
 
 ---
 
@@ -354,13 +385,14 @@ States: empty with filter = "No students match these filters."
 Purpose: understand one student in depth.
 Layout: header (avatar, name, class, grade, level and rank, streak, last active, flags as chips) with actions: Award bonus, Send announcement to this student, Open report card (TC-25).
 Tabs: Overview, Courses, Quizzes, Assignments, Skills and mistakes, Activity.
+
 - Overview: stat tiles (overall progress, average score, lessons completed, words learned), a score trend line (last 10 assessments), a weekly activity bar chart, and the attention reasons if flagged with plain-language suggestions ("Inactive for 6 days. Consider an announcement or a quest.").
 - Courses: each course with a progress bar and a unit-by-unit completion list.
 - Quizzes: table (quiz, date, score, attempts, time) with link to the student's attempt review.
 - Assignments: table (assignment, due, submitted at, status, grade) with link to the graded submission.
 - Skills and mistakes: bars for the five skills with trend arrows; "Common mistakes" lists: grammar topics most missed (with count), words most missed, question types with the lowest accuracy. Each item has a "Create practice for this" shortcut (opens the question bank filtered by that topic).
 - Activity: chronological log of the student's learning events.
-Comments on graded work are visible here by link, and no messaging exists.
+  Comments on graded work are visible here by link, and no messaging exists.
 
 ---
 
@@ -381,15 +413,16 @@ Purpose: build the course structure. Builder layout.
 Hierarchy: Course, Unit, Lesson / Activity / Assessment (quiz). (A "Term" grouping is optional and appears as a label on units.)
 Layout desktop: left panel (320px): the course tree with drag-to-reorder, expand/collapse, an "Add unit" button at the bottom, and "Add" menus inside each unit (Add lesson, Add activity, Add quiz). Selecting a node opens its editor in the main panel.
 Main panel by node type:
+
 - Course: name, description, grade, category, cover pattern picker, estimated hours, visibility chip, and the "Publish" menu (opens TC-12).
 - Unit: title, description, objectives (add/remove sentences), skills covered (multi-select skill chips), term label, estimated duration.
 - Lesson: summary card with title, minutes, blocks count and an "Edit lesson" button (opens TC-11).
 - Activity: title, skill, instructions, XP reward (select Low/Medium/High mapped to XP values), questions list (uses the Question editor, section 8), time estimate.
 - Quiz node: choose "Create new quiz here" (opens TC-17 inside the unit context) or "Link an existing quiz."
-Right panel (collapsible): "Checklist" showing what is missing before publishing (units without lessons, activities without questions, missing objectives) and a student-view preview toggle.
-Rules reminder text at the bottom of the unit editor: "Quizzes in this unit will unlock after students complete its lessons."
-Save: autosave drafts; "Preview as student" opens a read-only student-style view of the course.
-Mobile: the tree is a full-screen list; tapping a node opens its editor full screen with a back button.
+  Right panel (collapsible): "Checklist" showing what is missing before publishing (units without lessons, activities without questions, missing objectives) and a student-view preview toggle.
+  Rules reminder text at the bottom of the unit editor: "Quizzes in this unit will unlock after students complete its lessons."
+  Save: autosave drafts; "Preview as student" opens a read-only student-style view of the course.
+  Mobile: the tree is a full-screen list; tapping a node opens its editor full screen with a back button.
 
 ---
 
@@ -427,16 +460,17 @@ Mobile: stacked cards.
 
 Purpose: create an assignment that students solve on the platform. Builder layout, three columns on desktop.
 Left column: settings in collapsible groups.
+
 - Basics: title, instructions (rich text), course/unit link (optional), classes (multi-select) with grade shown.
 - Schedule: publish now or schedule date/time, due date/time, close date (for late work), late policy (three options from 4.3: Not accepted, Accepted with daily penalty with fields for percent per day and maximum penalty, Accepted with no penalty until the close date; the class default is prefilled and can be changed here).
 - Scoring: total points (auto-sum from questions), passing mark (optional).
 - Grading: grading mode (the four options in 4.1; shown only if writing questions exist), grade release (4.2).
 - Student view: allow resume (always on), show correct answers to students (never, after grading), shuffle questions, shuffle options.
 - Resources: link list (view-only for students; uploads are UI-only mock).
-Center column: the question list: numbered cards (these are a true sequence), each with type icon, prompt preview, points, and drag handle. "Add question" menu (New question, From question bank, Generate with AI). Question types: multiple choice, true/false, fill in the blank, matching, listening, writing.
-Right column: Question editor (section 8) for the selected question.
-Top bar actions: Preview as student, Save draft, Publish (opens a review dialog with a validation checklist: has questions, points set, classes selected, due date in the future, writing questions have a rubric if AI grading is on).
-Mobile: settings, questions and editor become three steps (stepper) in a single column flow.
+  Center column: the question list: numbered cards (these are a true sequence), each with type icon, prompt preview, points, and drag handle. "Add question" menu (New question, From question bank, Generate with AI). Question types: multiple choice, true/false, fill in the blank, matching, listening, writing.
+  Right column: Question editor (section 8) for the selected question.
+  Top bar actions: Preview as student, Save draft, Publish (opens a review dialog with a validation checklist: has questions, points set, classes selected, due date in the future, writing questions have a rubric if AI grading is on).
+  Mobile: settings, questions and editor become three steps (stepper) in a single column flow.
 
 ---
 
@@ -460,16 +494,17 @@ Same layout as TC-13 (Assignments list) with these differences: columns are titl
 
 Purpose: create a timed, auto-graded quiz. Builder layout, same three-column structure as TC-14.
 Left column settings:
+
 - Basics: title, instructions, grade, class(es), course/unit link (the quiz belongs to a unit when created from the course builder).
 - Timing: time limit in minutes (or none), open date/time, close date/time.
 - Scoring: total score (auto-sum), passing score (percent), points per question editable per question.
 - Attempts: attempts allowed (class default prefilled, override allowed), which score counts, wait between attempts.
 - Student view: shuffle questions, shuffle options, show answers after (Never, After submit, After close).
 - Rules reminder: "Hints and power-ups are disabled in quizzes." (read-only text)
-Center: question list with numbered cards, reorder, "Add question" (New question, From question bank, Generate with AI). Question types: multiple choice, true/false, fill in the blank, matching, listening. NO writing type in quizzes (the type is hidden here, and the validation explains why if a bank question is writing).
-Right: Question editor (section 8).
-Top bar: Preview as student, Save draft, Publish (validation checklist: at least 1 question, every question has a correct answer, points set, classes selected, open date valid).
-Side tools: "Add N random questions from the bank with filters" (a dialog with filters for skill, difficulty, and count).
+  Center: question list with numbered cards, reorder, "Add question" (New question, From question bank, Generate with AI). Question types: multiple choice, true/false, fill in the blank, matching, listening. NO writing type in quizzes (the type is hidden here, and the validation explains why if a bank question is writing).
+  Right: Question editor (section 8).
+  Top bar: Preview as student, Save draft, Publish (validation checklist: at least 1 question, every question has a correct answer, points set, classes selected, open date valid).
+  Side tools: "Add N random questions from the bank with filters" (a dialog with filters for skill, difficulty, and count).
 
 ---
 
@@ -478,11 +513,12 @@ Side tools: "Add N random questions from the bank with filters" (a dialog with f
 Purpose: understand how a class did on a quiz.
 Layout: header with quiz title, status, dates, and summary tiles (attempts, completion rate, average score, highest, lowest, average time).
 Sections:
+
 1. Score distribution histogram with pass line.
 2. Student table: student, attempts used, best/counted score, time, status (Passed/Not passed/Not attempted), actions ("Grant extra attempt", "View attempt").
 3. Item analysis: per question: percent correct, most common wrong answer, average time, and a flag "Might be too hard/too easy/confusing" if percent correct is extreme. "Edit question" and "Add to question bank" shortcuts.
 4. Skills breakdown of the quiz (accuracy per skill chip).
-Print/save as PDF button (print stylesheet from section 7).
+   Print/save as PDF button (print stylesheet from section 7).
 
 ---
 
@@ -515,6 +551,7 @@ States: empty = "Nothing to grade. You are all caught up."
 
 Purpose: grade one submission efficiently. Builder-style focused layout.
 Desktop layout, three panes:
+
 - Left (240px, collapsible): the queue for this assignment: students with status dots; the current one is highlighted; keyboard "J/K" or arrows to move.
 - Center: the student's submission in a student-like read-only view, question by question. Auto-graded questions show the student's answer, the correct answer, and the auto score (editable with an override reason). Writing questions show the full text with word count, with inline highlights from the AI where present.
 - Right (360px): the Grading panel, whose behavior depends on the assignment's grading mode:
@@ -522,11 +559,11 @@ Desktop layout, three panes:
   2. Overall grade with AI suggestions: one overall writing grade field and one overall comment field; the AI suggestions list below with "Insert" buttons to paste into the comment.
   3. Bulk approve: this screen is used for exceptions; AI scores are prefilled and marked "Approved by bulk" or "Needs review"; the teacher edits as needed and saves.
   4. Manual only: empty score/comment fields with the rubric reference.
-Common to all: rubric panel (criteria such as task completion, grammar, vocabulary, organization, with point ranges), quick comment snippets (the teacher's saved comments, insertable), "Comment on this answer" inline comments for any question (these are the comments students see on graded work), overall comment, total score summary (auto + writing = final), and the primary button "Confirm and next." Secondary: "Save for later" and "Skip."
-Status markers: AI pending, AI done, Teacher confirmed. Unsaved-changes guard.
-Co-teaching: a banner "{teacher} is grading this" appears when another co-teacher opened the submission in the last 10 minutes, with "Open anyway." Confirmed submissions show "Graded by {teacher} on {date}."
-Late submissions: a Late chip shows the policy that applied and, for penalty policy, the penalty in points with an "Override penalty" control (reason required).
-Mobile layout: single column; the queue opens as a drawer; the grading panel is a bottom sheet.
+     Common to all: rubric panel (criteria such as task completion, grammar, vocabulary, organization, with point ranges), quick comment snippets (the teacher's saved comments, insertable), "Comment on this answer" inline comments for any question (these are the comments students see on graded work), overall comment, total score summary (auto + writing = final), and the primary button "Confirm and next." Secondary: "Save for later" and "Skip."
+     Status markers: AI pending, AI done, Teacher confirmed. Unsaved-changes guard.
+     Co-teaching: a banner "{teacher} is grading this" appears when another co-teacher opened the submission in the last 10 minutes, with "Open anyway." Confirmed submissions show "Graded by {teacher} on {date}."
+     Late submissions: a Late chip shows the policy that applied and, for penalty policy, the penalty in points with an "Override penalty" control (reason required).
+     Mobile layout: single column; the queue opens as a drawer; the grading panel is a bottom sheet.
 
 ---
 
@@ -542,6 +579,7 @@ All reports have a Print / Save as PDF button (see section 7).
 
 Purpose: a full picture of one class over a period. Printable.
 Sections in order:
+
 1. Report header: class, grade, teacher, period, generated date, school logo (unchanged).
 2. Summary tiles: average score, completion rate, active students, assignments and quizzes in period.
 3. Performance over time: line chart of weekly class average score, with a text summary.
@@ -550,7 +588,7 @@ Sections in order:
 6. Assessments table: each assignment/quiz, date, submitted count, average, highest, lowest.
 7. Students: top performers (5), students needing support (5), and full roster table with progress and average.
 8. Teacher notes: an editable text area included in the print.
-Controls: change period, toggle sections on/off before printing.
+   Controls: change period, toggle sections on/off before printing.
 
 ---
 
@@ -608,6 +646,7 @@ Bell dropdown shows the latest 6. "Mark all as read" on the page header.
 Purpose: personal and default preferences.
 Layout: left tab list, right form.
 Sections:
+
 - Profile: name and email (read-only, managed by the school), subjects, a "Signature" name used on report cards.
 - Appearance: theme (Daylight or Nightfall), table density (Comfortable or Compact), text size.
 - Notifications: toggles per event type from TC-28, and a daily digest option.
@@ -623,14 +662,15 @@ Sections:
 Purpose: turn a syllabus, topic, or text into a full course draft with minimal teacher effort.
 Layout: a full-page wizard with a step indicator (these steps are a true sequence). One step visible at a time, Back and Next at the bottom, progress saved automatically so the teacher can leave and return ("Resume course generation" appears on the Courses page).
 Steps:
+
 1. Source. Choose how to start: Topic (free text), Syllabus or curriculum text (paste), Pasted lesson/reading text, Adapt an existing course (picker from My courses or School library), or Chapter list (paste a table of contents). Plus a free-text box "Anything the AI should know" (for example "weak students, exam in June").
 2. Shape. Grade (7 to 12), category (Main course, Reading Club, Exam Prep, Custom), number of units, lessons per unit, total weeks, skills emphasis (vocabulary, grammar, reading, writing, listening sliders), level (below, at, above grade), tone (friendly, neutral, formal), and toggles: include activities, include a quiz per unit, include vocabulary lists, include audio scripts. Sensible defaults are prefilled so the teacher can press Next immediately.
 3. Review outline. An editable tree: units with titles and objectives, lessons with titles and time estimates. The teacher can rename, reorder, add, delete, or "Regenerate this unit" with an instruction. This is the main control point before full content is generated.
 4. Generate content. A progress screen showing each unit and what is being created (lessons, activities, quiz questions). It runs in the background; the teacher can leave and a notification arrives when ready. Partial results appear as they finish. Failures are shown per item with retry.
 5. Review. Opens the course builder (TC-10) with every generated item tagged "Created with AI." A summary bar shows: N lessons, N activities, N quizzes, and "Reviewed N of N." Quick-review mode steps through items with Approve and Edit buttons. Spot-check suggestions highlight the items the AI is least sure about.
 6. Publish and assign. Opens TC-12. Publishing a generated course requires the teacher to tick "I reviewed this course." Unreviewed items stay highlighted but do not block publishing once the teacher confirms.
-Rules: the course is always created as Draft. Generated lessons use the same blocks as the lesson editor (TC-11). Generated content follows the grade level and the selected tone. Quiz questions follow the question types allowed (no writing in quizzes).
-Mobile: single column, steps stack; the outline review uses an accordion.
+   Rules: the course is always created as Draft. Generated lessons use the same blocks as the lesson editor (TC-11). Generated content follows the grade level and the selected tone. Quiz questions follow the question types allowed (no writing in quizzes).
+   Mobile: single column, steps stack; the outline review uses an accordion.
 
 ---
 
@@ -653,15 +693,16 @@ List page layout: header with "New support plan" and filters (class, status, iss
 Ways a plan starts: the "Create support plan" button on a flagged student (TC-08), from a Suggested action (4.12), from the Copilot, or "New support plan" here (pick a student or several).
 Group plans: when several students share an issue, one plan covers the group (one targeted assignment, one quest, one announcement).
 Plan detail page (opens from the list):
+
 1. Diagnosis: AI summary of what is going wrong, with evidence links (for example "Missed 7 of 10 conditional questions across the last 3 quizzes," "No activity for 6 days").
 2. Goals: 2 to 3 measurable goals with a target and a date (for example "Reach 70 percent on conditionals by 24 Oct").
 3. Steps: AI-prepared ACTION CARDS the teacher approves individually: a targeted practice assignment (8 to 10 questions on the weak topic, built from the question bank or generated), a custom quest for the student or group, a short encouraging announcement addressed to the student or group, a bonus XP award to apply when a goal is met, and a suggested class-level reteach note. Each shows the exact change before Approve.
 4. Timeline: the review date and the milestones.
 5. Progress: auto-updating metrics against each goal, a trend chart, and a status suggestion ("On track," "Needs a new approach").
 6. Outcome: when completed, the teacher (or AI draft) writes a short outcome note; the plan archives.
-Privacy rule: students NEVER see the words "support plan" or the diagnosis. They only receive normal items: an assignment, a quest, an announcement or a bonus. Plans are visible only to the teacher(s) of that class and Admins.
-Co-teaching: all teachers of the class can see and edit the plan; changes show "last changed by."
-Mobile: plan detail is a single column with collapsible sections.
+   Privacy rule: students NEVER see the words "support plan" or the diagnosis. They only receive normal items: an assignment, a quest, an announcement or a bonus. Plans are visible only to the teacher(s) of that class and Admins.
+   Co-teaching: all teachers of the class can see and edit the plan; changes show "last changed by."
+   Mobile: plan detail is a single column with collapsible sections.
 
 ---
 
@@ -691,6 +732,7 @@ The AI Copilot (4.11) can do everything below via conversation. These are the on
 - TC-29 Settings: AI settings (below).
 
 AI settings (in TC-29, section "AI assistant"):
+
 - Writing tone: friendly, neutral, formal, concise.
 - Default reading level of generated content: below grade, at grade, above grade.
 - Default difficulty for generated questions.
@@ -716,14 +758,15 @@ One editor is used by the quiz builder, assignment builder, activity editor, les
 
 Common fields: question type (selector), prompt (rich text with optional image and audio placeholders), points, skill (vocabulary, grammar, reading, writing, listening), difficulty (Easy, Medium, Hard), topic tags, explanation shown after answering, and a live "Student view" preview underneath.
 Type-specific fields:
+
 - Multiple choice: 3 to 5 options, one correct (or "multiple answers" mode with several correct), reorder, "Shuffle options" toggle.
 - True/false: the correct answer toggle.
 - Fill in the blank: a sentence where the teacher marks blanks and enters accepted answers per blank (several accepted spellings allowed; case sensitivity toggle), or word-bank mode.
 - Matching: pairs list (left items and right items), with distractors allowed.
 - Listening: audio placeholder (upload/link UI) with a replay limit, transcript (hidden from students until review) and one of the answer types above.
 - Writing (assignments, practice and activities only): prompt, min and max words, rubric selection (from rubric templates), sample answer (hidden), and the AI grading toggle (when the assignment mode uses AI).
-Validation: every question needs a prompt, a correct answer (except writing), and points. Errors are inline and listed in the builder's checklist.
-Actions: Save, Duplicate, Delete, "Save to question bank" toggle.
+  Validation: every question needs a prompt, a correct answer (except writing), and points. Errors are inline and listed in the builder's checklist.
+  Actions: Save, Duplicate, Delete, "Save to question bank" toggle.
 
 ---
 
@@ -767,6 +810,7 @@ Audit fields on Class rules, Submission grades and BonusAward: changedBy, change
 - Comments on graded work appear on the student's result page (ST-14), labeled "Teacher feedback."
 
 ### Required changes to the student spec (to apply once this file is approved)
+
 1. ST-24 Quests and ST-01 Dashboard: show a "From your teacher" group for custom class quests.
 2. ST-02/ST-03: show courses assigned by the teacher and library courses; show a "Teacher" and "Custom" chip.
 3. ST-05 or ST-04: honor teacher unlock overrides (locked until a date, opened early) with an explanation.
@@ -780,6 +824,7 @@ Audit fields on Class rules, Submission grades and BonusAward: changedBy, change
 ## 11. CONFIRMED CANONICAL DECISIONS
 
 All assumptions and open questions are confirmed and locked:
+
 1. Teachers choose between Daylight and Nightfall themes and comfortable vs. compact density; no shop access.
 2. Grading modes: AI-pregraded with teacher approval, AI instant feedback, or pure Manual grading (AI off).
 3. Grade changes maintain an immutable audit log row (`submission_grades` / `audit_log`) showing author, before/after score, timestamp, and comment.

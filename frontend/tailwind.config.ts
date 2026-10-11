@@ -75,8 +75,8 @@ export default {
           100: "#F5F7FA",
           200: "#EEF0F5",
         },
-        stroke: "#1A1530", /* ink */
-        muted: "#4A4566",   /* ink-2 */
+        stroke: "#1A1530" /* ink */,
+        muted: "#4A4566" /* ink-2 */,
 
         /* Existing brand colors (kept for compatibility) */
         navy: { 900: "#0F1D45", 700: "#16255C", 500: "#25397E" },
@@ -116,7 +116,14 @@ export default {
         accent: ["Caveat", "cursive"],
         arabic: ["Amiri", "serif"],
         /* Keep existing sans */
-        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "Roboto", "sans-serif"],
+        sans: [
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "'Segoe UI'",
+          "Roboto",
+          "sans-serif",
+        ],
       },
       animation: {
         /* ========================================
@@ -124,13 +131,13 @@ export default {
          ======================================== */
 
         /* Sticker wiggles - subtle rotation shake */
-        "wiggle": "wiggle 0.6s ease-in-out infinite",
+        wiggle: "wiggle 0.6s ease-in-out infinite",
 
         /* Celebration burst */
-        "burst": "burst 0.5s ease-out",
+        burst: "burst 0.5s ease-out",
 
         /* Pulse animation */
-        "pulse": "pulse 2s ease-in-out infinite",
+        pulse: "pulse 2s ease-in-out infinite",
       },
     },
     /* ========================================
@@ -154,11 +161,8 @@ export default {
       addUtilities,
       theme,
     }: {
-      addUtilities: (
-        utilities: Record<string, Record<string, string>>,
-        options?: string[],
-      ) => void;
-      theme: (key: string, defaultValue?: unknown) => any;
+      addUtilities: (utilities: Record<string, Record<string, string>>, options?: string[]) => void;
+      theme: (key: string, defaultValue?: unknown) => unknown;
     }) {
       const colors = theme("colors", {}) as Record<string, unknown>;
       const shadows = theme("boxShadow", {}) as Record<string, unknown>;
@@ -167,51 +171,61 @@ export default {
       /* ========================================
       Color utilities
       ======================================== */
-      const colorUtilities = Object.entries(colors).reduce((acc, [key, value]) => {
-        if (typeof value === "object" && value !== null && !(value instanceof Array)) {
-          // Handle named color sets with shades (e.g., surface: {50: ..., 100: ...})
-          Object.entries(value).forEach(([shade, hex]) => {
-            acc[`.bg-${key}-${shade}`] = { backgroundColor: hex };
-            acc[`.text-${key}-${shade}`] = { color: hex };
-            acc[`.border-${key}-${shade}`] = { borderColor: hex };
-          });
-          // Also add default (no shade) if first key is numeric
-          const firstKey = Object.keys(value)[0];
-          if (!isNaN(parseInt(firstKey))) {
-            // Already added above with shade
+      const colorUtilities = Object.entries(colors).reduce(
+        (acc, [key, value]) => {
+          if (typeof value === "object" && value !== null && !(value instanceof Array)) {
+            // Handle named color sets with shades (e.g., surface: {50: ..., 100: ...})
+            Object.entries(value).forEach(([shade, hex]) => {
+              if (typeof hex !== "string") return;
+              acc[`.bg-${key}-${shade}`] = { backgroundColor: hex };
+              acc[`.text-${key}-${shade}`] = { color: hex };
+              acc[`.border-${key}-${shade}`] = { borderColor: hex };
+            });
+            // Also add default (no shade) if first key is numeric
+            const firstKey: string | undefined = Object.keys(value)[0];
+            if (firstKey !== undefined && !isNaN(parseInt(firstKey))) {
+              // Already added above with shade
+            }
+          } else if (typeof value === "string") {
+            // Handle single color values
+            acc[`.bg-${key}`] = { backgroundColor: value };
+            acc[`.text-${key}`] = { color: value };
+            acc[`.border-${key}`] = { borderColor: value };
           }
-        } else if (typeof value === "string") {
-          // Handle single color values
-          acc[`.bg-${key}`] = { backgroundColor: value };
-          acc[`.text-${key}`] = { color: value };
-          acc[`.border-${key}`] = { borderColor: value };
-        }
-        return acc;
-      }, {} as Record<string, Record<string, string>>);
+          return acc;
+        },
+        {} as Record<string, Record<string, string>>,
+      );
 
       /* ========================================
       Shadow utilities
       ======================================== */
-      const shadowUtilities = Object.entries(shadows).reduce((acc, [key, value]) => {
-        if (typeof value === "string") {
-          acc[`.${key}`] = {
-            boxShadow: value,
-          };
-        }
-        return acc;
-      }, {} as Record<string, Record<string, string>>);
+      const shadowUtilities = Object.entries(shadows).reduce(
+        (acc, [key, value]) => {
+          if (typeof value === "string") {
+            acc[`.${key}`] = {
+              boxShadow: value,
+            };
+          }
+          return acc;
+        },
+        {} as Record<string, Record<string, string>>,
+      );
 
       /* ========================================
       Font family utilities
       ======================================== */
-      const fontUtilities = Object.entries(fonts).reduce((acc, [key, value]) => {
-        if (Array.isArray(value)) {
-          acc[`.font-${key}`] = {
-            fontFamily: value.join(","),
-          };
-        }
-        return acc;
-      }, {} as Record<string, Record<string, string>>);
+      const fontUtilities = Object.entries(fonts).reduce(
+        (acc, [key, value]) => {
+          if (Array.isArray(value)) {
+            acc[`.font-${key}`] = {
+              fontFamily: value.join(","),
+            };
+          }
+          return acc;
+        },
+        {} as Record<string, Record<string, string>>,
+      );
 
       addUtilities(colorUtilities, ["responsive", "hover"]);
       addUtilities(shadowUtilities);

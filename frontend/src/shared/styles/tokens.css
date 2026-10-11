@@ -11,75 +11,75 @@
      ======================================== */
 
   /* Coral shades */
-  --world-coral-50: #FAFFF0;
-  --world-coral-100: #F5FFD5;
-  --world-coral-200: #E0FFB7;
-  --world-coral-300: #CFFF99;
-  --world-coral-400: #B6FF73;
-  --world-coral-500: #B6E83C;
-  --world-coral-600: #98CC27;
-  --world-coral-700: #7AA81C;
+  --world-coral-50: #fafff0;
+  --world-coral-100: #f5ffd5;
+  --world-coral-200: #e0ffb7;
+  --world-coral-300: #cfff99;
+  --world-coral-400: #b6ff73;
+  --world-coral-500: #b6e83c;
+  --world-coral-600: #98cc27;
+  --world-coral-700: #7aa81c;
 
   /* Amber shades */
-  --world-amber-50: #FFFDF0;
-  --world-amber-100: #FFFDCC;
-  --world-amber-200: #FFFAB2;
-  --world-amber-300: #FFFAA8;
-  --world-amber-400: #FFAA7E;
-  --world-amber-500: #FF9A3D;
-  --world-amber-600: #E07A2E;
-  --world-amber-700: #C05A20;
+  --world-amber-50: #fffdf0;
+  --world-amber-100: #fffdcc;
+  --world-amber-200: #fffab2;
+  --world-amber-300: #fffaa8;
+  --world-amber-400: #ffaa7e;
+  --world-amber-500: #ff9a3d;
+  --world-amber-600: #e07a2e;
+  --world-amber-700: #c05a20;
 
   /* Mint shades */
-  --world-mint-50: #E6FFFB;
-  --world-mint-100: #CCFFEB;
-  --world-mint-200: #99FFD6;
-  --world-mint-300: #66FFC7;
-  --world-mint-400: #33FFA8;
-  --world-mint-500: #35DCA8;
-  --world-mint-600: #27AFA0;
-  --world-mint-700: #1A8277;
+  --world-mint-50: #e6fffb;
+  --world-mint-100: #ccffeb;
+  --world-mint-200: #99ffd6;
+  --world-mint-300: #66ffc7;
+  --world-mint-400: #33ffa8;
+  --world-mint-500: #35dca8;
+  --world-mint-600: #27afa0;
+  --world-mint-700: #1a8277;
 
   /* Sky shades */
-  --world-sky-50: #E8F6FF;
-  --world-sky-100: #B2E8FF;
-  --world-sky-200: #8CDCFF;
-  --world-sky-300: #59C1FF;
-  --world-sky-400: #2AB8FF;
-  --world-sky-500: #4DB8FF;
-  --world-sky-600: #3A9AD9;
-  --world-sky-700: #277CC4;
+  --world-sky-50: #e8f6ff;
+  --world-sky-100: #b2e8ff;
+  --world-sky-200: #8cdcff;
+  --world-sky-300: #59c1ff;
+  --world-sky-400: #2ab8ff;
+  --world-sky-500: #4db8ff;
+  --world-sky-600: #3a9ad9;
+  --world-sky-700: #277cc4;
 
   /* Violet shades */
-  --world-violet-50: #F0F2FF;
-  --world-violet-100: #D6DDFF;
-  --world-violet-200: #BCC8FF;
-  --world-violet-300: #A2B0FF;
-  --world-violet-400: #8896FF;
-  --world-violet-500: #7C8CFF;
-  --world-violet-600: #6877E8;
-  --world-violet-700: #5463D0;
+  --world-violet-50: #f0f2ff;
+  --world-violet-100: #d6ddff;
+  --world-violet-200: #bcc8ff;
+  --world-violet-300: #a2b0ff;
+  --world-violet-400: #8896ff;
+  --world-violet-500: #7c8cff;
+  --world-violet-600: #6877e8;
+  --world-violet-700: #5463d0;
 
   /* Rose shades */
-  --world-rose-50: #FFF0F5;
-  --world-rose-100: #FFD8E0;
-  --world-rose-200: #FFB8CF;
-  --world-rose-300: #FF99BC;
-  --world-rose-400: #FF78A0;
-  --world-rose-500: #FF6FA5;
-  --world-rose-600: #E05A8E;
-  --world-rose-700: #C04578;
+  --world-rose-50: #fff0f5;
+  --world-rose-100: #ffd8e0;
+  --world-rose-200: #ffb8cf;
+  --world-rose-300: #ff99bc;
+  --world-rose-400: #ff78a0;
+  --world-rose-500: #ff6fa5;
+  --world-rose-600: #e05a8e;
+  --world-rose-700: #c04578;
 
   /* ========================================
      Neutrals (GLOBAL-STYLES-SPEC §3)
      ======================================== */
 
   /* Core neutrals from spec §3.1 */
-  --surface: #FFFFFF;
-  --surface-elevated: #FAFBFC;
-  --background: #F5F7FA;
-  --stroke: #1A1530; /* ink - used for 2px outlines */
-  --muted: #4A4566;   /* ink-2 - secondary text */
+  --surface: #ffffff;
+  --surface-elevated: #fafbfc;
+  --background: #f5f7fa;
+  --stroke: #1a1530; /* ink - used for 2px outlines */
+  --muted: #4a4566; /* ink-2 - secondary text */
 
   /* ========================================
      Base-layer aliases (consumed by base.css)
@@ -91,9 +91,9 @@
        [data-world] overrides it per GLOBAL-STYLES-SPEC §3.4)
      - --world-main: scrollbar-thumb hover + active-world accent
      ======================================== */
-  --focus-ring: #1A1530;
-  --world-soft: #FFD93D;
-  --world-main: #FFB84D;
+  --focus-ring: #1a1530;
+  --world-soft: #ffd93d;
+  --world-main: #ffb84d;
 
   /* ========================================
      Arcade Shadows (hard offset, no blur)

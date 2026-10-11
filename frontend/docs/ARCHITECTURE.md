@@ -22,6 +22,7 @@ alhikmah-english-platform/
   frontend/               Code only. No docs folder inside.
   backend/                Separate directory with its own docs (Supabase migrations, functions, docs/)
 ```
+
 - frontend/docs is DELETED. Nothing in it is kept: the design docs are replaced by the global styles spec, the tech stack and folder rules are moved into this file, the hero page doc describes a mock that is ignored.
 - The existing landing page code (frontend/src/pages/landing) is a mock and is ignored. It is deleted when the new landing page is built (task PUB-B). Its generic hooks (Lenis, in-view, reduced motion, scroll navbar) may be moved to shared if they fit.
 - The backend directory is documented separately. The only shared document is the contract in 07-contract, which the backend docs must satisfy.
@@ -30,29 +31,29 @@ alhikmah-english-platform/
 
 ## 2. TECH STACK (FINAL FOR V1)
 
-| Layer | Choice | Notes |
-|---|---|---|
-| Language | TypeScript, strict | No `any` without a comment explaining why |
-| UI library | React 18 | Function components and hooks only |
-| Build | Vite 5 | Already in the project |
-| Routing | React Router v6 (data router) | Route table with role guards; lazy route modules |
-| Styling | Tailwind CSS 3.4 | Config generated from GLOBAL-STYLES tokens; CSS variables for worlds and themes |
-| Accessible primitives | Radix UI | Dialog, dropdown, tabs, tooltip, select, popover, switch, etc., always styled with our system |
-| Animation | GSAP (core, ScrollTrigger, Flip, SplitText), Lenis, Motion (Framer Motion), Rive, Lottie (only if needed) | Ownership rules in GLOBAL-STYLES section 8.1 |
-| Sound and particles | Howler.js, canvas-confetti | Lazy loaded |
-| 3D | three, @react-three/fiber, @react-three/drei | Lazy chunk, strict budget (GLOBAL-STYLES section 9) |
-| Icons | Lucide React | Heavier stroke (2.25 to 2.5) |
-| Forms | React Hook Form + Zod | Zod schemas are the source of truth for form types |
-| Server state | TanStack Query | All reads and writes go through query and mutation hooks |
-| Client state | Zustand | Small stores: effects tier, sound, sidebar, focused flow, celebration queue, theme preview |
-| Backend client | @supabase/supabase-js | Auth, Postgres, Storage, Realtime, Edge Functions |
-| Charts | Recharts | Custom chunky shapes, table alternative |
-| Dates | date-fns | School time zone from platform settings |
-| Rich text | Tiptap (restricted toolbar) | Builders and announcements |
-| Drag and drop | dnd-kit | Builders, planner, avatar editor |
-| Testing | Vitest + React Testing Library; Playwright (end to end); axe (accessibility checks) | |
-| Lint and format | ESLint + Prettier | |
-| Package manager | pnpm | Delete package-lock.json |
+| Layer                 | Choice                                                                                                    | Notes                                                                                         |
+| --------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Language              | TypeScript, strict                                                                                        | No `any` without a comment explaining why                                                     |
+| UI library            | React 18                                                                                                  | Function components and hooks only                                                            |
+| Build                 | Vite 5                                                                                                    | Already in the project                                                                        |
+| Routing               | React Router v6 (data router)                                                                             | Route table with role guards; lazy route modules                                              |
+| Styling               | Tailwind CSS 3.4                                                                                          | Config generated from GLOBAL-STYLES tokens; CSS variables for worlds and themes               |
+| Accessible primitives | Radix UI                                                                                                  | Dialog, dropdown, tabs, tooltip, select, popover, switch, etc., always styled with our system |
+| Animation             | GSAP (core, ScrollTrigger, Flip, SplitText), Lenis, Motion (Framer Motion), Rive, Lottie (only if needed) | Ownership rules in GLOBAL-STYLES section 8.1                                                  |
+| Sound and particles   | Howler.js, canvas-confetti                                                                                | Lazy loaded                                                                                   |
+| 3D                    | three, @react-three/fiber, @react-three/drei                                                              | Lazy chunk, strict budget (GLOBAL-STYLES section 9)                                           |
+| Icons                 | Lucide React                                                                                              | Heavier stroke (2.25 to 2.5)                                                                  |
+| Forms                 | React Hook Form + Zod                                                                                     | Zod schemas are the source of truth for form types                                            |
+| Server state          | TanStack Query                                                                                            | All reads and writes go through query and mutation hooks                                      |
+| Client state          | Zustand                                                                                                   | Small stores: effects tier, sound, sidebar, focused flow, celebration queue, theme preview    |
+| Backend client        | @supabase/supabase-js                                                                                     | Auth, Postgres, Storage, Realtime, Edge Functions                                             |
+| Charts                | Recharts                                                                                                  | Custom chunky shapes, table alternative                                                       |
+| Dates                 | date-fns                                                                                                  | School time zone from platform settings                                                       |
+| Rich text             | Tiptap (restricted toolbar)                                                                               | Builders and announcements                                                                    |
+| Drag and drop         | dnd-kit                                                                                                   | Builders, planner, avatar editor                                                              |
+| Testing               | Vitest + React Testing Library; Playwright (end to end); axe (accessibility checks)                       |                                                                                               |
+| Lint and format       | ESLint + Prettier                                                                                         |                                                                                               |
+| Package manager       | pnpm                                                                                                      | Delete package-lock.json                                                                      |
 
 Not used: CSS-in-JS, Redux, any UI kit with its own visual identity (MUI, Ant, Chakra), backdrop blur effects, i18next (the UI is English only; Arabic exists only as content in the Translation tool, with `lang="ar"` and `dir="rtl"` on that content). All user-visible strings live in one central copy module per page or domain so that translation can be added later without a rewrite.
 
@@ -100,6 +101,7 @@ frontend/src/
 ```
 
 Page template (every page folder):
+
 ```
 pages/student-quiz-attempt/
   StudentQuizAttemptPage.tsx    Route entry. Thin: composes components and wires hooks
@@ -111,6 +113,7 @@ pages/student-quiz-attempt/
 ```
 
 Import rules:
+
 1. A page may import from shared/ and from its own folder. Never from another page.
 2. shared/ never imports from pages/.
 3. If two pages need the same thing, promote it to shared/ (ui, layout, effects, domain) at that moment. Not before.

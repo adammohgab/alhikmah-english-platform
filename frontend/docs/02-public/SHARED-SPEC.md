@@ -12,6 +12,7 @@ Page IDs (SH-xx) are stable. The task-breakdown step will reference them. Do not
 ## 1. CONTEXT AND LOCKED DECISIONS
 
 Locked decisions (from the owner):
+
 - The original task files only define two shared pages: the Landing page (hero, platform overview, learning areas, AI, games, curriculum, login CTA) and the Login page (credential fields, login action, forgot-password link, loading state, error state). This spec keeps both and adds the pages the other specs already depend on.
 - The landing page is for students and the school community, with a calm, informative tone. It is NOT a heavy marketing page.
 - Landing visuals: art in the hero, product previews lower down.
@@ -92,6 +93,7 @@ Purpose: introduce the platform plainly to students and the school community, an
 Layout desktop: full-width sections stacked, content up to 1200 px. Public header on top, footer at the bottom.
 
 Sections in order:
+
 1. Hero. Left: a headline of one short line, a one-sentence subline, a primary button "Sign in" and a secondary text link "See how it works" (scrolls to the overview). Right: the hero art (abstract composition described in section 2) that fills the right half and bleeds slightly past the content edge. Under the buttons, one quiet line: "For students and teachers of {school name}." Copy proposals (not final): headline "Practice English every day." subline "Lessons, quizzes, games and an AI tutor in one place. Level up as you learn." The hero entrance is the only orchestrated animation on the page.
 2. Platform overview. A short intro line, then three plain statements in a staggered (not equal-card) layout: Learn (courses, units and lessons), Practice (vocabulary, grammar, reading, writing, translation, games) and Grow (XP, levels, streaks, badges and rewards). Beside them, a large product preview of the student dashboard cropped off the right edge, with a caption ("Your day at a glance: quests, streak and deadlines").
 3. Learning areas. The five skills plus translation shown as a horizontal row of tiles with distinct sizes: Vocabulary, Grammar, Reading, Writing, Listening, Translation. Each tile has the skill color, an icon, one line of text, and a tiny preview of its screen. Tapping a tile on mobile expands it.
@@ -114,6 +116,7 @@ Performance and accessibility: art as inline SVG or CSS shapes, lazily loaded pr
 Purpose: let any user sign in with one form.
 Layout desktop: a split screen. Left (about 55 percent): an art panel using the hero art style with the platform wordmark and one short line ("Welcome back."). Right: the AuthCard centered. Mobile: the AuthCard on a plain background with a short art band at the top.
 Card contents, in order:
+
 1. School logo (unchanged) and the platform wordmark.
 2. Title "Sign in" and the line "Use the username and password from your school."
 3. Form-level InlineAlert area (hidden until needed; announced to screen readers).
@@ -122,11 +125,12 @@ Card contents, in order:
 6. Primary button "Sign in" (full width). Link "Forgot your password?" (to SH-03). Link "Need help?" (to SH-06).
 7. A quiet line: "Accounts are created by your school."
 8. (Development only, hidden in production builds) a collapsed panel "Demo accounts" listing mock usernames and passwords for a student, a teacher, a School admin and a Super admin, with buttons that fill the form.
-Behavior:
+   Behavior:
+
 - Validation: both fields required; messages on blur and on submit ("Enter your username." / "Enter your password.").
 - Pressing Enter submits. While submitting: the button shows a spinner and the text "Signing in", fields are disabled.
 - Success: redirect per section 6.
-States and messages (shown in the InlineAlert):
+  States and messages (shown in the InlineAlert):
 - Invalid credentials: "Username or password is incorrect." (the same message for an unknown username and a wrong password).
 - Locked: "Too many attempts. Try again in {minutes} minutes, or ask your school to unlock your account."
 - Network error: "We could not reach the server. Check your connection and try again."
@@ -134,8 +138,8 @@ States and messages (shown in the InlineAlert):
 - Signed out (arrived after sign-out): info alert "You have signed out."
 - Maintenance mode on: a warning alert at the top "The platform is under maintenance. {message}" and the Sign in button is disabled for students and teachers. Admins can still sign in; an "I am an admin" toggle is NOT used. Instead the button stays enabled and the server decides by role (mock: usernames starting with "admin" bypass).
 - Already signed in: skip the page and redirect to the person's dashboard.
-Mock behavior in this phase: the form checks the mock accounts; any other combination shows the invalid-credentials message; after 5 wrong attempts the form shows the locked message for the mock duration.
-Links: SH-03, SH-06, SH-01 (logo), role dashboards.
+  Mock behavior in this phase: the form checks the mock accounts; any other combination shows the invalid-credentials message; after 5 wrong attempts the form shows the locked message for the mock duration.
+  Links: SH-03, SH-06, SH-01 (logo), role dashboards.
 
 ---
 
@@ -144,14 +148,15 @@ Links: SH-03, SH-06, SH-01 (logo), role dashboards.
 Purpose: help people who cannot sign in, without email.
 Layout desktop: inside the same split layout as SH-02 (art panel left), the right side shows a wider card with two parts side by side (stacked on mobile): "Request a reset" and "Contact your school."
 Part 1, Request a reset (form):
+
 - Intro line: "Tell us who you are. Your school will give you a temporary password."
 - Fields: Username (required), Full name (required), Grade and class (optional, for students), Note (optional, up to 200 characters).
 - Button "Send request."
 - Success state replaces the form: "Request sent. Your school will contact you with a temporary password. This can take up to 2 school days." (The text is the same whether or not the username exists, so no one can discover which usernames are real.) A "Back to sign in" button.
 - Limits: at most 3 requests per hour from one device. When exceeded: "You have sent several requests. Please wait before trying again, or contact your school."
-Part 2, Contact your school: the ContactCard (office, hours, phone, location, contact email as plain text) plus short guidance: "Students: ask your teacher. Teachers: ask your school admin."
-Where the request goes: it appears for the Admin in the Users page "Reset requests" tab and as an admin notification (section 8).
-Links: SH-02, SH-06.
+  Part 2, Contact your school: the ContactCard (office, hours, phone, location, contact email as plain text) plus short guidance: "Students: ask your teacher. Teachers: ask your school admin."
+  Where the request goes: it appears for the Admin in the Users page "Reset requests" tab and as an admin notification (section 8).
+  Links: SH-02, SH-06.
 
 ---
 
@@ -181,11 +186,12 @@ Shown when a sign-in succeeds on an account with status Archived or when a signe
 Purpose: one place for help that does not need an account.
 Layout: reading layout (720 px) with a sidebar table of contents on desktop.
 Sections in order:
+
 1. Contact: the ContactCard (school name, office hours, phone, location, contact email as plain text, support link).
 2. Who should I ask? A simple two-column list: Students: your teacher first, then the school office. Teachers: your school admin. Admins: the platform owner.
 3. Common problems: short entries with links: I cannot sign in (checklist: check username spelling, caps lock, ask the school to unlock), I forgot my password (link to SH-03), My account is not active (SH-05), I cannot see my class or course (ask your teacher), The AI Tutor is not answering (it may be off or you may have reached today's limit), I want to report a problem (sign in, then use "Report a problem" next to the item).
 4. Browser and device tips: supported browsers (latest Chrome, Edge, Safari, Firefox), screen sizes, and "Works on phones."
-Mobile: single column; the table of contents becomes a dropdown.
+   Mobile: single column; the table of contents becomes a dropdown.
 
 ---
 
@@ -194,6 +200,7 @@ Mobile: single column; the table of contents becomes a dropdown.
 Purpose: answer common questions without a login.
 Layout: reading layout (720 px). A search field at the top that filters questions live. Groups below, each an accordion list (one question open at a time within a group; all open state is allowed with "Expand all").
 Groups and starter questions:
+
 - Getting started: How do I get an account? How do I sign in? What if I forget my password?
 - Learning: What are XP, levels and streaks? How do courses, units and lessons work? Why is a quiz locked?
 - Quizzes and assignments: What is the difference between a quiz and an assignment? Can I retake a quiz? Who grades my writing?
@@ -201,8 +208,8 @@ Groups and starter questions:
 - AI Tutor: What can the AI Tutor do? Why did it refuse my question? Is there a limit?
 - Privacy: Who can see my progress? What do other students see on the leaderboard? Can school staff read my AI chats? (Answer plainly: yes, authorized school staff can view conversations when needed, and every view is logged.)
 - Troubleshooting: The page will not load. My work did not save.
-Content is static in this phase (assumption: not editable by the Admin). Each answer is short, plain, and links to the relevant page when helpful.
-Empty search: "No questions match. Try different words, or contact your school" with a link to SH-06.
+  Content is static in this phase (assumption: not editable by the Admin). Each answer is short, plain, and links to the relevant page when helpful.
+  Empty search: "No questions match. Try different words, or contact your school" with a link to SH-06.
 
 ---
 
@@ -211,9 +218,10 @@ Empty search: "No questions match. Try different words, or contact your school" 
 Purpose: the legal pages.
 Layout: reading layout with two tabs: Terms of use, Privacy notice. A table of contents on the left on desktop. "Last updated" date at the top. A Print button.
 Content: the school supplies the final legal text. The placeholder structure must exist:
+
 - Terms of use: who may use the platform; account responsibility (keep your password private, accounts are assigned by the school); acceptable use; AI features and their limits (the AI can make mistakes, teachers stay responsible for grading); rewards and the in-app currency (no real-money value, no refunds); content ownership; account suspension; changes to the terms; contact.
 - Privacy notice: what data is collected (name, username, grade, class, learning progress, quiz and assignment results, writing submitted, rewards and purchases, leaderboard display name, AI conversations); why; who can see it (the student, their teachers, school admins; other students see only display name, avatar, level and XP on leaderboards); AI conversations may be reviewed by authorized school staff and each review is logged; how long data is kept (from Platform settings Data retention); the rights of students and guardians and how to ask the school; security measures at a high level; contact.
-Both documents need review by the school before launch (see section 10).
+  Both documents need review by the school before launch (see section 10).
 
 ---
 
@@ -252,6 +260,7 @@ Layout: ErrorPageTemplate. Title "This page is not available for your account." 
 Roles: student, teacher, admin (School admin or Super admin). One role per account (assumption).
 
 Rules in order of evaluation on every navigation:
+
 1. Maintenance mode on and the user is a student or teacher: show SH-13 (the sign-in page shows the maintenance alert).
 2. Not signed in and the route is private: redirect to SH-02 with a "next" value (only for paths inside their future role area).
 3. Account Archived: sign out and show SH-05.
@@ -285,7 +294,7 @@ Sign out: confirms with a toast "Signed out", clears the mock session, and goes 
 3. An admin verifies the person (outside the platform, in person or through the school) and presses "Generate temporary password." The password is shown once with Copy and Print buttons. The account is marked "must change password." All sessions end.
 4. The admin marks the request Handled. The action is written to the audit log.
 5. The person signs in with the temporary password and is taken to SH-04.
-Rules: the request form never confirms whether the username exists. Admins can dismiss a request ("Not recognized"). Requests older than 14 days are archived automatically.
+   Rules: the request form never confirms whether the username exists. Admins can dismiss a request ("Not recognized"). Requests older than 14 days are archived automatically.
 
 ---
 
@@ -304,25 +313,27 @@ LegalDocument: kind (terms, privacy), version, updatedAt, sections.
 ## 10. REQUIRED CHANGES TO THE OTHER SPECS (apply once this file is approved)
 
 Admin spec:
+
 1. Add a "Username" field (assigned by the school, unique, auto-suggested from the name) to Create user (AD-04), the CSV import mapping (AD-05), the Users list search and columns (AD-02) and User detail (AD-03). Sign-in uses the username, not the email. Email becomes an optional contact field.
 2. Users page (AD-02): add a "Reset requests" tab and an "Unlock account" action for Locked users.
 3. Dashboard (AD-01): the "Sign-in problems" panel also shows the count of open reset requests.
 4. Notifications (AD-29): add "Password reset request."
 5. Platform settings (AD-27): Security settings feed SH-02 and SH-04 (lockout, password rules, timeouts); Maintenance message and expected return time feed SH-13; General contact details feed the ContactCard.
 6. Admin invite dialog (AD-28): the sign-in identifier is a username, not an email.
-Teacher spec:
-1. TC-04 "Invite by student ID or email" becomes "Invite by username or student ID."
-2. Roster columns show the username.
-Student spec:
-1. Settings (ST-31): Account shows the username (read-only) and a "Change password" action.
-2. Class invites appear in notifications (already listed in the admin spec section 10).
-All specs: use the shared error and no-access pages for guard failures; the idle-timeout dialog and offline banner behave the same everywhere.
+   Teacher spec:
+7. TC-04 "Invite by student ID or email" becomes "Invite by username or student ID."
+8. Roster columns show the username.
+   Student spec:
+9. Settings (ST-31): Account shows the username (read-only) and a "Change password" action.
+10. Class invites appear in notifications (already listed in the admin spec section 10).
+    All specs: use the shared error and no-access pages for guard failures; the idle-timeout dialog and offline banner behave the same everywhere.
 
 ---
 
 ## 11. CONFIRMED CANONICAL DECISIONS
 
 All previous assumptions are confirmed and locked:
+
 1. Public pages always use the Daylight theme (no dark mode, no purchased themes).
 2. One primary role per account (Admin, Teacher, or Student).
 3. "Keep me signed in on this device" is optional and off by default.

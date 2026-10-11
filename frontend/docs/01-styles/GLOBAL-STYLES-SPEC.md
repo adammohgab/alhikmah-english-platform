@@ -42,6 +42,7 @@ Rule for this file: pure text. No images. Small code blocks are allowed only to 
 Maximal does not mean random. The look is a SYSTEM with strict rules that are applied everywhere, so the energy reads as design and not as noise.
 
 The five rules that make it one product:
+
 1. Everything that is an object has an INK OUTLINE and a HARD OFFSET SHADOW. Cards, buttons, inputs, chips, avatars, dialogs, charts. The outline is what defines a boundary, never a fill color alone.
 2. Everything is a STICKER. Surfaces sit on the page as stickers: they lift on hover, press down on click, and can be peeled, rotated slightly and slapped on.
 3. COLOR WORLDS carry meaning. The page, header and active controls take the color of the area or skill you are in. Moving between areas morphs the world.
@@ -51,7 +52,9 @@ The five rules that make it one product:
 The memorable thing: the WORLD MORPH. As the student moves through the product (or scrolls through a long page), the page tint, outlines' accents, decorations and the shape of the transition change world. It feels like walking through rooms of one toy.
 
 ### 2.1 Anti-slop checklist (reviewers use this)
+
 A screen fails review if any of these is true:
+
 - All cards are identical rounded rectangles in a uniform grid with uniform shadows.
 - It uses a purple-to-blue (or any) decorative gradient wash, glassmorphism or blurred frosted panels.
 - Everything is the same size, so nothing is loud.
@@ -63,6 +66,7 @@ A screen fails review if any of these is true:
 - It looks like a component library default with a chunky skin on top.
 
 ### 2.2 What survives from the old docs
+
 Realistic content in every mock. No component is reinvented per page (everything comes from the shared kit). Logical CSS properties are welcome but not required. Everything else from the old design docs is replaced.
 
 ---
@@ -70,49 +74,54 @@ Realistic content in every mock. No component is reinvented per page (everything
 ## 3. COLOR SYSTEM
 
 ### 3.1 Core neutrals
+
 - ink: #1A1530. All outlines, all body text on light surfaces, hard shadows (default).
 - ink-2: #4A4566. Secondary text.
 - surface: #FFFFFF. The surface of cards, inputs and panels (the "sticker paper").
 - night-900: #14112A, night-800: #1D1940, night-700: #2A2558. Dark surfaces (section 3.5).
 - night-text: #F6F3FF. Text on night surfaces. night-shadow: #0B0919.
-Contrast: ink on surface is 17.6 to 1. night-text on night-900 is 16.8 to 1.
+  Contrast: ink on surface is 17.6 to 1. night-text on night-900 is 16.8 to 1.
 
 ### 3.2 The twelve color worlds
+
 Every world has five tokens:
+
 - main: the saturated candy color. Fills of buttons, bars, tiles, hero blocks. ALWAYS used with ink text and an ink outline.
 - tint: the pastel page background and large soft areas.
 - soft: a mid pastel for panels, chips, hover and selected states.
 - pop: a contrasting accent used sparingly for stickers, sparks, highlights and notification dots.
 - deep: a dark readable shade of the hue for text on tint or soft, links and icons on tint. Never used as a big fill.
 
-| World | Layer | main | tint | soft | pop | deep |
-|---|---|---|---|---|---|---|
+| World                  | Layer | main    | tint    | soft    | pop     | deep    |
+| ---------------------- | ----- | ------- | ------- | ------- | ------- | ------- |
 | Vocabulary (Bubblegum) | skill | #FF6FA5 | #FFEDF4 | #FFC7DC | #FFD93D | #9B1B52 |
-| Grammar (Blueberry) | skill | #7C8CFF | #ECEEFF | #C9CFFF | #FFB84D | #2B3499 |
-| Reading (Sky) | skill | #4DB8FF | #E8F6FF | #BCE4FF | #FF7A59 | #0B5C99 |
-| Writing (Tangerine) | skill | #FF9A3D | #FFF1E3 | #FFD3A6 | #2FD6A3 | #8F4300 |
-| Listening (Mint) | skill | #35DCA8 | #E6FBF3 | #B5F0DA | #FF6FA5 | #0B6B4B |
-| Translation (Lime) | skill | #B6E83C | #F4FBDD | #DDF39A | #9B7BFF | #4A6600 |
-| Learn (Sunshine) | area | #FFD23F | #FFF8DB | #FFEA94 | #4DB8FF | #6E5200 |
-| Play (Tomato) | area | #FF5A4F | #FFECE9 | #FFC4BE | #FFD23F | #A3150C |
-| AI (Aqua) | area | #26D0E0 | #E3FAFC | #AEEFF5 | #FF6FA5 | #0A6670 |
-| Rewards (Orchid) | area | #D26BFF | #F9EBFF | #EBC2FF | #FFD23F | #7A1AA8 |
-| Teacher tools (Fern) | area | #5FD068 | #E9F9EA | #BFEEC2 | #FF6FA5 | #1B6A24 |
-| Admin tools (Cocoa) | area | #C98E5E | #F8EFE7 | #E8CDB5 | #4DB8FF | #6B3E1D |
+| Grammar (Blueberry)    | skill | #7C8CFF | #ECEEFF | #C9CFFF | #FFB84D | #2B3499 |
+| Reading (Sky)          | skill | #4DB8FF | #E8F6FF | #BCE4FF | #FF7A59 | #0B5C99 |
+| Writing (Tangerine)    | skill | #FF9A3D | #FFF1E3 | #FFD3A6 | #2FD6A3 | #8F4300 |
+| Listening (Mint)       | skill | #35DCA8 | #E6FBF3 | #B5F0DA | #FF6FA5 | #0B6B4B |
+| Translation (Lime)     | skill | #B6E83C | #F4FBDD | #DDF39A | #9B7BFF | #4A6600 |
+| Learn (Sunshine)       | area  | #FFD23F | #FFF8DB | #FFEA94 | #4DB8FF | #6E5200 |
+| Play (Tomato)          | area  | #FF5A4F | #FFECE9 | #FFC4BE | #FFD23F | #A3150C |
+| AI (Aqua)              | area  | #26D0E0 | #E3FAFC | #AEEFF5 | #FF6FA5 | #0A6670 |
+| Rewards (Orchid)       | area  | #D26BFF | #F9EBFF | #EBC2FF | #FFD23F | #7A1AA8 |
+| Teacher tools (Fern)   | area  | #5FD068 | #E9F9EA | #BFEEC2 | #FF6FA5 | #1B6A24 |
+| Admin tools (Cocoa)    | area  | #C98E5E | #F8EFE7 | #E8CDB5 | #4DB8FF | #6B3E1D |
 
 Verified contrast (computed): ink on every `main` is at least 5.7 to 1; ink on every `tint` and `soft` is at least 11.5 to 1; `deep` on `tint` is at least 6.0 to 1 and on `soft` at least 5.1 to 1. On night-900, every `main` is at least 6.0 to 1 and every `pop` at least 5.8 to 1.
 Important consequence: `main` colors are saturated mid-tones and do NOT reach 3 to 1 against white by themselves. Therefore a fill is never the only boundary. The ink outline always provides the boundary, and text on a `main` fill is always ink.
 
 ### 3.3 Semantic colors (status only, always with a shape and a label)
-| Meaning | Fill | Text on tint or white | Tint |
-|---|---|---|---|
-| Success / correct | #1FBF7A (ink text 7.4 to 1) | #0B6B45 | #E3F8EE |
-| Danger / wrong / overdue | #F2566A (ink text 5.3 to 1) | #B3162D | #FFE9EC |
-| Warning / attention | #FFB020 (ink text 9.6 to 1) | #7A5200 | #FFF3D6 |
-| Info | the Reading world (main #4DB8FF) | #0B5C99 | #E8F6FF |
-Status is shape-coded as well as color-coded: success is a round sticker with a check, danger is a jagged-edge (zigzag) sticker with an exclamation or cross, warning is a triangle-notched sticker, info is a speech-bubble sticker. Each status also carries a text label, never color alone.
+
+| Meaning                                                                                                                                                                                                                                                                                         | Fill                             | Text on tint or white | Tint    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | --------------------- | ------- |
+| Success / correct                                                                                                                                                                                                                                                                               | #1FBF7A (ink text 7.4 to 1)      | #0B6B45               | #E3F8EE |
+| Danger / wrong / overdue                                                                                                                                                                                                                                                                        | #F2566A (ink text 5.3 to 1)      | #B3162D               | #FFE9EC |
+| Warning / attention                                                                                                                                                                                                                                                                             | #FFB020 (ink text 9.6 to 1)      | #7A5200               | #FFF3D6 |
+| Info                                                                                                                                                                                                                                                                                            | the Reading world (main #4DB8FF) | #0B5C99               | #E8F6FF |
+| Status is shape-coded as well as color-coded: success is a round sticker with a check, danger is a jagged-edge (zigzag) sticker with an exclamation or cross, warning is a triangle-notched sticker, info is a speech-bubble sticker. Each status also carries a text label, never color alone. |
 
 ### 3.4 How worlds are applied (precedence)
+
 1. SKILL WORLD wins inside skill content: the Vocabulary, Grammar, Reading, Writing and Translation tool pages (ST-15 to ST-19) take their skill world for page tint and header. Listening content (listening questions, audio blocks) takes Listening. Skill chips, skill bars and skill icons use their skill world everywhere in the product.
 2. AREA WORLD applies to everything else by area:
    - Learn: dashboard, courses, units, lessons, activities, quizzes, assignments, certificates, profile, settings, notifications.
@@ -128,16 +137,20 @@ Status is shape-coded as well as color-coded: success is a round sticker with a 
 Each page sets `data-world` on its root element. The world variables below read from it.
 
 ### 3.5 Dark surfaces ("Night")
+
 Allowed ONLY on: game play screens, AI Tutor chat, shop theme previews and reward reveals (the "stage"), footer, marquee bands.
+
 - Backgrounds night-900 with panels night-800 and raised parts night-700. Text night-text. Never pure black.
 - Outlines on night are the current world's `soft` or paper white, 3 px, so the chunky look carries over. Hard shadows on night use night-shadow.
 - Accents on night use the world's `main` and `pop`, including glow (a blurred duplicate behind a shape, only on high effects tier).
 - A night surface meets a light page through a notched, scalloped or wavy edge shape (a "torn paper" divider), never a hard straight cut and never a gradient fade.
 
 ### 3.6 Gradients and shine (rule)
+
 Default is flat color plus halftone and grain. Allowed exceptions: the world morph (animated between two worlds), highlight shine on 3D-like objects (coins, trophies, chests), data heat maps, and the sheen on tilting cards. No decorative gradient washes, gradient text or gradient buttons.
 
 ### 3.7 CSS variables (names are fixed)
+
 ```
 :root {
   --ink: 26 21 48;            /* stored as RGB channels so Tailwind alpha works */
@@ -157,6 +170,7 @@ Default is flat color plus halftone and grain. Allowed exceptions: the world mor
 }
 /* Tailwind (v3.4) colors map to rgb(var(--world-main) / <alpha-value>) etc. */
 ```
+
 World names: vocabulary, grammar, reading, writing, listening, translation, learn, play, ai, rewards, teacher, admin.
 The page background is `rgb(var(--world-tint))`. The world morph animates these variables (GSAP tweens the variables, 600 ms, "power2.inOut").
 
@@ -165,6 +179,7 @@ The page background is `rgb(var(--world-tint))`. The world morph animates these 
 ## 4. THEMES (THE FULL RE-SKIN)
 
 The 12 worlds above are the DEFAULT theme ("Candy Pop"). A theme is a complete replacement set:
+
 - For each of the 12 worlds, the five tokens (main, tint, soft, pop, deep), so skill colors and area colors all change.
 - ink and surface values (an exotic theme can warm or cool the ink and the paper).
 - Night values for dark surfaces.
@@ -173,7 +188,7 @@ The 12 worlds above are the DEFAULT theme ("Candy Pop"). A theme is a complete r
 - Decoration pack: the sticker set, squiggle style, confetti shapes and marquee separators.
 - Shape bias (for example one theme leans blobby, another leans notched), within the shape system.
 - Name, rarity, price, and preview art.
-Rules:
+  Rules:
 - Every theme must meet the same contrast thresholds as section 3.2 for all 12 worlds (ink on main at least 4.5 to 1; deep on tint and soft at least 4.5 to 1; text on night at least 7 to 1). The Themes studio (AD-18) checks this and blocks publishing on failure.
 - Themes are single-mode light themes, EXCEPT optional themes marked "Night theme" whose page backgrounds are night surfaces. The default and the free starters are light. (Assumption, see section 17.)
 - Free starters: "Candy Pop" (default) and "Sorbet" (the same system with softer, more pastel mains). Purchasable themes are exotic and colorful.
@@ -185,30 +200,33 @@ Rules:
 ## 5. TYPOGRAPHY
 
 ### 5.1 Families
+
 - Display: Fredoka (variable, rounded, chunky; weights 500 to 700). Headlines, big numbers, sticker text, buttons labels, tab labels.
 - Body and UI: Figtree (clean, friendly). Paragraphs, table cells, form text, captions.
 - Hand note (decorative only): Caveat. Short scribbled notes next to arrows, at most 6 words, never for information the user must read.
 - Arabic (Translation tool only): IBM Plex Sans Arabic for body, Baloo Bhaijaan 2 for large Arabic headings in the tool.
-Fallbacks: display "Fredoka, 'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif"; body "Figtree, system-ui, sans-serif".
-Fonts are self-hosted with `font-display: swap`, subset to Latin, preloaded for the display font.
+  Fallbacks: display "Fredoka, 'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif"; body "Figtree, system-ui, sans-serif".
+  Fonts are self-hosted with `font-display: swap`, subset to Latin, preloaded for the display font.
 
 ### 5.2 Scale (fluid)
-| Token | Size | Line height | Weight and family | Use |
-|---|---|---|---|---|
-| display-xl | clamp(56px, 9vw, 140px) | 0.95 | Fredoka 700, tracking -0.02em | Landing hero, celebration titles |
-| display-lg | clamp(44px, 6vw, 96px) | 1.0 | Fredoka 700 | Section openers, big stats |
-| h1 | clamp(36px, 4.2vw, 64px) | 1.05 | Fredoka 700 | Page titles |
-| h2 | clamp(28px, 3vw, 44px) | 1.1 | Fredoka 600 | Section titles |
-| h3 | 24px | 1.2 | Fredoka 600 | Card titles |
-| h4 | 20px | 1.25 | Fredoka 600 | Subsections |
-| body-lg | 18px | 28px | Figtree 500 | Lessons, intros |
-| body | 16px | 24px | Figtree 500 | Default text |
-| body-sm | 14px | 20px | Figtree 500 | Table cells, secondary |
-| caption | 12px | 16px | Figtree 600 | Captions, helper text |
-| label | 13px | 16px | Figtree 700, sentence case | Chips, field labels (NOT uppercase) |
-| number | tabular figures, Figtree 700 | | | Stats in dense UI; display numbers use Fredoka |
+
+| Token      | Size                         | Line height | Weight and family             | Use                                            |
+| ---------- | ---------------------------- | ----------- | ----------------------------- | ---------------------------------------------- |
+| display-xl | clamp(56px, 9vw, 140px)      | 0.95        | Fredoka 700, tracking -0.02em | Landing hero, celebration titles               |
+| display-lg | clamp(44px, 6vw, 96px)       | 1.0         | Fredoka 700                   | Section openers, big stats                     |
+| h1         | clamp(36px, 4.2vw, 64px)     | 1.05        | Fredoka 700                   | Page titles                                    |
+| h2         | clamp(28px, 3vw, 44px)       | 1.1         | Fredoka 600                   | Section titles                                 |
+| h3         | 24px                         | 1.2         | Fredoka 600                   | Card titles                                    |
+| h4         | 20px                         | 1.25        | Fredoka 600                   | Subsections                                    |
+| body-lg    | 18px                         | 28px        | Figtree 500                   | Lessons, intros                                |
+| body       | 16px                         | 24px        | Figtree 500                   | Default text                                   |
+| body-sm    | 14px                         | 20px        | Figtree 500                   | Table cells, secondary                         |
+| caption    | 12px                         | 16px        | Figtree 600                   | Captions, helper text                          |
+| label      | 13px                         | 16px        | Figtree 700, sentence case    | Chips, field labels (NOT uppercase)            |
+| number     | tabular figures, Figtree 700 |             |                               | Stats in dense UI; display numbers use Fredoka |
 
 ### 5.3 Typographic effects (each has one job)
+
 - Sticker text: display text with a 3 to 4 px ink text-stroke (paint-order stroke fill or an SVG duplicate) and a hard offset shadow in ink or in the world's `deep`. ONLY on display sizes: hero, section openers, celebrations. Never on body, data or buttons.
 - Highlighter: a hand-drawn marker swash behind a key word (SVG, world `soft` or `pop`). At most ONE highlighted word per section. Vary the technique across the page (highlighter, squiggle underline, circled scribble, boxed sticker). Do not accent a word in every headline.
 - Split reveals: display text enters by characters or words with stagger and overshoot (section 8). Only when scrolled into view the first time.
@@ -221,6 +239,7 @@ Fonts are self-hosted with `font-display: swap`, subset to Latin, preloaded for 
 ## 6. SHAPE, OUTLINE, SHADOW AND SPACING
 
 ### 6.1 Outline and shadow tokens
+
 - stroke-1: 2 px (inputs, chips, dense table container, small stickers).
 - stroke-2: 3 px (cards, buttons, panels, dialogs). The default.
 - stroke-3: 4 px (hero stickers, large display blocks, celebrations).
@@ -230,6 +249,7 @@ Fonts are self-hosted with `font-display: swap`, subset to Latin, preloaded for 
 - Shadows are implemented so they animate smoothly without repainting: use a pseudo-element shadow shape that is moved with transform; do not animate box-shadow.
 
 ### 6.2 Shape vocabulary (named shapes)
+
 - pill: radius 999 px.
 - squircle: radius 24 px (cards), 32 px (dialogs and large panels).
 - blob: an organic radius shape (for example 63% 37% 54% 46% / 55% 48% 52% 45%); three or four preset blobs; some may slowly morph (decorative only).
@@ -242,33 +262,37 @@ Fonts are self-hosted with `font-display: swap`, subset to Latin, preloaded for 
 - circle.
 
 Assignment by element (defaults, can be overridden by a page spec):
-| Element | Shape |
-|---|---|
-| Primary button | pill, or notch for the "play" and "start" buttons |
-| Secondary button | pill with white fill |
-| Input and select | rounded rectangle radius 14 px, stroke-2 |
-| Card (content) | squircle 24 px; mix with ticket and notch variants for variety |
-| Chip and tag | pill |
-| Badge and level medallion | burst or circle |
-| Avatar | circle or blob (the frame decides) |
-| Progress track | pill with stripes inside |
-| Dialog | squircle 32 px with a tab header sticker |
-| Tooltip and chat bubble | speech bubble |
-| Toast | notch sticker with a tail-less slide |
-| Table container | rounded rectangle radius 18 px, stroke-1 or stroke-2 |
-| Tab | tab shape (folder style) |
+
+| Element                   | Shape                                                          |
+| ------------------------- | -------------------------------------------------------------- |
+| Primary button            | pill, or notch for the "play" and "start" buttons              |
+| Secondary button          | pill with white fill                                           |
+| Input and select          | rounded rectangle radius 14 px, stroke-2                       |
+| Card (content)            | squircle 24 px; mix with ticket and notch variants for variety |
+| Chip and tag              | pill                                                           |
+| Badge and level medallion | burst or circle                                                |
+| Avatar                    | circle or blob (the frame decides)                             |
+| Progress track            | pill with stripes inside                                       |
+| Dialog                    | squircle 32 px with a tab header sticker                       |
+| Tooltip and chat bubble   | speech bubble                                                  |
+| Toast                     | notch sticker with a tail-less slide                           |
+| Table container           | rounded rectangle radius 18 px, stroke-1 or stroke-2           |
+| Tab                       | tab shape (folder style)                                       |
 
 Variety rule: in any grid of three or more cards, use at least two different shapes or rotations (for example alternating ticket and squircle, or one card rotated by 1.5 degrees), but the SAME outline, shadow and type rules.
 
 ### 6.3 How non-rectangular shapes keep outlines
+
 clip-path removes outlines and shadows. Therefore all non-rectangular shapes are built with the ShapeFrame technique: an outer layer (ink, larger by the stroke width) and an inner layer (the fill), both clipped with the same path, plus a shadow layer offset by the shadow token. The shadow layer is a separate element that moves with transform. SVG outline paths are used for complex shapes (blob, burst, ticket). ShapeFrame is a shared component (task in the plan); no page implements its own.
 
 ### 6.4 Rotation and stickers
+
 - Stickers (decorative or informational) rotate between -6 and +6 degrees. Content cards rotate at most 1.5 degrees and only in marketing or celebration contexts and in the student dashboard. Tables, forms and builders never rotate.
 - A sticker can be "peeled": on hover the corner curls (a clip and a small shadow), on click it lifts and moves.
 - At most 2 rotated stickers in any single viewport region, and none overlapping text that must be read.
 
 ### 6.5 Spacing and layout
+
 - 4 px base unit. Steps: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 120.
 - Sections on public and dashboard pages are full-bleed bands in world colors; content sits in a container up to 1280 px (1440 px for data-heavy teacher and admin pages).
 - Collage layouts are allowed: negative margins, overlapping stickers, elements bleeding off the edge. Overlaps never hide text or controls.
@@ -294,20 +318,22 @@ Everything below is aria-hidden and has pointer-events none unless it is a desig
 ## 8. MOTION SYSTEM
 
 ### 8.1 Who owns what (to avoid libraries fighting)
-| Library | Owns | Never |
-|---|---|---|
-| Lenis | Smooth scrolling for the whole document; scroll velocity | Animating anything except scroll |
-| GSAP (core, ScrollTrigger, Flip, SplitText) | Scroll-linked and scrubbed animation, pinned sections, page-level timelines, the world morph, page transition timelines, text splits, Flip shared-element moves, marquee | Component mount and unmount animation |
-| Motion (Framer Motion) | Component enter and exit (AnimatePresence), layout animation, gestures (hover, tap, drag, focus), springs, list reordering | Scroll-linked animation, page transitions timelines |
-| CSS (transitions and keyframes) | Simple hover and focus states, small looping decoration, color changes | Anything needing choreography |
-| Rive | Characters, the streak flame, animated sticker icons, celebratory state machines | Layout or data-driven UI |
-| Lottie | One-shot celebratory animations only when an asset exists and Rive is unsuitable | Looping UI |
-| Howler.js | All sound | |
-| canvas-confetti | Confetti and particle bursts | |
-| Three.js / react-three-fiber | The few 3D moments (section 9) | Ordinary UI |
-Rule: one library animates a given property of a given element. If an element is controlled by Motion it is not also tweened by GSAP.
+
+| Library                                                                                                                               | Owns                                                                                                                                                                     | Never                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| Lenis                                                                                                                                 | Smooth scrolling for the whole document; scroll velocity                                                                                                                 | Animating anything except scroll                    |
+| GSAP (core, ScrollTrigger, Flip, SplitText)                                                                                           | Scroll-linked and scrubbed animation, pinned sections, page-level timelines, the world morph, page transition timelines, text splits, Flip shared-element moves, marquee | Component mount and unmount animation               |
+| Motion (Framer Motion)                                                                                                                | Component enter and exit (AnimatePresence), layout animation, gestures (hover, tap, drag, focus), springs, list reordering                                               | Scroll-linked animation, page transitions timelines |
+| CSS (transitions and keyframes)                                                                                                       | Simple hover and focus states, small looping decoration, color changes                                                                                                   | Anything needing choreography                       |
+| Rive                                                                                                                                  | Characters, the streak flame, animated sticker icons, celebratory state machines                                                                                         | Layout or data-driven UI                            |
+| Lottie                                                                                                                                | One-shot celebratory animations only when an asset exists and Rive is unsuitable                                                                                         | Looping UI                                          |
+| Howler.js                                                                                                                             | All sound                                                                                                                                                                |                                                     |
+| canvas-confetti                                                                                                                       | Confetti and particle bursts                                                                                                                                             |                                                     |
+| Three.js / react-three-fiber                                                                                                          | The few 3D moments (section 9)                                                                                                                                           | Ordinary UI                                         |
+| Rule: one library animates a given property of a given element. If an element is controlled by Motion it is not also tweened by GSAP. |
 
 ### 8.2 Timing, easing and springs (tokens)
+
 - Durations: instant 90 ms, fast 160 ms, base 280 ms, slow 480 ms, epic 900 ms, page transition 700 ms total.
 - GSAP eases: sticker-pop (back.out(1.8)), bounce (elastic.out(1, 0.55)), glide (power3.out), morph (power2.inOut), snap (expo.out).
 - Motion springs: snappy (stiffness 520, damping 32), bouncy (stiffness 400, damping 18), gooey (stiffness 200, damping 12), settle (stiffness 260, damping 28).
@@ -315,6 +341,7 @@ Rule: one library animates a given property of a given element. If an element is
 - Nothing blocks input. Animations never delay a result the user is waiting for, never disable a control that should be clickable, and can be interrupted by the next input.
 
 ### 8.3 Global smooth scroll (Lenis)
+
 - Lenis runs on the whole app (public and all roles). Configuration: duration about 1.1 s with an exponential ease (or lerp 0.1), wheel multiplier 1, touch uses native momentum scrolling (syncTouch off), `autoRaf` off; Lenis is driven from the GSAP ticker so ScrollTrigger and Lenis share one frame loop: `lenis.on("scroll", ScrollTrigger.update)`, `gsap.ticker.add((t) => lenis.raf(t * 1000))`, `gsap.ticker.lagSmoothing(0)`.
 - Nested scroll areas must opt out so they scroll normally: dialogs, drawers, dropdowns, popovers, chat message lists, tables with their own overflow, builder panels, code or text areas. Mark them with `data-lenis-prevent`.
 - When a modal or full-screen reveal opens, call `lenis.stop()`; call `lenis.start()` on close.
@@ -323,40 +350,44 @@ Rule: one library animates a given property of a given element. If an element is
 - The existing useLenis hook in the landing mock may be moved to shared and extended; one Lenis instance for the whole app, created in the app shell.
 
 ### 8.4 Interaction catalog (every item is a shared behavior, built once)
+
 Buttons
+
 - Hover: lift -2 px and the shadow grows one step. Press: sinks (shadow to 0, translate by the offset, scale 0.97). Release: springs back with overshoot (bouncy).
 - Primary success actions fire a small particle burst from the button.
 - Large call-to-action buttons are MAGNETIC: inside a radius of 80 px the button leans toward the pointer by up to 12 px. Only on devices with a fine pointer.
-Cards and stickers
+  Cards and stickers
 - TILT: on pointer devices, cards tilt up to 6 degrees toward the pointer with a moving sheen highlight. Corner peel on stickers. Cards in lists lift a step on hover (no tilt in dense lists).
 - Draggable stickers (builders, avatar editor, shop preview) lift, rotate toward the drag direction and drop with a settle.
-Form controls
+  Form controls
 - Focus: the outline thickens one step and a ring pulses once. Labels float with a spring. Errors: a short horizontal shake (3 oscillations, 240 ms) and the status icon changes to the zigzag sticker. Success: a green check sticker pops in.
 - Switch: gooey morph of the knob; checkbox: sticker pop and the check draws; radio: dot grows with overshoot; select: options cascade in with stagger.
-Lists and data
+  Lists and data
 - Lists enter with stagger and overshoot; reordering uses layout animation; deleting collapses with a poof of tiny particles (low effects tier: simple fade).
 - Numbers count up with overshoot. Progress bars FILL with a liquid slosh (a wave at the leading edge) and a sparkle trail.
 - Table rows in dense tables do NOT animate on hover (a tint only); row enter stagger is limited to the first 12 rows.
-Feedback
+  Feedback
 - Correct answer: green burst sticker pops, answer tile bounces, optional sound. Wrong answer: the tile shakes, a zigzag sticker appears; never humiliating (no red full-screen flash). Streak flame: a Rive state machine (idle, grow, flare). XP gain: "+25 XP" burst floats from the source to the XP chip, which pulses.
-Navigation
+  Navigation
 - Active nav item pops forward (shadow grows, slight rotation of its icon sticker). Tab changes slide a highlighter pill between tabs (Motion layoutId).
 - Tooltips pop like speech bubbles with a tiny delay (300 ms) and never cover the target.
-Cursor (pointer devices only)
+  Cursor (pointer devices only)
 - A custom cursor: a small ink dot plus a trailing blob ring that follows with easing. Over interactive elements the ring grows into a pill with a label ("Open", "Play", "Drag", "Claim"), over text inputs it becomes the system I-beam, and over disabled elements it shrinks. The custom cursor never hides the system cursor inside text inputs, dialogs' scrollbars, or while dragging files. Disabled on touch, under reduced motion and on the low tier. One shared component with a single requestAnimationFrame loop that only changes transforms.
-Idle and ambient
+  Idle and ambient
 - Decorations drift (slow sine movement), stickers wobble every 6 to 10 seconds, the active sticker blinks. All ambient motion pauses when off screen, when the tab is hidden, and on low tier.
-Loading
+  Loading
 - Skeletons are sticker placeholders with a halftone shimmer. Spinners are bouncing letters or a morphing blob. Route loading is covered by the transition layer.
-Haptics (optional)
+  Haptics (optional)
 - Short vibration on supported phones for correct, wrong, claim and level-up. A toggle in Settings.
 
 ### 8.5 Scroll-driven storytelling
+
 - Public landing page: up to 3 pinned sections with scrubbed timelines (for example the overview product preview building piece by piece, the curriculum sequence assembling, the games band with horizontal scroll), parallax layers (speeds set by data attributes), text split reveals, marquee speed tied to scroll velocity, a progress rail, and the world morph between sections (each section sets its own world; the page tint tween follows the scroll).
 - In-app pages: scroll storytelling is lighter. Page headers have parallax art and shrink into a sticky bar; dashboards animate sections in as they enter (once); long pages (lesson, reports) show a scroll progress sticker. No pinned sections inside the app except the landing and celebration reveals.
 - All scroll animation uses ScrollTrigger with Lenis and `scrub` smoothing of 0.5 to 1. Entrance animations run once.
 
 ### 8.6 Page transitions (route wipes and morphs)
+
 - Every route change in the app runs a wipe: shutters or shapes in the DESTINATION area's world color sweep across, hide the swap, and reveal the new page. Total 700 ms (350 out, 350 in). The page tint morphs to the new world during the wipe.
 - Style per area: Learn = slanted shutters; Play = circle iris; AI = ripple from the clicked point; Rewards = confetti curtain; Teacher tools = notched panels slide; Admin tools = stacked tabs flip; Public = big blob swipe. Skill pages use their skill world's color with the Learn shutter style.
 - Shared element morphs (GSAP Flip): a course card becomes the course page header; a badge tile becomes the badge dialog; a shop item becomes the preview stage; the avatar morphs into the profile plate. If the source element is missing, fall back to the wipe.
@@ -366,15 +397,18 @@ Haptics (optional)
 - Forms and quiz flows: a wipe never interrupts typing or an active attempt; the idle timeout and unsaved-changes guards run before the wipe.
 
 ### 8.7 Celebration system
+
 Levels of celebration, triggered by product events:
-| Level | Triggers | What happens |
-|---|---|---|
-| Small | Correct answer, lesson complete, coin earned, quest progress | Burst sticker, small particles, short sound, XP and coin float |
-| Medium | Quest claimed, quiz passed, badge earned, streak day | Sticker burst with confetti, bounce, character cameo (optional), sound, toast sticker |
-| Large | Level up, rank up, certificate, 7-day or longer streak milestone, perfect quiz, shop reveal of an Epic or Legendary item | Full-screen takeover (night stage), 3D or Rive hero object, confetti shower, big sound, Lenis stopped, skippable |
-Rules: celebrations queue; at most one Large per 10 seconds; every celebration is skippable with a click or Escape and never blocks reading results; under reduced motion they become a static sticker and a short fade; on teacher and admin side the same system runs with their own events (a successful publish, approving AI grades, finishing a rollover) at Small and Medium levels.
+
+| Level                                                                                                                                                                                                                                                                                                                                                                                       | Triggers                                                                                                                 | What happens                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| Small                                                                                                                                                                                                                                                                                                                                                                                       | Correct answer, lesson complete, coin earned, quest progress                                                             | Burst sticker, small particles, short sound, XP and coin float                                                   |
+| Medium                                                                                                                                                                                                                                                                                                                                                                                      | Quest claimed, quiz passed, badge earned, streak day                                                                     | Sticker burst with confetti, bounce, character cameo (optional), sound, toast sticker                            |
+| Large                                                                                                                                                                                                                                                                                                                                                                                       | Level up, rank up, certificate, 7-day or longer streak milestone, perfect quiz, shop reveal of an Epic or Legendary item | Full-screen takeover (night stage), 3D or Rive hero object, confetti shower, big sound, Lenis stopped, skippable |
+| Rules: celebrations queue; at most one Large per 10 seconds; every celebration is skippable with a click or Escape and never blocks reading results; under reduced motion they become a static sticker and a short fade; on teacher and admin side the same system runs with their own events (a successful publish, approving AI grades, finishing a rollover) at Small and Medium levels. |
 
 ### 8.8 Sound system
+
 - Howler.js with one audio sprite per category: ui (tap, toggle, open, close, pop), feedback (correct, wrong, claim, coin, xp, level-up, badge, streak, error), celebration (confetti, fanfare, reveal), games (per game beats and cues).
 - Defaults: master volume 0.35, ON by default. A mute button (speaker icon) is ALWAYS visible in the chrome: in the top bar on desktop and in the compact menu on mobile, and inside focused flows (quiz, games, grading) in the slim header. Settings offer master volume and category switches (UI taps, feedback, celebrations, game sounds).
 - Browsers block audio before the first user gesture. Audio unlocks on the first pointer or key event; the mute button reflects the real state.
@@ -383,14 +417,16 @@ Rules: celebrations queue; at most one Large per 10 seconds; every celebration i
 - In teacher and admin pages, UI tap sounds are on by default like everywhere else, with a one-click "Taps off" in the sound menu (see section 17, open question).
 
 ### 8.9 Reduced motion and effects tiers
+
 Three tiers, chosen automatically and overridable in Settings ("Effects": Full, Reduced, Minimal):
-| Tier | What runs |
-|---|---|
-| Full | Everything in this spec |
-| Reduced | No parallax or scroll scrubbing, no custom cursor, no tilt or magnetic, no confetti showers (single burst), no 3D (replaced by Rive or still), page wipes shortened to 350 ms, marquee slower and paused on interaction, ambient drift off |
-| Minimal | Everything static or crossfade: 150 ms fades only, no Lenis smoothing, no particles, no 3D, marquee stopped, sound unchanged |
-Automatic selection: `prefers-reduced-motion: reduce` selects Minimal. A runtime quality governor samples frame time: if the average frame takes more than 20 ms for 2 seconds it drops one tier for decorative effects (never below what the user chose as a floor), and shows a small toast "Effects lowered to keep things smooth" once, with an undo. The governor also reads device memory and hardware concurrency at start. Sound is independent of the tier.
-Accessibility rules that always hold: no flashing more than 3 times per second; looping or moving content that lasts over 5 seconds has a pause control (marquees and ambient motion); parallax and scroll animation are gentle (small distances); vestibular-heavy effects (full-screen zoom or spin) are only in Large celebrations and are skippable; keyboard focus is never hidden by effects.
+
+| Tier                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | What runs                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Full                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Everything in this spec                                                                                                                                                                                                                    |
+| Reduced                                                                                                                                                                                                                                                                                                                                                                                                                                                              | No parallax or scroll scrubbing, no custom cursor, no tilt or magnetic, no confetti showers (single burst), no 3D (replaced by Rive or still), page wipes shortened to 350 ms, marquee slower and paused on interaction, ambient drift off |
+| Minimal                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Everything static or crossfade: 150 ms fades only, no Lenis smoothing, no particles, no 3D, marquee stopped, sound unchanged                                                                                                               |
+| Automatic selection: `prefers-reduced-motion: reduce` selects Minimal. A runtime quality governor samples frame time: if the average frame takes more than 20 ms for 2 seconds it drops one tier for decorative effects (never below what the user chose as a floor), and shows a small toast "Effects lowered to keep things smooth" once, with an undo. The governor also reads device memory and hardware concurrency at start. Sound is independent of the tier. |
+| Accessibility rules that always hold: no flashing more than 3 times per second; looping or moving content that lasts over 5 seconds has a pause control (marquees and ambient motion); parallax and scroll animation are gentle (small distances); vestibular-heavy effects (full-screen zoom or spin) are only in Large celebrations and are skippable; keyboard focus is never hidden by effects.                                                                  |
 
 ---
 
@@ -398,6 +434,7 @@ Accessibility rules that always hold: no flashing more than 3 times per second; 
 
 3D is allowed in only these places: (1) one accent object in the landing hero, (2) the reward reveal stage (chest, coins, trophy) for Large celebrations and shop reveals, (3) the level-up and certificate takeover, (4) one optional rotating object in the shop theme preview stage. Nothing else.
 Rules (non-negotiable):
+
 - Loaded lazily as a separate chunk (dynamic import), never in the initial bundle, and only when the component is about to be visible. Chunk target at most 250 KB gzipped for three, react-three-fiber and helpers combined.
 - One WebGL canvas at a time. The canvas mounts when needed and unmounts when done.
 - Pixel ratio clamped to between 1 and 1.5 on phones (2 on large desktops), `frameloop="demand"` except while an animation plays, rendering paused when off screen (IntersectionObserver) or the tab is hidden.
@@ -407,6 +444,7 @@ Rules (non-negotiable):
 - Assets (glTF) are stylized to match the chunky look: thick outlines via inverted-hull or a toon shader, flat colors from the current world.
 
 Global performance budgets (measured on a mid-range phone, throttled 4G):
+
 - Largest Contentful Paint at most 2.5 s on public pages; Interaction to Next Paint at most 200 ms; Cumulative Layout Shift at most 0.05.
 - JavaScript per route chunk at most 150 KB gzipped, excluding the shared kit and excluding the lazy 3D chunk. The shared animation libraries (Lenis, GSAP core and used plugins, Motion) are in the shared chunk; Rive runtime, Howler, confetti, three are lazy.
 - Animate only transform and opacity (and filter sparingly). Never animate width, height, top, left, box-shadow or clip-path on large areas every frame (clip-path morphs are allowed on small shapes). `will-change` is applied only during an animation and removed after.
@@ -420,6 +458,7 @@ Global performance budgets (measured on a mid-range phone, throttled 4G):
 ## 10. COMPONENT STYLING RULES (VISUAL LAW FOR THE SHARED KIT)
 
 Each component in the UI kit follows these rules. Behavior comes from the role specs; Radix primitives provide accessibility and are always styled with this system.
+
 - Button: pill (or notch for Play and Start), stroke-2 ink outline, shadow-sm, display font label. Variants: primary (world main fill, ink text), secondary (white fill), tertiary (world soft fill), ghost (no outline; a squiggle underline draws on hover), danger (danger fill), icon (circle). Sizes: S 36 px, M 44 px, L 56 px, XL 72 px (hero). Disabled: fill becomes soft grey-tint with a dashed outline and no shadow; never an invisible button.
 - Input, textarea, select: white fill, stroke-2 ink, radius 14, shadow-xs; focus raises to shadow-sm and thickens the outline; label above in Figtree 700; helper text below; error: danger text and a zigzag sticker with a message.
 - Card: white fill, stroke-2, shadow-md, squircle 24; variants flat, ticket, notch, sticker (rotated). Cards on a `tint` page sit on top with a clear contrast.
@@ -438,7 +477,9 @@ Each component in the UI kit follows these rules. Behavior comes from the role s
 - Scrollbars: thick pill thumbs with ink outline on desktop (custom styling where supported).
 
 ### 10.1 Dense data screens (teacher and admin tables, grading, builders, reports)
+
 The same language with legibility guardrails:
+
 - The table lives in a stroke-2 container with a world main header band (ink text, display font labels in sentence case); rows are white with hairline dividers; zebra is optional and uses `tint`.
 - No rotation, tilt, magnetic or hover lift inside tables. Hover is a `soft` row tint only. Selected rows get a `soft` fill and a thick check sticker.
 - Row text is Figtree 14 px minimum, numbers tabular. Contrast always at least 4.5 to 1.
@@ -448,6 +489,7 @@ The same language with legibility guardrails:
 - Motion in dense screens is fast (durations at most 160 ms for row-level feedback) and never delays showing data.
 
 ### 10.2 Charts
+
 - Built with Recharts using custom shapes: bars have ink outlines, rounded caps and hard shadows (shadow-xs); lines are 4 px with round caps and sticker dots; areas are flat world soft fills with halftone; pie and donut use thick outlines and burst labels.
 - Series colors come from worlds (skill charts use the skill worlds; mixed charts use area worlds); text labels are always present (never color alone) and every chart has a "View as table" toggle.
 - Gridlines are 1 px dotted at 12 percent ink. Axis labels Figtree 12 to 14 px.
@@ -458,16 +500,18 @@ The same language with legibility guardrails:
 ## 11. CHARACTERS (LIMITED)
 
 Policy: no persistent mascot. At most TWO characters exist, both built as Rive state machines in the sticker style (chunky shapes, ink outline, flat color, expressive faces).
+
 - Character A: the AI Tutor persona (placeholder name to be chosen). Appears as the chat avatar and in the AI Tutor header and empty state. States: idle, listening, thinking, talking, celebrating, confused.
 - Character B: the helper (placeholder name to be chosen). Appears ONLY in empty states, error pages (404, offline, maintenance), onboarding and Medium or Large celebrations. States: wave, cheer, shrug, sleep, tools.
-Never in: forms, tables, quizzes, assignment solving, grading, builders, settings, data screens.
-Assets needed: two Rive files with the state machines, plus static fallbacks (PNG or SVG) for the Minimal tier. Characters wear the current theme's colors through Rive color inputs.
+  Never in: forms, tables, quizzes, assignment solving, grading, builders, settings, data screens.
+  Assets needed: two Rive files with the state machines, plus static fallbacks (PNG or SVG) for the Minimal tier. Characters wear the current theme's colors through Rive color inputs.
 
 ---
 
 ## 12. EMOJI POLICY
 
 The least amount possible. Use stickers and Lucide icons instead.
+
 - Never in: navigation, buttons, labels, form text, data, tables, errors, headings.
 - Allowed, sparingly: reaction stickers in celebrations (one emoji at most per celebration), the AI Tutor's replies when it chooses (not forced), and student-written content.
 - When an emoji is shown as design, it is rendered as an illustrated sticker, not a font emoji, so it matches the style.
@@ -512,18 +556,20 @@ The least amount possible. Use stickers and Lucide icons instead.
 Confirmed existing: Vite, React 18, React Router v6, TypeScript, Tailwind CSS 3.4, GSAP, Lenis, Lucide React.
 Add (all lazy where noted): Motion (framer-motion), Rive (@rive-app/react-canvas, lazy), lottie (only if needed, lazy), Howler.js (lazy after first paint), canvas-confetti (lazy), three and @react-three/fiber and @react-three/drei helpers (lazy chunk), Radix UI primitives (a11y), Recharts, React Hook Form and Zod, TanStack Query, Zustand (effects tier, sound and settings stores), date-fns.
 Notes on the existing docs and project:
+
 - frontend/docs/01-tech-stack/tech-stack.md says "no animation library beyond Tailwind transitions and Framer Motion opt-in". This is superseded: the animation stack in this spec is the standard.
 - Supabase and i18next appear in the old docs. Our specs say frontend only with mock data and English UI. Keep the packages out of the build until a decision is made (section 17).
 - package-lock.json exists while the old docs say pnpm. Pick one package manager.
 - tailwind.config.ts and globals.css must be rewritten from this file (tokens, worlds, shapes, shadows, fluid type, breakpoints). The existing landing styles.css is ignored.
-New shared pieces required (each becomes tasks in the plan):
-WorldProvider and data-world mechanism, ThemeProvider (full re-skin), ShapeFrame, Sticker, Squiggle (self-drawing SVG), Halftone and Grain layers, Marquee, Button and the full kit styled per section 10, EffectsProvider (tier, governor), Lenis provider, TransitionOutlet with per-area wipes and Flip morphs, CursorLayer, MagneticWrap, TiltCard, SoundProvider with Howler sprite loader and mute control, ConfettiProvider and burst helper, Celebration queue, Rive host component, R3F Stage (lazy) with fallbacks, SplitText reveal helper, scroll progress sticker, page header band component, dev pages: /dev/styleguide (tokens, shapes, components) and /dev/motion (every animation, FPS meter, tier switcher).
+  New shared pieces required (each becomes tasks in the plan):
+  WorldProvider and data-world mechanism, ThemeProvider (full re-skin), ShapeFrame, Sticker, Squiggle (self-drawing SVG), Halftone and Grain layers, Marquee, Button and the full kit styled per section 10, EffectsProvider (tier, governor), Lenis provider, TransitionOutlet with per-area wipes and Flip morphs, CursorLayer, MagneticWrap, TiltCard, SoundProvider with Howler sprite loader and mute control, ConfettiProvider and burst helper, Celebration queue, Rive host component, R3F Stage (lazy) with fallbacks, SplitText reveal helper, scroll progress sticker, page header band component, dev pages: /dev/styleguide (tokens, shapes, components) and /dev/motion (every animation, FPS meter, tier switcher).
 
 ---
 
 ## 17. OPEN QUESTIONS AND ASSUMPTIONS
 
 Assumptions I made (confirm or correct):
+
 1. The two characters are the AI Tutor persona and one helper for empty, error and celebration states; no other character appears.
 2. Gradients are limited to the exceptions in 3.6.
 3. Free starter themes are Candy Pop (default) and Sorbet, both light. Dark "Night themes" can exist only as purchasable items. Teachers and Admins pick among the free starters unless you want them to buy themes too.
@@ -534,6 +580,7 @@ Assumptions I made (confirm or correct):
 8. UI tap sounds stay on for teachers and admins (with a quick "Taps off"); you may prefer them off by default for grading sessions.
 
 Still open:
+
 - Do teachers and admins get purchasable themes, or only the free starters?
 - The names of the two characters and whether you already have art direction for them.
 - Will the school logo sit on a sticker plate on colored backgrounds, or only on plain surfaces (SHARED-SPEC says plain light surface; this system's colored world backgrounds need a plain plate)?

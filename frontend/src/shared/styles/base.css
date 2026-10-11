@@ -53,7 +53,15 @@ textarea {
    tint/soft fill. Night surfaces override to paper.
    Default comes from tokens.css --focus-ring. */
 :where(a, button, input, select, textarea, [tabindex], summary):focus-visible,
-:where([role="button"], [role="link"], [role="tab"], [role="checkbox"], [role="radio"], [role="switch"], [role="option"]):focus-visible {
+:where(
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="checkbox"],
+  [role="radio"],
+  [role="switch"],
+  [role="option"]
+):focus-visible {
   outline: 2px solid var(--focus-ring, #1a1530);
   outline-offset: 2px;
   border-radius: 4px;

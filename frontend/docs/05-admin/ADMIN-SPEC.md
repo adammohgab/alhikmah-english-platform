@@ -13,6 +13,7 @@ Page IDs (AD-xx) are stable. The task-breakdown step will reference them. Do not
 Who the Admin is: school staff who run the platform. They manage people, classes, the official curriculum and content, the rules of the reward system, AI behavior and cost, and the health of the platform.
 
 Locked decisions (from the owner):
+
 - Two admin roles: Super admin (everything) and School admin (limited to users, classes, and content; no platform settings).
 - User management actions: create one user manually, bulk import from CSV, reset passwords, deactivate/archive users (history is kept), and bulk promote students to the next grade (year rollover).
 - Both teachers and Admins can create classes. Admins can add or remove teachers on any class, and only Admins can delete a class.
@@ -51,25 +52,25 @@ Tokens, typography, spacing, radius scale, status colors, table patterns, chart 
 Super admin: everything.
 School admin: users, classes, curriculum, content, moderation, announcements, reports. Read-only on gamification rules, AI controls and usage. No access to platform settings or to admin accounts.
 
-| Area | Super admin | School admin |
-|---|---|---|
-| Dashboard | Full | Full (AI cost shown read-only) |
-| Users (students, teachers) | Full | Full |
-| Admin accounts and roles | Full | Hidden |
-| Classes | Full | Full |
-| Year rollover | Full | Full (typed confirmation required) |
-| Curriculum | Full | Full |
-| Content management | Full | Full |
-| Moderation | Full | Full |
-| Gamification (XP, quests, badges, shop, avatar, themes) | Full | View only |
-| Leaderboard moderation | Full | Full |
-| AI features, limits, safety rules, instructions | Full | View only |
-| AI usage and cost | Full | View only |
-| AI activity log | Full | View (limited detail) |
-| Announcements | Full | Full |
-| Reports | Full | Full |
-| Audit log | Full | Own scope only (users, classes, content) |
-| Platform settings | Full | Hidden |
+| Area                                                    | Super admin | School admin                             |
+| ------------------------------------------------------- | ----------- | ---------------------------------------- |
+| Dashboard                                               | Full        | Full (AI cost shown read-only)           |
+| Users (students, teachers)                              | Full        | Full                                     |
+| Admin accounts and roles                                | Full        | Hidden                                   |
+| Classes                                                 | Full        | Full                                     |
+| Year rollover                                           | Full        | Full (typed confirmation required)       |
+| Curriculum                                              | Full        | Full                                     |
+| Content management                                      | Full        | Full                                     |
+| Moderation                                              | Full        | Full                                     |
+| Gamification (XP, quests, badges, shop, avatar, themes) | Full        | View only                                |
+| Leaderboard moderation                                  | Full        | Full                                     |
+| AI features, limits, safety rules, instructions         | Full        | View only                                |
+| AI usage and cost                                       | Full        | View only                                |
+| AI activity log                                         | Full        | View (limited detail)                    |
+| Announcements                                           | Full        | Full                                     |
+| Reports                                                 | Full        | Full                                     |
+| Audit log                                               | Full        | Own scope only (users, classes, content) |
+| Platform settings                                       | Full        | Hidden                                   |
 
 (Assumption: the "View only" rows for School admin and the rollover rule need confirmation, see section 11.)
 
@@ -78,9 +79,11 @@ School admin: users, classes, curriculum, content, moderation, announcements, re
 ## 4. GLOBAL SHELL (AD-00)
 
 ### 4.1 Desktop (1200+)
+
 Left sidebar 264px (collapsible to a 72px icon rail). Top bar 64px. Content max width 1440px, 32px padding.
 
 Sidebar, top to bottom:
+
 1. Platform wordmark (placeholder). School logo small at the bottom, unchanged.
 2. Dashboard.
 3. People: Users, Classes.
@@ -91,14 +94,16 @@ Sidebar, top to bottom:
 8. Insights: Reports, Audit log.
 9. System (Super admin only): Platform settings, Admins and roles.
 10. Bottom: Notifications, and the admin's name, role chip and menu (Sign out).
-Items that are read-only for the current role show a small lock icon.
+    Items that are read-only for the current role show a small lock icon.
 
 Top bar: page title or breadcrumb; global search (users, classes, content, settings); an "Ask AI" button for the Admin Copilot (same component as the teacher Copilot, admin-scoped; Ctrl/Cmd+J); notification bell; role chip; avatar menu.
 
 ### 4.2 Tablet and mobile
+
 Tablet: icon rail by default, overlay expand. Mobile: admin is supported for monitoring and urgent actions only. Bottom tab bar: Home, Users, Moderation, AI, More. Tables become stacked cards. Builders, wizards with large tables (CSV import mapping, rollover) show "Best on a larger screen" but remain usable.
 
 ### 4.3 Global behaviors
+
 - Toasts for confirmations; destructive actions use the danger zone pattern.
 - Search is global ("/" focuses it).
 - Every list has loading, empty and error states as defined in the student spec.
@@ -156,6 +161,7 @@ Purpose: show what needs the admin's attention and the state of the platform.
 Layout desktop: 12-column grid. Full-width pending issues band on top, then a two-column body.
 
 Sections in order:
+
 1. Greeting and summary line ("4 issues need attention. AI spend is at 68 percent of the monthly budget.").
 2. Pending issues (highest priority, full width). A panel with a count per type shown as tabs or chips: Flagged content, Reported items, Failed AI jobs (with total). Below, a table of the newest 6 items: type chip, short description, source (user, class or feature), severity (Low, Medium, High), age (and an overdue chip when High is older than 24 hours), status, and an "Open" action. "Open moderation queue" link. If no issues: "No open issues." with a calm check state.
 3. Users and activity (left, second). Tiles: students, teachers, admins, active today, active this week, new this week. A 14-day line chart of daily active users split by role (student, teacher). A small list "Sign-in problems" (locked accounts, repeated failed logins) with a link to the user.
@@ -186,14 +192,15 @@ Mobile: stacked cards.
 Purpose: view and manage one user.
 Layout: header with avatar, name, role, status chip, and actions: Edit, Reset password, Archive or Restore.
 Tabs:
+
 - Profile: all fields (name; display name and leaderboard setting for students; student or employee ID; email; grade for students; role; classes; created date; created by). Edit mode in place with Save and Cancel; a changed-fields summary on save.
 - Learning (students): progress by course, average score, level, XP and coins (read-only), badges earned, streak. Teachers: classes, courses authored, assignments created, grading turnaround (mock).
 - Activity: sign-in history (date, device type, result) and recent actions.
 - AI usage: usage this month by feature, limits in effect, and override fields (raise or lower this user's AI limits; reason required; audit logged).
 - Notes: private admin notes (not visible to the user).
-Reset password dialog: generates a temporary password (shown once, with Copy and Print buttons; no email is sent), requires the user to change it at the next sign-in, and states that the user will be signed out everywhere. The action is audit logged.
-Archive dialog: explains consequences ("Cannot sign in. Removed from leaderboards. History and grades stay. Can be restored.") with the count of classes affected. For a teacher: a warning lists classes where they are the only teacher and requires reassigning a teacher first.
-Permissions: School admin cannot open Admin accounts.
+  Reset password dialog: generates a temporary password (shown once, with Copy and Print buttons; no email is sent), requires the user to change it at the next sign-in, and states that the user will be signed out everywhere. The action is audit logged.
+  Archive dialog: explains consequences ("Cannot sign in. Removed from leaderboards. History and grades stay. Can be restored.") with the count of classes affected. For a teacher: a warning lists classes where they are the only teacher and requires reassigning a teacher first.
+  Permissions: School admin cannot open Admin accounts.
 
 ---
 
@@ -212,14 +219,15 @@ Actions: Create user, Create and add another, Cancel. After creating, a success 
 Purpose: create or update many users at once.
 Layout: a full-page wizard with a step indicator (a true sequence).
 Steps:
+
 1. Upload. Choose the import type (Students, Teachers, or Class enrollments). Download a template CSV. Drag a file or choose one. Limits stated (up to 2,000 rows, CSV only, UTF-8).
 2. Map columns. A table matching CSV columns to platform fields, auto-detected, with an "AI suggest mapping" button for messy headers. Required fields are marked.
 3. Validate. A results table with row numbers and a status per row (OK, Warning, Error) and the reason ("Email already used by another account," "Grade must be 7 to 12," "Class not found"). Filters: All, Errors, Warnings. The admin can fix a value inline or exclude a row. "Fix with AI" proposes corrections for common problems (typos in grade or class names) shown as a diff for approval. "Download error report" as CSV.
 4. Review. A summary: N users will be created, N updated, N skipped, N classes will be created, N students will be enrolled. A choice for duplicates (skip or update).
 5. Import. A progress bar and live counts. The admin can leave and gets a notification when done.
 6. Result. A summary with counts, a list of failed rows, and "Download credentials sheet" (CSV with temporary passwords, shown once; the page warns to store it securely) and "Print credentials."
-Rules: the import is not partial by default: rows with errors are excluded and listed; valid rows are imported. A completed import creates one audit entry listing the counts.
-Mobile: shows "Best on a larger screen."
+   Rules: the import is not partial by default: rows with errors are excluded and listed; valid rows are imported. A completed import creates one audit entry listing the counts.
+   Mobile: shows "Best on a larger screen."
 
 ---
 
@@ -228,13 +236,14 @@ Mobile: shows "Best on a larger screen."
 Purpose: move students to the next grade at the start of a school year safely.
 Layout: full-page wizard, steps in sequence, each step must be completed before the next.
 Steps:
+
 1. Scope. Select the school year being closed and opened (for example 2026 to 2027) and which grades to include (all by default).
 2. Grade mapping. A table: from grade, to grade (7 to 8, 8 to 9, 9 to 10, 10 to 11, 11 to 12, 12 to Graduated/Archived). Each row shows the number of students. An exceptions list lets the admin search students to RETAIN in their current grade (repeat year) or to move differently. Grade 12 default: archive as graduated (history kept).
 3. Classes. Choose what happens to existing classes: archive old classes (default) and create new classes for the new year. The page proposes new classes (names, grade, students split) with a button "Suggest with AI." Teachers can be carried over to the new classes (checkbox per class). Courses are re-assigned: each new class gets the official courses for its grade (editable).
 4. Preview impact. Exact counts: promoted, retained, graduated, classes archived, classes created, course assignments created, and what is preserved ("XP, level, coins, badges, streaks and certificates are kept"). Warnings for edge cases (students with no class, teachers with no class).
 5. Confirm. The danger zone dialog with typed confirmation ("ROLLOVER") and a scheduled option (run now or at a date/time).
 6. Result. A summary and a link "Undo rollover" valid for 7 days (restores grades and class membership; assumption). A notification goes to every teacher.
-Notes: weekly leaderboards reset by schedule independently of rollover; all-time leaderboards by grade follow the student into the new grade.
+   Notes: weekly leaderboards reset by schedule independently of rollover; all-time leaderboards by grade follow the student into the new grade.
 
 ---
 
@@ -262,19 +271,20 @@ Purpose: define and maintain the school's OFFICIAL curriculum.
 Hierarchy (as in the original plan): Grade, Term, Unit, Lesson, Activity, Assessment. (Assumption: official COURSES, such as Main Course, Reading Club and Exam Prep, are PACKAGES of units defined in the Packages tab, see section 11.)
 Layout desktop: three panes. Left (320px): the curriculum tree (Grade 7 to 12, each with Terms, then Units, then Lessons, Activities, Assessments), with drag to reorder, expand/collapse, status dots (Draft, Published), and a school year selector at the top (curriculum is versioned per school year). Center: the editor for the selected node. Right (collapsible): "Coverage and standards" panel.
 Center editor by node type:
+
 - Grade: description, learning outcomes list (the standards for that grade), default courses.
 - Term: name, dates (from the school calendar), weeks, goals.
 - Unit: title, objectives, skills covered, term, estimated hours, linked outcomes, vocabulary and grammar targets.
 - Lesson: summary card with "Edit lesson" (opens the lesson editor, same as teacher TC-11).
 - Activity: instructions, skill, XP level, questions (Question editor).
 - Assessment: link to a quiz or assignment template; passing score default.
-Right panel: skill balance for the selected grade or term (bars for vocabulary, grammar, reading, writing, listening vs a target), gaps flagged (units with no assessment, outcomes not covered), duplicate content warnings.
-Tabs at the top of the center area: Structure, Packages, Versions.
+  Right panel: skill balance for the selected grade or term (bars for vocabulary, grammar, reading, writing, listening vs a target), gaps flagged (units with no assessment, outcomes not covered), duplicate content warnings.
+  Tabs at the top of the center area: Structure, Packages, Versions.
 - Packages: define official courses per grade (name, category, which units from which terms are included, order, cover pattern). Publishing a package makes it assignable to classes and visible in the library with the Official chip.
 - Versions: curriculum versions per school year (Draft, Published, Archived), a diff view, and "Duplicate to next year."
-Publish: "Publish curriculum" uses the Draft/Publish/Versions pattern with an impact preview (classes using affected units, students with in-progress lessons). Published curriculum is NOT editable by teachers (they can duplicate it). Edits to a published item create "Unpublished changes."
-AI: "Generate with AI" opens AD-10. Node-level AI buttons: "Suggest objectives," "Fill missing lessons," "Check coverage against the grade outcomes," "Rebalance skills."
-Mobile: tree as a full-screen list; node editor full screen.
+  Publish: "Publish curriculum" uses the Draft/Publish/Versions pattern with an impact preview (classes using affected units, students with in-progress lessons). Published curriculum is NOT editable by teachers (they can duplicate it). Edits to a published item create "Unpublished changes."
+  AI: "Generate with AI" opens AD-10. Node-level AI buttons: "Suggest objectives," "Fill missing lessons," "Check coverage against the grade outcomes," "Rebalance skills."
+  Mobile: tree as a full-screen list; node editor full screen.
 
 ---
 
@@ -282,13 +292,14 @@ Mobile: tree as a full-screen list; node editor full screen.
 
 Purpose: draft a grade or term of the official curriculum with AI.
 Layout: a wizard like the teacher course generator (TEACHER-SPEC TC-30) with Admin additions. Steps in sequence:
+
 1. Scope and source. Choose Grade (one or several), Term(s), and the source: national/school standards text (paste), existing curriculum (adapt last year's), topic list, or textbook table of contents. The school's AI custom instructions (AD-21) and curriculum standards are shown as "Applied automatically" with a link.
 2. Shape. Units per term, lessons per unit, weeks, skills emphasis sliders, assessment pattern (quiz per unit, term exam), course tracks to include (Main Course, Reading Club, Exam Prep), tone and level.
 3. Review outline. Editable tree; regenerate any unit with an instruction.
 4. Generate content. Background progress per unit; partial results appear; per-item retry; notification when done.
 5. Review. Opens the curriculum tree with all generated items marked "Created with AI." A review panel offers "Quality check" (reading level fit, duplicates, age appropriateness, coverage of outcomes) and a spot-check list of low-confidence items. Items remain Draft.
 6. Publish. Uses the Draft/Publish/Versions pattern. Requires the admin to confirm "I reviewed this curriculum." Super admin or School admin may publish.
-Generated items are always Draft. Approval is the admin's action. No student sees anything until published.
+   Generated items are always Draft. Approval is the admin's action. No student sees anything until published.
 
 ---
 
@@ -299,15 +310,16 @@ Layout: header with "Create" (menu: Course, Lesson, Activity, Quiz, Question, Vo
 Filter rail: source (Official, Teacher library), status (Draft, Published, Unpublished, Archived), grade, skill, author, last edited, flagged. Search.
 Table columns: title, type chip, source chip (Official or Teacher name), grade, status chip, used by (classes count), last edited, flags, and a row menu (Preview, Edit, Duplicate, Publish, Unpublish, Archive, History).
 Status rules:
+
 - Draft: not visible to students.
 - Published: visible as intended (to classes using it, or in the library).
 - Unpublished: removed from the library and from new assignments. Existing classes keep access for content already started if the admin chooses "Keep for current classes" in the dialog (default), otherwise it is hidden for them too.
 - Archived: hidden everywhere, kept for history.
-Unpublish dialog: states how many classes and students are affected, asks for a reason (required for teacher-authored content; the teacher receives a notification with the reason), and offers "Keep for current classes."
-Preview: opens a read-only student-style view (and a Teacher view for teacher-facing content) without recording progress.
-Practice content: Vocabulary lists (word, part of speech, meaning, Arabic meaning, example, level), Grammar topics (rule, examples, common mistakes, practice questions), Reading passages (text, level, topic, questions, glossary), Writing prompts (task, audience, suggested length). These feed the student practice libraries and the games.
-AI buttons: "Generate" (a vocabulary list for a unit, a reading passage at a level, a grammar topic with practice, writing prompts), "Quality check" (reading level, age appropriateness, bias, duplicates, missing answers), "Auto-tag" (grade, skill, topic), "Find outdated content."
-Bulk actions: Publish, Unpublish, Archive, Add tag.
+  Unpublish dialog: states how many classes and students are affected, asks for a reason (required for teacher-authored content; the teacher receives a notification with the reason), and offers "Keep for current classes."
+  Preview: opens a read-only student-style view (and a Teacher view for teacher-facing content) without recording progress.
+  Practice content: Vocabulary lists (word, part of speech, meaning, Arabic meaning, example, level), Grammar topics (rule, examples, common mistakes, practice questions), Reading passages (text, level, topic, questions, glossary), Writing prompts (task, audience, suggested length). These feed the student practice libraries and the games.
+  AI buttons: "Generate" (a vocabulary list for a unit, a reading passage at a level, a grammar topic with practice, writing prompts), "Quality check" (reading level, age appropriateness, bias, duplicates, missing answers), "Auto-tag" (grade, skill, topic), "Find outdated content."
+  Bulk actions: Publish, Unpublish, Archive, Add tag.
 
 ---
 
@@ -325,14 +337,15 @@ Autosave drafts; "Unsaved changes" guard; a Publish button that opens the Draft/
 Purpose: handle flagged content, reported items and failed AI jobs.
 Layout: header with summary tiles (open, high severity, average age, resolved this week). Tabs: Flagged content, Reported items, Failed AI jobs, All. Filters: severity (Low, Medium, High), status (New, In review, Resolved, Dismissed), assignee, age, source.
 Item types:
+
 - Flagged content: content blocked or flagged by the AI safety rules (AD-21) or by the quality check (a teacher-published course with inappropriate content, a generated lesson flagged, an announcement flagged).
 - Reported items: items users reported (a student reporting an AI Tutor answer or a piece of content; a teacher reporting library content or an AI result). The student and teacher UIs need a "Report a problem" action (see section 10).
 - Failed AI jobs: a course generation, curriculum generation, bulk grading or report job that failed after retries.
 - Blocked sensitive-topic messages from the AI Tutor appear under Flagged content as Low severity with a "Safety rule: sensitive topic" label. There is no separate alert type and nothing is pushed to staff.
-Table: type chip, short description, source, reporter, severity, status, age (overdue chip when High is older than 24 hours), assignee, and an Open action.
-Detail drawer: a snapshot of the item (content, the AI exchange, the job log), context links (class, author, content), reporter note, history of actions, and an "AI triage" block: a short AI summary, a severity suggestion, and a recommended action with "Apply."
-Actions: Assign to me/another admin, Dismiss (reason), Resolve (note), Unpublish content, Edit content, Send a note to the author (a system notification, reason shown), Retry AI job, Escalate to Super admin, Mark as a safety rule gap (adds an example to the AD-21 test cases).
-Mobile: stacked cards; the drawer becomes a full screen.
+  Table: type chip, short description, source, reporter, severity, status, age (overdue chip when High is older than 24 hours), assignee, and an Open action.
+  Detail drawer: a snapshot of the item (content, the AI exchange, the job log), context links (class, author, content), reporter note, history of actions, and an "AI triage" block: a short AI summary, a severity suggestion, and a recommended action with "Apply."
+  Actions: Assign to me/another admin, Dismiss (reason), Resolve (note), Unpublish content, Edit content, Send a note to the author (a system notification, reason shown), Retry AI job, Escalate to Super admin, Mark as a safety rule gap (adds an example to the AD-21 test cases).
+  Mobile: stacked cards; the drawer becomes a full screen.
 
 ---
 
@@ -340,13 +353,14 @@ Mobile: stacked cards; the drawer becomes a full screen.
 
 Purpose: tune the reward economy. Super admin edits; School admin views.
 Layout: tabs: XP values, Levels and ranks, Coins, Streaks, Teacher bonus caps, Versions. A persistent bar at the top shows the version state ("Draft, 3 changes. Published version v7") with "Preview impact," "Discard changes," and "Publish."
+
 - XP values: a table of actions (finish lesson, finish activity, quiz by score band, assignment submitted, assignment bonus when the teacher confirms a high grade, practice set, game, quest, streak milestone, AI Tutor quiz-me round) with XP value and a daily cap per type. Editable cells with validation.
 - Levels and ranks: a levels table (1 to 60) with XP thresholds, a chart of the curve, curve presets (Gentle, Standard, Steep) that fill the table, and manual editing. Rank titles editor: names, level ranges, and plate border style picker. Impact preview shows how many students would change level.
 - Coins: sources and amounts (quests, quiz results, streak milestones, badges, level-ups), daily earning caps, and a balance health view (average coins held, coins earned vs spent last 30 days, items bought) to help balance prices.
 - Streaks: what counts as a learning day (checkboxes of actions), the day boundary (time zone and reset time from platform settings), freeze rules (max owned, price in the shop), milestone rewards table (3, 7, 14, 30, 60, 100 days).
 - Teacher bonus caps: daily XP and coin cap per teacher per student, and whether bonus XP counts toward the leaderboard.
-Publishing: effective from now or a date. A choice for level recalculation: "Recalculate levels for everyone" or "Apply to new XP only" with the impact preview. Version history and rollback.
-Test panel: "Simulate a student" (enter XP, see level and rank).
+  Publishing: effective from now or a date. A choice for level recalculation: "Recalculate levels for everyone" or "Apply to new XP only" with the impact preview. Version history and rollback.
+  Test panel: "Simulate a student" (enter XP, see level and rank).
 
 ---
 
@@ -355,15 +369,16 @@ Test panel: "Simulate a student" (enter XP, see level and rank).
 Purpose: define the content of the quest system and badges.
 Layout: two tabs: Quests, Badges.
 Quests tab:
+
 - Sub-tabs: Daily pool, Weekly pool, Rotation rules.
 - Template list: title pattern ("Finish {n} lessons"), target type (lessons, quiz score, words learned, texts written, games played, streak days, xp earned), target value range (min and max per level band), reward (XP and coins), difficulty, grade range, skill, active toggle.
 - Rotation rules: how many daily and weekly quests are drawn, balance rules (at least one skill-based, no duplicates within 3 days, scale targets to the student's level), bonus chest reward for completing all daily quests.
 - Test panel: "Preview a day for a student" shows which 3 quests would be drawn.
-Badges tab:
+  Badges tab:
 - Grid and table view of badges: icon, name, category (Learning, Streak, Quiz, Practice, Games, Social, Collector, Secret), rarity, active, earned by (count).
 - Badge editor: name, description, hint text, category, rarity, icon (choose from the icon set or upload; mock), criteria builder (event, threshold, time window, optional conditions such as "grade at least 9"), reward (XP, coins, or an item), secret toggle, and a live card preview. A "Simulate" panel enters a student history and shows whether the badge would unlock.
-AI helpers: "Suggest quest ideas," "Suggest badge ideas for a category," "Write descriptions and hints." Results appear as action cards; the admin approves before anything is saved.
-Draft/Publish/Versions pattern applies to templates and badges.
+  AI helpers: "Suggest quest ideas," "Suggest badge ideas for a category," "Write descriptions and hints." Results appear as action cards; the admin approves before anything is saved.
+  Draft/Publish/Versions pattern applies to templates and badges.
 
 ---
 
@@ -397,12 +412,13 @@ Validation: every item needs alt text and a preview; items must not overlap inco
 Purpose: create and publish the exotic themes students buy.
 Layout: a theme list (grid with thumbnails and status) and a theme editor.
 Theme editor, three areas: left controls, center live preview, right checks.
+
 - Controls: name, description, rarity, mode (light or dark), the 9 named color tokens (ink, paper, surface, primary, spark, mint, sun, sky, danger) with color pickers and hex fields, background treatment (flat, soft pattern from a preset list, illustrated edge from a preset list), accent illustration style, corner radius scale (sharp, balanced, soft), and an optional signature motion preset (subtle, off).
 - Live preview: tabs showing a student dashboard, a lesson page, a quiz question, and the shop card, all rendered with the draft theme.
 - Checks: automatic contrast checks for each text/background pair with pass or fail (body text must be at least 4.5 to 1; large text 3 to 1). Publishing is blocked until all required pairs pass. A color-blind simulation toggle (protanopia, deuteranopia, tritanopia) for the preview.
-Publish: sets status Live and makes the theme available to link to a shop item (AD-16). Editing a Live theme creates a new version; students keep what they own; changes apply for everyone using it immediately after publish (with an impact count of owners).
-AI helper: "Generate a theme from a mood or description" (for example "Tokyo at night") proposes 3 palettes with names as action cards; the admin picks one and refines it.
-Free starter themes (Daylight and Nightfall) are locked system themes: viewable and duplicable, not deletable.
+  Publish: sets status Live and makes the theme available to link to a shop item (AD-16). Editing a Live theme creates a new version; students keep what they own; changes apply for everyone using it immediately after publish (with an impact count of owners).
+  AI helper: "Generate a theme from a mood or description" (for example "Tokyo at night") proposes 3 palettes with names as action cards; the admin picks one and refines it.
+  Free starter themes (Daylight and Nightfall) are locked system themes: viewable and duplicable, not deletable.
 
 ---
 
@@ -413,11 +429,12 @@ Layout: header with scope tabs (Class, Grade, School) and period toggle (This we
 Entries: the leaderboard table (rank, avatar, display name, student, class, grade, level, XP for the period) with search and filters. Row actions: Hide from leaderboards, Reset leaderboard score (period), Force rename display name, View user.
 Flagged: automatically detected items with a reason: XP spike (for example more than 3 times the student's weekly average in a day), repeated game farming, inappropriate display name (matched by the blocklist), duplicate accounts suspicion. Each shows evidence and actions: Dismiss, Hide, Reset score, Rename. "AI explain" summarizes the suspicious pattern.
 Definitions:
+
 - Hide: the student does not appear on leaderboards of any scope until restored. Their XP and level are unchanged.
 - Reset leaderboard score: sets the leaderboard score for the chosen period to 0 for that student. The student's real XP, level and rewards are unchanged.
 - Force rename: changes the display name to first name plus initial and notifies the student.
 - Reset a whole board (weekly board for a class, grade or school): a danger zone dialog with an impact preview.
-Every action requires a reason and is logged in the Actions log and the audit log. A hidden student is not told by default; a toggle "Notify the student" is available.
+  Every action requires a reason and is logged in the Actions log and the audit log. A hidden student is not told by default; a toggle "Notify the student" is available.
 
 ---
 
@@ -427,18 +444,19 @@ Purpose: control which AI features are on, for whom, and how much they can be us
 Layout: tabs: Features, Limits, Overrides.
 Features tab: a table of every AI feature with an On/Off switch, scope (All, Selected grades, Selected classes), status, and usage in the last 7 days.
 Feature list:
+
 - Student: AI Tutor (chat), Tutor "Quiz me" mode, Writing correction in the Writing tool and in assignments, Translation helper, Explain-my-mistakes after quizzes.
 - Teacher: AI grading of writing, AI question helper, Course generation, Copilot, Suggested actions, Support plans, Planner, Announcement drafting, Report comments.
 - Admin: Curriculum generation, Content quality check, Moderation triage, CSV import assistant, Admin Copilot.
-Turning a feature off opens a dialog with an impact summary (who loses it) and a note shown to users ("AI Tutor is turned off by your school"). Features can be scheduled (for example off during exams between two dates).
-Limits tab:
+  Turning a feature off opens a dialog with an impact summary (who loses it) and a note shown to users ("AI Tutor is turned off by your school"). Features can be scheduled (for example off during exams between two dates).
+  Limits tab:
 - Per student: daily AI Tutor messages, daily writing checks, daily "quiz me" rounds.
 - Per teacher: daily and monthly AI actions per feature and a monthly "AI credits" allowance (credits are a simple unit for generation sizes: a lesson = 1 credit, a course = N credits, a grading batch = per submission).
 - School budget: a monthly spend budget with alert thresholds at 70, 90 and 100 percent, and the behavior at 100 percent: choose one: Stop all AI, Stop non-essential AI (keep AI Tutor and grading), or Warn only.
 - Reset timing (midnight local time; monthly on the 1st).
-Overrides tab: a list of user-specific or class-specific limit overrides (who, what, value, reason, expires), with "Add override."
-What users see when limited: friendly messages ("You have used today's tutor messages. They reset at midnight."). The student and teacher specs list these states.
-Draft/Publish/Versions pattern for limits and feature scopes.
+  Overrides tab: a list of user-specific or class-specific limit overrides (who, what, value, reason, expires), with "Add override."
+  What users see when limited: friendly messages ("You have used today's tutor messages. They reset at midnight."). The student and teacher specs list these states.
+  Draft/Publish/Versions pattern for limits and feature scopes.
 
 ---
 
@@ -447,6 +465,7 @@ Draft/Publish/Versions pattern for limits and feature scopes.
 Purpose: control what the AI may say and how it behaves for this school. Super admin edits; School admin views.
 Layout: tabs: Safety rules, Custom instructions, Test sandbox, Versions.
 Safety rules tab:
+
 - Age-appropriate filter level (Strict by default for grades 7 to 12; Standard; Custom) with a plain description of each.
 - Blocked topics and words (lists with categories, editable), allowed focus ("Student AI Tutor answers only English-learning and study questions"), and the off-topic behavior (politely redirect, or block).
 - Tone rules (encouraging, respectful, no sarcasm toward students, no shaming for mistakes).
@@ -454,13 +473,13 @@ Safety rules tab:
 - Sensitive topics: when a student mentions harming themselves, abuse, bullying or serious distress, the Tutor stops that thread and replies with the neutral message (editable text, default: "We can't process this request."). The exchange is logged as a Flagged content item (Low severity). No alert is sent to staff. (See the note in section 11.)
 - Academic integrity: the Tutor explains and guides but does not simply give answers for graded work; the setting "While an assignment or quiz is open, limit the Tutor to hints" (on by default).
 - Per-feature overrides (different rules for the Tutor versus teacher tools).
-Custom instructions tab:
+  Custom instructions tab:
 - A school-level instruction document (free text with sections: School policy, Curriculum standards and outcomes, Spelling and style (British or American), Level and tone, Things to always or never do). A structured helper inserts common blocks.
 - Per-feature instruction add-ons (Tutor, Grading rubric defaults, Course generation, Announcement drafting, Report comments).
 - "Draft with AI" proposes the instruction text from the curriculum and policies pasted in; the admin edits and approves.
 - Version history with restore, character budget indicator, and a lint (flags contradictions and unclear rules).
-Test sandbox tab: choose a feature and a role (student, teacher), type a sample prompt, and see a MOCK response and which rules fired (allowed, redirected, blocked, escalated). A saved list of test cases (including those added from moderation) can be run in batch with pass/fail results. Test cases are used before every publish.
-Publish: Draft/Publish/Versions pattern; a failing test blocks publish unless the admin overrides with a reason.
+  Test sandbox tab: choose a feature and a role (student, teacher), type a sample prompt, and see a MOCK response and which rules fired (allowed, redirected, blocked, escalated). A saved list of test cases (including those added from moderation) can be run in batch with pass/fail results. Test cases are used before every publish.
+  Publish: Draft/Publish/Versions pattern; a failing test blocks publish unless the admin overrides with a reason.
 
 ---
 
@@ -469,6 +488,7 @@ Publish: Draft/Publish/Versions pattern; a failing test blocks publish unless th
 Purpose: understand and control AI spend.
 Layout: header with a date range selector (Today, 7 days, This month, Custom) and a filter bar (feature, role, grade, class, user).
 Sections:
+
 1. Budget summary: month-to-date spend, monthly budget bar with threshold markers, forecast, days remaining, and alert state.
 2. Trend charts: requests and cost over time (line) with an optional breakdown by feature (stacked bars).
 3. By feature: a table (feature, requests, average cost per request, total cost, share of spend, trend).
@@ -476,8 +496,8 @@ Sections:
 5. Top consumers: top 10 users with usage and limit status. Link to the user's AI usage tab (AD-03).
 6. Limit hits: how many times limits blocked users, by feature, with the top affected groups. Suggests adjusting limits.
 7. Anomalies: automatic flags (a spike in usage, a user with unusually high usage, a failing job retrying) with "AI explain this spike" providing a plain-language summary.
-Actions: Print/Save as PDF (print stylesheet), Export CSV for the tables (assumption), "Adjust limits" link (AD-20), "Set budget alert recipients" link (AD-28).
-Permissions: School admin sees read-only.
+   Actions: Print/Save as PDF (print stylesheet), Export CSV for the tables (assumption), "Adjust limits" link (AD-20), "Set budget alert recipients" link (AD-28).
+   Permissions: School admin sees read-only.
 
 ---
 
@@ -507,12 +527,13 @@ Read status: read counts and unread lists with "Remind unread."
 
 Purpose: school-level reporting. Printable.
 Layout: report picker with period selector: School overview, Learning health, Teacher activity, Content usage, AI summary.
+
 - School overview: users by role, active users, sign-ins, growth.
 - Learning health: completion and average scores by grade and class; skill breakdown (vocabulary, grammar, reading, writing, listening) per grade; classes needing support (lowest completion or scores).
 - Teacher activity: assignments created, grading turnaround time (median), announcements sent, classes with no recent activity (counts, not rankings by name in the printed version unless the admin toggles it).
 - Content usage: most used courses, least used, official versus teacher library, unpublished this period.
 - AI summary: usage, cost, approvals, limit hits (mirrors AD-22).
-Each report has an AI written summary at the top (editable), charts with table alternatives, and Print/Save as PDF using the print stylesheet. A "Compare grades" mode places grades side by side.
+  Each report has an AI written summary at the top (editable), charts with table alternatives, and Print/Save as PDF using the print stylesheet. A "Compare grades" mode places grades side by side.
 
 ---
 
@@ -533,6 +554,7 @@ If a teacher grade-change audit trail is adopted (teacher spec open question), g
 Purpose: configure the platform.
 Layout: left tab list, right form panel, a fixed bar for Save and Discard, and "Last changed by" under each section.
 Tabs:
+
 - General: platform name, school name, school logo (upload; the original logo is never modified and is shown unchanged), contact email, support link, terms and privacy links, and the footer text.
 - Language and region: the interface language is fixed to English (read-only); Translation tool languages (English and Arabic; read-only); spelling variant (British or American) used by AI and sample content; time zone; date and time format; first day of the week.
 - Notifications: which notification types exist and their defaults for students and teachers (streak reminders, deadline reminders, announcements, badges), the default reminder time, and admin alert rules (who gets pending issues, AI budget thresholds, import finished, failed jobs, security events). Delivery channel: in-app only (the platform sends no emails).
@@ -540,7 +562,7 @@ Tabs:
 - Platform preferences: the school calendar (school years and terms with start and end dates), weekly leaderboard reset day (Monday by default), the day boundary and reset time for streaks and daily quests, default passing mark, default quiz rules (attempts), default late policy (used to prefill classes), session length, and the leaderboard privacy defaults.
 - Security: password rules (length, complexity), temporary password rules, sign-in lockout (attempts and duration), session timeout, "Require two-step verification for admin accounts" toggle, and "Allow sign-in from new devices notification."
 - Data: audit log and AI log retention periods, archive retention for users, and a maintenance mode switch with a banner message for users (read-only mode for students and teachers).
-Changes to Security and Features use impact previews. Everything audit logged.
+  Changes to Security and Features use impact previews. Everything audit logged.
 
 ---
 
@@ -565,6 +587,7 @@ Each item has one action button. "Mark all as read." The bell dropdown shows the
 ## 7. AI TOUCHPOINTS FOR THE ADMIN (SUMMARY)
 
 All AI results follow the AI action card pattern (TEACHER-SPEC 4.10): nothing is saved, published, sent or applied without the admin pressing Approve.
+
 - Curriculum: generate a grade or term, suggest objectives, fill missing lessons, check coverage against outcomes, rebalance skills (AD-09, AD-10).
 - Content: generate practice content, quality check, auto-tag, find outdated content (AD-11).
 - Moderation: triage summary and recommended action (AD-13).
@@ -624,6 +647,7 @@ Notification (admin): id, kind, title, createdAt, read, link.
 ## 10. REQUIRED CHANGES TO THE STUDENT AND TEACHER SPECS (apply once this file is approved)
 
 Student spec:
+
 1. Add "Report a problem" to AI Tutor messages, lessons, and shared content (feeds AD-13). One small menu item with a short reason selector and an optional note.
 2. Add AI states everywhere an AI feature appears: Off ("AI Tutor is turned off by your school"), limit reached ("You have used today's tutor messages. They reset at midnight."), safety redirect (a calm message that explains what the Tutor can help with), and the neutral "We can't process this request." message for blocked sensitive topics.
 3. Shop (ST-27): support Limited time, Retired (not shown unless owned), Sale price, Bundles, and rarity price bands from AD-16; avatar items, frames, titles from AD-17; themes from AD-18.
@@ -636,6 +660,7 @@ Student spec:
 10. Class invites (from teachers) appear in ST-30 notifications with Accept and Decline buttons, since no email is sent.
 
 Teacher spec:
+
 1. Library (TC-09): Official courses appear with an Official chip, are not editable by teachers, and can be duplicated; courses unpublished by an admin show "Removed from the library by an admin" with the reason.
 2. Add "Report a problem" to AI results and library content (feeds AD-13).
 3. AI states: Off, limit reached ("Your AI credits are used. They reset on the 1st. Contact your admin."), safety redirect.
@@ -648,6 +673,7 @@ Teacher spec:
 ## 11. CONFIRMED CANONICAL DECISIONS
 
 All assumptions and open questions are confirmed and locked:
+
 1. Roles: Super admin has full control; School admin has operational access (users, classes, content moderation) with read-only on core platform settings and system AI configs.
 2. Year Rollover: School admin and Super admin can run rollover with typed confirmation ("ROLLOVER"); rollover snapshot allows 7-day rollback.
 3. Impersonation / "View As": Admin view-as mode is supported for student and teacher support, indicated by an omnipresent colored banner with an exit action; all actions taken in view-as are marked in the audit log.

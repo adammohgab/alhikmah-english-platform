@@ -32,12 +32,12 @@ Dev server runs on http://localhost:5173.
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `pnpm dev` | Start Vite dev server |
-| `pnpm build` | Typecheck (`tsc --noEmit`) then production build to `dist/` |
-| `pnpm preview` | Serve the production `dist/` build locally |
-| `pnpm test` | Run Vitest (`vitest run`) |
+| Command        | What it does                                                |
+| -------------- | ----------------------------------------------------------- |
+| `pnpm dev`     | Start Vite dev server                                       |
+| `pnpm build`   | Typecheck (`tsc --noEmit`) then production build to `dist/` |
+| `pnpm preview` | Serve the production `dist/` build locally                  |
+| `pnpm test`    | Run Vitest (`vitest run`)                                   |
 
 ## Project structure
 

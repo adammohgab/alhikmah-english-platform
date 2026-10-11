@@ -28,7 +28,7 @@ html.lenis body {
 }
 
 body {
-  @apply bg-surface-50 text-ink-900 font-body antialiased;
+  @apply bg-surface-50 font-body text-ink-900 antialiased;
   text-rendering: optimizeLegibility;
 }
 
@@ -36,11 +36,24 @@ body {
    prefers-reduced-motion killswitch live in base.css (single owner). */
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.35; transform: scaleY(0.6); }
-  50% { opacity: 1; transform: scaleY(1); }
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scaleY(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 
 @keyframes fadein {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

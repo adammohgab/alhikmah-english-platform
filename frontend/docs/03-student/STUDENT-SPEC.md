@@ -15,6 +15,7 @@ What it is: an English-learning platform for a private school (Al Hikmah). Stude
 Stack: Next.js, TypeScript, Tailwind CSS. Frontend only for now: UI plus mock data. No real backend, no real AI API, no real payments.
 
 Locked decisions (from the owner):
+
 - Users are students in grades 7 to 12.
 - The interface is English only. Arabic appears only inside the Translation tool (Arabic text must render right-to-left inside that tool; the rest of the page stays left-to-right).
 - The platform does NOT use the school logo colors. It gets its own distinct identity. It must not look like a generic AI-generated SaaS template. (The school logo itself can still appear unchanged in the footer/about area and on certificates; it just does not drive the palette.)
@@ -38,11 +39,13 @@ Locked decisions (from the owner):
 ## 2. DESIGN SYSTEM
 
 ### 2.1 Design intent
+
 Feel: a place students want to open every day. Closer to a well-made game launcher crossed with a personal study notebook than to a school portal or an admin template. Confident, a little playful, never childish (users are 12 to 18).
 
 One memorable thing: the progress identity. The student's level, XP and streak are drawn as a single recognizable "badge plate" component (see 2.6) that follows the student through the app. Everything else stays calmer so that element carries the personality.
 
 Things to avoid (these are the tells of a templated look):
+
 - A page made of identical rounded cards with the same soft grey shadow.
 - Gradient washes used as decoration.
 - A tracked-out ALL-CAPS label above every heading.
@@ -52,7 +55,9 @@ Things to avoid (these are the tells of a templated look):
 - Using the school logo colors.
 
 ### 2.2 Default theme tokens ("Daylight", the free starter theme)
+
 Named colors (proposal, can be tuned during implementation but token NAMES are fixed):
+
 - ink: #1B1740 (main text, deep blue-violet black)
 - paper: #F7F5FC (page background, cool lilac white)
 - surface: #FFFFFF (panels)
@@ -66,6 +71,7 @@ Named colors (proposal, can be tuned during implementation but token NAMES are f
 Skill colors (used everywhere a skill appears: chips, icons, progress): vocabulary = sun, grammar = primary, reading = sky, writing = spark, listening = mint, translation = a muted teal. Never rely on color alone; every skill also has an icon and a text label.
 
 ### 2.3 Theme architecture (important for the shop)
+
 - All colors, background pattern, corner radius, and decorative accent come from CSS variables / a theme object. No component may hard-code a color.
 - A theme defines: the 9 named colors above, a page background treatment (flat color, soft pattern, or illustrated edge), an accent illustration style, corner-radius scale, and a preview thumbnail.
 - Every theme must pass text contrast (body text at least 4.5:1 on its surface). Themes that fail do not ship.
@@ -76,6 +82,7 @@ Skill colors (used everywhere a skill appears: chips, icons, progress): vocabula
 - Selected theme id is stored per student (mock: in memory / local state).
 
 ### 2.4 Typography
+
 - Display and headings: Bricolage Grotesque (expressive, slightly quirky grotesque with weight and width range). Used big on page titles and level numbers.
 - Body and UI: Figtree (friendly, very readable at small sizes).
 - Arabic (Translation tool only): IBM Plex Sans Arabic.
@@ -83,6 +90,7 @@ Skill colors (used everywhere a skill appears: chips, icons, progress): vocabula
 - Headings use sentence case. No all-caps labels. Numbers use tabular figures in stats and leaderboards.
 
 ### 2.5 Shape, spacing, depth, motion
+
 - Spacing unit 4px. Common steps: 8, 12, 16, 24, 32, 48.
 - Radius scale is hierarchical, not one radius everywhere: 8 (inputs, chips), 14 (panels), 24 (hero panels and the badge plate), full (avatars, pills).
 - Depth: flat by default. Elevation only for things that float (dropdowns, dialogs, the AI chat input). Cards are separated by spacing and background tone, not by a shadow on each one.
@@ -93,12 +101,15 @@ Skill colors (used everywhere a skill appears: chips, icons, progress): vocabula
 - Celebration moments (level up, badge unlock, quest complete, certificate earned) use a full-screen or dialog moment that can be dismissed with one click or Escape.
 
 ### 2.6 Signature component: the Badge Plate
+
 A compact horizontal plate showing: avatar (with equipped frame), level number, rank title, an XP bar to next level, streak count with flame, and coin balance.
+
 - Full size on the Dashboard hero and Profile.
 - Compact size in the top bar of every page (avatar + level + streak + coins).
 - Tapping the compact plate opens the Profile.
 
 ### 2.7 Component inventory (shared, build once)
+
 Layout: AppShell, Sidebar, TopBar, MobileTabBar, PageHeader, Section, EmptyState, ErrorState, Skeleton.
 Identity and progress: BadgePlate, Avatar (with frame), XpBar, LevelChip, StreakFlame, CoinCount, ProgressRing, ProgressBar, SkillChip, RankTitle.
 Content: CourseCard, UnitRow, LessonRow, ActivityRow, DeadlineRow, AnnouncementCard, NotificationItem.
@@ -108,12 +119,14 @@ AI: ChatMessage, ChatInput, TypingIndicator, PromptSuggestionChips, Conversation
 Generic: Button (primary/secondary/quiet/danger), IconButton, Chip, Tabs, SegmentedControl, Dialog, Drawer, Dropdown, Toast, Tooltip, SearchField, FilterBar, Pagination.
 
 ### 2.8 Writing style (UI copy)
+
 - Sentence case. Plain verbs. Buttons say what happens: "Start quiz", "Save draft", "Submit assignment", "Buy for 450 coins".
 - The same action keeps the same name everywhere ("Submit" produces a toast "Submitted").
 - Errors explain what went wrong and how to fix it, and do not apologize. Empty screens invite one action.
 - Tone for students: direct and a bit warm. Encouraging on failure ("2 more correct answers would have passed. Try again when ready.") and not sugary.
 
 ### 2.9 Accessibility and responsive floor
+
 - Visible keyboard focus on everything interactive.
 - Touch targets at least 44px on mobile.
 - Color is never the only signal (correct/wrong also has icon and text).
@@ -126,11 +139,13 @@ Generic: Button (primary/secondary/quiet/danger), IconButton, Chip, Tabs, Segmen
 ## 3. GLOBAL SHELL (ST-00)
 
 ### 3.1 Desktop layout (1200+)
+
 Left sidebar, 264px wide, collapsible to a 72px icon rail (remembers the choice).
 Top bar across the content area, 64px tall.
 Content area: max width 1280px, centered, 32px side padding.
 
 Sidebar contents, top to bottom:
+
 1. Platform wordmark/logo area (placeholder platform name; school logo may appear small at the very bottom of the sidebar, unchanged).
 2. Home: Dashboard.
 3. Learn: My courses, Assignments, Quizzes (history).
@@ -139,26 +154,31 @@ Sidebar contents, top to bottom:
 6. Play: Games.
 7. Rewards: Daily quests, Leaderboard, Achievements, Shop.
 8. Bottom: Notifications, Settings, and the student's compact Badge Plate (opens Profile).
-Active item: filled with primary tint plus a left indicator. Items with pending things show a small count (e.g. 2 due assignments, 3 unfinished quests).
+   Active item: filled with primary tint plus a left indicator. Items with pending things show a small count (e.g. 2 due assignments, 3 unfinished quests).
 
 Top bar contents, left to right: page title (or breadcrumb on deep pages), global search (courses, lessons, words), then on the right: streak flame with count, coin count, XP/level chip, notification bell with dot, avatar menu (Profile, Settings, Sign out).
 
 ### 3.2 Tablet (768 to 1199)
+
 Sidebar collapsed to the icon rail by default, expandable as an overlay drawer. Top bar stays.
 
 ### 3.3 Mobile (under 768)
+
 No sidebar. Top bar becomes: back arrow or hamburger, page title, bell. Streak/coins move into a slim strip under the top bar on the dashboard only.
 Bottom tab bar, 5 tabs: Home, Learn, Practice, Play, Rewards.
+
 - Learn opens a hub with Courses, Assignments, Quizzes.
 - Practice opens a hub with the five skill tools and AI Tutor.
 - Rewards opens a hub with Quests, Leaderboard, Achievements, Shop.
 - Profile, Notifications, Settings are reached from the avatar menu in the top bar.
-A floating AI Tutor button is available on lesson, activity and assignment pages.
+  A floating AI Tutor button is available on lesson, activity and assignment pages.
 
 ### 3.4 Deep-page behavior
+
 Quiz attempt, assignment solving, game play and the AI Tutor chat use a focused layout: the sidebar and tab bar hide, a slim header shows the exit button, the timer if any, and progress. Exiting mid-attempt asks for confirmation.
 
 ### 3.5 Global behaviors
+
 - Page transitions: instant swap with a simple fade. No slide transitions.
 - Toasts appear bottom-center on desktop, top on mobile.
 - XP/coin gains show a small floating "+25 XP" near the top-bar chip when earned.
@@ -171,12 +191,15 @@ Quiz attempt, assignment solving, game play and the AI Tutor chat use a focused 
 All numbers are proposals for mock data and can be tuned. Visual behavior is what matters now.
 
 ### 4.1 XP
+
 Earned for: finishing a lesson, finishing an activity, passing a quiz, submitting an assignment, finishing a practice set, finishing a game, completing a daily quest, keeping a streak milestone.
 Sample values: lesson 20, activity 15, quiz by score (10 to 50), assignment submission 30 (bonus when teacher confirms a good grade), practice set 10, game 5 to 25, quest 10 to 30.
 Anti-farming: repeated practice and games have a daily XP cap per type. The UI shows "Daily cap reached" calmly when hit.
 
 ### 4.2 Levels and rank titles
+
 Levels 1 to 60. XP needed rises gradually. Rank title changes every 10 levels:
+
 - 1 to 9: Newcomer
 - 10 to 19: Explorer
 - 20 to 29: Wordsmith
@@ -184,44 +207,52 @@ Levels 1 to 60. XP needed rises gradually. Rank title changes every 10 levels:
 - 40 to 49: Linguist
 - 50 to 59: Scholar
 - 60: Grandmaster
-Each rank title has its own plate border style. Rank titles can be displayed as the profile title unless the student equips a purchased title.
+  Each rank title has its own plate border style. Rank titles can be displayed as the profile title unless the student equips a purchased title.
 
 ### 4.3 Coins
+
 - Earned by quests, quiz results, streak milestones, badges, and level-ups. NOT earned by simply time on site.
 - Spent only in the Shop.
 - Coins are an in-app currency only (no real money in scope).
 
 ### 4.4 Streaks
+
 - A streak day counts when the student completes at least one learning action that day (lesson, activity, quiz, assignment, or a practice set).
 - Shows current streak, best streak, and a 7-day mini calendar.
 - Streak freeze (power-up): protects one missed day. The shop sells it; the streak panel shows how many are owned and whether one was auto-used.
 - Milestones at 3, 7, 14, 30, 60, 100 days give coins and a badge.
 
 ### 4.5 Daily quests and weekly goals
+
 - 3 daily quests, refreshed at midnight. Examples: "Finish 1 lesson", "Score 80% on any quiz", "Learn 10 new words", "Write a short text", "Play 2 games".
 - 3 weekly goals, reset on Monday. Examples: "Earn 500 XP", "Keep a 5-day streak", "Finish 1 assignment".
 - Each quest has a progress bar, a reward (XP and/or coins), and a state: in progress, ready to claim, claimed.
 - Completing all 3 daily quests gives a bonus chest (a small coin reward with a short opening animation).
 
 ### 4.6 Badges and achievements
+
 Categories: Learning, Streak, Quiz, Practice, Games, Social (leaderboard), Collector (shop), Secret.
 Each badge: name, short description, icon, rarity, state (locked with hint, in progress with bar, earned with date). Secret badges show "?" until earned. Students can pin up to 3 badges to the profile.
 
 ### 4.7 Leaderboard
+
 Ranked by XP. Scope tabs: My class, My grade, Whole school. Period tabs: This week (resets Monday), All-time.
 Shows rank, avatar with frame, display name, level, XP for that period. The student's own row is always visible (pinned at the bottom if off screen). Top 3 get a podium treatment. Movement since last week (up/down arrows) shown on weekly view.
 Privacy: only display name, avatar, level and XP are shown to other students. No grades or quiz scores.
 
 ### 4.8 Certificates
+
 Issued for: completing a course, reaching rank milestones (new rank title), and finishing a streak of 100 days. View-only in the UI, with a "Print / Save as PDF" button (browser print), no real PDF generation yet. Carries the school logo (unchanged) and student name.
 
 ### 4.9 Avatars, frames, titles
+
 - Avatar is built from layers: base character, outfit, accessory, background. Free starter options exist.
 - Frames surround the avatar everywhere it is shown (rank-style borders, animated rare frames).
 - Titles are equipable text under the name ("Midnight Reader").
 - Shop items have rarity and can be previewed on the student's own avatar.
 
 ### 4.10 Power-ups
+
 Streak freeze (protect a missed day), Hint (remove two wrong options in a multiple-choice question; allowed in games and practice, NOT in teacher quizzes or assignments), Extra time (+30 seconds in timed games). Power-ups are blocked inside teacher-graded quizzes and assignments to protect fairness.
 
 ---
@@ -281,6 +312,7 @@ Purpose: tell the student, in five seconds, what they should do today and how th
 Desktop layout: 12-column grid. Top full-width hero band, then a two-column body (main 8 columns, side 4 columns).
 
 Sections in order:
+
 1. Greeting hero band (full width). Left: "Good evening, {first name}" with a one-line contextual nudge ("You are 1 quest away from the daily bonus chest."). Right: the full Badge Plate (avatar with frame, level and rank title, XP bar to next level, streak flame with count, coin balance). A slim "Resume" strip sits under the greeting: last lesson/activity title, course name, a progress bar, and a "Resume" button. (Resume strip is an addition so the student can jump back in; it is visually secondary to quests.)
 2. Daily quests and streak (main column, top, the highest priority). Three QuestCards in a row with progress and reward. To the right of or above them, the streak panel: current streak, 7-day mini calendar with today highlighted, freeze count. A "Claim" state on completed quests. Bonus chest indicator ("2 of 3 done").
 3. XP, level and rank (main column, second). A wide panel: XP earned this week as a small bar chart (7 bars), XP to next level, the rank title ladder showing current rank and the next one, and a "Weekly goals" row (3 compact goal bars).
@@ -326,14 +358,15 @@ Links: unit row to ST-04, lesson to ST-05, quiz to ST-08, assignment to ST-12.
 Purpose: everything inside one unit.
 Layout: header band with breadcrumb (Course / Unit), unit title, short description, progress bar.
 Sections in order:
+
 1. Learning objectives: 3 to 6 "By the end of this unit you can..." sentences.
 2. Skills covered: SkillChips (vocabulary, grammar, reading, writing, listening).
 3. Lessons: ordered list of LessonRows (these are a true sequence, so numbering is appropriate): number, title, estimated minutes, done state, "Start" or "Review".
 4. Activities: list of ActivityRows grouped by skill, each with XP reward and done state.
 5. Unit assessment: card for the unit quiz showing lock state (locked until all lessons are done), question count, time, attempts allowed (teacher setting), best score if attempted.
 6. Unit vocabulary: horizontal strip of key words with a "Add all to my library" action.
-Mobile: same order, stacked.
-Gamification hooks: finishing the unit shows a CelebrationDialog and awards a unit badge.
+   Mobile: same order, stacked.
+   Gamification hooks: finishing the unit shows a CelebrationDialog and awards a unit badge.
 
 ---
 
@@ -531,6 +564,7 @@ Mobile: 2 per row, or 1 per row for readability.
 Purpose: a reusable game shell. All 7 games use the same shell with different play areas.
 Layout (focused): top bar with exit, game name, score, TimerPill (or a "no timer" mode), and a progress bar. Center: the play area. Bottom: controls and Power-up buttons (hint, extra time).
 Game play areas:
+
 - Vocabulary Match: two columns of cards to pair words with meanings.
 - Word Builder: letters to arrange into the target word.
 - Grammar Challenge: choose the correct form to complete a sentence.
@@ -538,8 +572,8 @@ Game play areas:
 - Sentence Builder: drag/tap word chips into the correct order.
 - Spelling: audio placeholder plus type the word.
 - Timed Quiz: rapid multiple-choice questions against the clock.
-Rules: solo, vs the clock or vs the student's own best score (the screen shows "Your best: 1,240"). A combo/streak counter inside the game rewards consecutive correct answers. Correct/wrong feedback is immediate with sound off by default (sound toggle in settings).
-Pause: opens a dialog (Resume, Quit). Quit asks for confirmation.
+  Rules: solo, vs the clock or vs the student's own best score (the screen shows "Your best: 1,240"). A combo/streak counter inside the game rewards consecutive correct answers. Correct/wrong feedback is immediate with sound off by default (sound toggle in settings).
+  Pause: opens a dialog (Resume, Quit). Quit asks for confirmation.
 
 ---
 
@@ -630,6 +664,7 @@ Empty state: "You are all caught up."
 Purpose: personal preferences.
 Layout: left tab list (or sections on mobile), right form panel.
 Sections:
+
 - Account: name (read-only, managed by school), email, change password (UI only), grade and class (read-only).
 - Appearance: choose the active theme from the owned list, with a preview; reduce motion toggle; text size (small, default, large).
 - Learning: daily goal (light, regular, serious: sets XP target), reading text size, auto-play audio toggle, show Arabic meanings toggle.
@@ -645,14 +680,15 @@ Sections:
 One component renders every question type for quizzes, assignments, activities, practice and games. Each question has: prompt, optional media (image, audio placeholder), type, points, and a state (unanswered, answered, correct, wrong, review).
 
 Types and their UI:
+
 - Multiple choice: 3 to 5 options as large tappable rows with a radio mark. (Optional multiple-answer variant uses checkboxes and says "Choose all that apply".)
 - True/false: two large side-by-side buttons.
 - Fill in the blank: sentence with inline input(s) or a word bank to tap from.
 - Matching: two columns, tap-to-pair with a line/color link; clear a pair by tapping it again.
 - Listening: audio player placeholder (play, replay with a limit, speed) plus any answer type under it. Transcript hidden until review.
 - Writing: text area, word count, min/max words. ONLY available in assignments and practice (never in quizzes, because quizzes are auto-graded only).
-Review state: shows correct/wrong with icon and text, the correct answer, and an explanation.
-Keyboard support: arrow keys and Enter on options; Tab order follows the visual order.
+  Review state: shows correct/wrong with icon and text, the correct answer, and an explanation.
+  Keyboard support: arrow keys and Enter on options; Tab order follows the visual order.
 
 ---
 
@@ -692,6 +728,7 @@ Certificate: id, kind, title, issuedAt.
 ## 10. CONFIRMED CANONICAL DECISIONS
 
 All assumptions are confirmed and locked:
+
 1. Economy: Coins are strictly in-app currency earned through lessons, quests, and games; no real money transactions.
 2. Themes: Daylight and Nightfall are free starters; all other themes are unlockable or purchasable with in-app coins.
 3. Assessments: Quizzes are strictly auto-graded; written responses belong to assignments and practice tools.
