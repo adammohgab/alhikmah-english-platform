@@ -1,15 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import { HeroPage } from "@/pages/landing/HeroPage";
 
 export const router = createBrowserRouter(
   [
     {
-      path: "/",
-      element: <HeroPage />,
-    },
-    {
       path: "*",
-      element: <HeroPage />,
+      element: null,
     },
   ],
   {
