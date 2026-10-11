@@ -150,16 +150,25 @@ export default {
      Custom plugin to make CSS custom properties
      available as Tailwind utilities
      ======================================== */
-    function ({ addUtilities, theme }) {
-      const colors = theme("colors", {});
-      const shadows = theme("boxShadow", {});
-      const fonts = theme("fontFamily", {});
+    function ({
+      addUtilities,
+      theme,
+    }: {
+      addUtilities: (
+        utilities: Record<string, Record<string, string>>,
+        options?: string[],
+      ) => void;
+      theme: (key: string, defaultValue?: unknown) => any;
+    }) {
+      const colors = theme("colors", {}) as Record<string, unknown>;
+      const shadows = theme("boxShadow", {}) as Record<string, unknown>;
+      const fonts = theme("fontFamily", {}) as Record<string, unknown>;
 
       /* ========================================
       Color utilities
       ======================================== */
       const colorUtilities = Object.entries(colors).reduce((acc, [key, value]) => {
-        if (typeof value === "object" && !(value instanceof Array)) {
+        if (typeof value === "object" && value !== null && !(value instanceof Array)) {
           // Handle named color sets with shades (e.g., surface: {50: ..., 100: ...})
           Object.entries(value).forEach(([shade, hex]) => {
             acc[`.bg-${key}-${shade}`] = { backgroundColor: hex };
@@ -178,7 +187,7 @@ export default {
           acc[`.border-${key}`] = { borderColor: value };
         }
         return acc;
-      }, {});
+      }, {} as Record<string, Record<string, string>>);
 
       /* ========================================
       Shadow utilities
@@ -190,7 +199,7 @@ export default {
           };
         }
         return acc;
-      }, {});
+      }, {} as Record<string, Record<string, string>>);
 
       /* ========================================
       Font family utilities
@@ -202,7 +211,7 @@ export default {
           };
         }
         return acc;
-      }, {});
+      }, {} as Record<string, Record<string, string>>);
 
       addUtilities(colorUtilities, ["responsive", "hover"]);
       addUtilities(shadowUtilities);
