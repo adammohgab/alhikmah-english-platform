@@ -82,6 +82,20 @@
   --muted: #4A4566;   /* ink-2 - secondary text */
 
   /* ========================================
+     Base-layer aliases (consumed by base.css)
+     - --focus-ring: high-contrast :focus-visible color (ink)
+     - --world-soft: brand selection fill, alias for
+       `selection:bg-primary-300` (no `primary` palette in
+       tailwind.config; defaults to Learn/Vocabulary yellow
+       so selection follows the world morph when
+       [data-world] overrides it per GLOBAL-STYLES-SPEC §3.4)
+     - --world-main: scrollbar-thumb hover + active-world accent
+     ======================================== */
+  --focus-ring: #1A1530;
+  --world-soft: #FFD93D;
+  --world-main: #FFB84D;
+
+  /* ========================================
      Arcade Shadows (hard offset, no blur)
      ======================================== */
 

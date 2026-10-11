@@ -46,9 +46,12 @@ textarea {
 }
 
 /* ---- 2. High-contrast accessibility focus rings ----
-   Task: universal 2px ring + 2px offset on :focus-visible.
-   Spec §10 visual law: ink ring with white gap so it reads on
-   every world tint/soft fill. Night surfaces override to paper. */
+   Task: universal 2px ring + 2px offset on :focus-visible (confirmed
+   canonical for this task; SPEC §10 cites 4px + white gap + pop dot —
+   deviation flagged, no upgrade without sign-off).
+   Spec §10 visual law: ink ring so it reads on every world
+   tint/soft fill. Night surfaces override to paper.
+   Default comes from tokens.css --focus-ring. */
 :where(a, button, input, select, textarea, [tabindex], summary):focus-visible,
 :where([role="button"], [role="link"], [role="tab"], [role="checkbox"], [role="radio"], [role="switch"], [role="option"]):focus-visible {
   outline: 2px solid var(--focus-ring, #1a1530);
@@ -77,9 +80,9 @@ textarea {
 
 /* ---- 3. Brand text-selection styling ----
    Equivalent of `selection:bg-primary-300 selection:text-black`:
-   candy highlight fill with ink text. Uses the active world soft
-   token when present so selection follows the world morph (§3.4),
-   falling back to Learn pop yellow. */
+   candy highlight fill with ink text. --world-soft default is bound
+   in tokens.css (alias, since tailwind.config has no `primary`
+   palette); [data-world] overrides follow the world morph (§3.4). */
 ::selection {
   background: var(--world-soft, #ffd93d);
   color: #1a1530;
