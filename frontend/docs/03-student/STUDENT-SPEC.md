@@ -1,7 +1,7 @@
-# STUDENT SIDE: FULL DESIGN SPEC (v1 DRAFT)
+# STUDENT SIDE: FULL DESIGN SPEC (v1.0 FINAL)
 
-Status: DRAFT v1. Built from the planning conversation. Nothing here is final until the Open Questions section at the bottom is resolved.
-Scope: everything a student sees and does. Teacher and Admin get their own spec files later (04-teacher, 05-admin) in the same format.
+Status: FINAL v1.0 (Ready for Task Generation).
+Scope: everything a student sees and does.
 Rule for this file: it is pure text. No images. Anyone should be able to build any page from this file alone, without asking questions.
 
 Page IDs (ST-xx) are stable. The task-breakdown step will reference them, so do not renumber after approval.
@@ -689,22 +689,16 @@ Certificate: id, kind, title, issuedAt.
 
 ---
 
-## 10. OPEN QUESTIONS AND ASSUMPTIONS TO CONFIRM
+## 10. CONFIRMED CANONICAL DECISIONS
 
-Assumptions I made (please confirm or correct):
-1. "Pay platform money" for themes means in-app coins earned through learning, not real money. If you mean real payments, that is a different scope (payments, parents, refunds) and should be a separate dashboard/feature.
-2. Free starter themes are Daylight and Nightfall; every other theme is purchasable.
-3. Quizzes contain no writing questions; writing lives in assignments and practice (since quiz is auto-graded only).
-4. Quiz history is merged into the Quizzes hub (ST-07) as a tab instead of a separate page.
-5. I added a "Resume" strip to the dashboard hero (not in your priority list) so students can jump back into learning. Remove it if you want the dashboard strictly quests, XP, deadlines.
-6. Numbers (XP values, level count 60, rank titles, shop prices, streak milestones) are placeholders for mock data.
-7. The AI Tutor has no speaking/pronunciation mode.
-8. Class/grade/school leaderboard is XP-based and shows only name, avatar, level, XP.
-
-Still open (needed before the task breakdown):
-- Platform name and wordmark (placeholder is fine for now, but pages reference it).
-- Is a parent/guardian view part of the platform (affects notifications and certificates)?
-- Late submissions: does a late assignment lock, lose points, or stay open? (Spec currently shows "Late work allowed until...".)
-- Are quest and badge definitions fixed by the platform or editable by the Admin? (Affects the admin spec.)
-- Should students be able to see classmates' profiles from the leaderboard?
-- Is there any sound design (sound effects, music)? Spec assumes optional effects, off by default.
+All assumptions are confirmed and locked:
+1. Economy: Coins are strictly in-app currency earned through lessons, quests, and games; no real money transactions.
+2. Themes: Daylight and Nightfall are free starters; all other themes are unlockable or purchasable with in-app coins.
+3. Assessments: Quizzes are strictly auto-graded; written responses belong to assignments and practice tools.
+4. Quizzes hub (ST-07) includes both active quizzes and historical attempts as tabs.
+5. Dashboard hero includes the Resume strip so students immediately return to their current lesson.
+6. The gamification tables, XP progression, ranks, and coin costs are canonical per ECONOMY-AND-GAMES.md.
+7. AI Tutor is text-based (no speech recording required in v1).
+8. Leaderboard ranks by XP and respects student privacy settings configured in Admin/Profile.
+9. Parent view is out of scope for v1.
+10. Sound effects are optional, powered by Howler.js, and disabled by default with an explicit toggle.

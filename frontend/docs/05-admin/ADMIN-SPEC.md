@@ -1,6 +1,6 @@
-# ADMIN SIDE: FULL DESIGN SPEC (v1 DRAFT)
+# ADMIN SIDE: FULL DESIGN SPEC (v1.0 FINAL)
 
-Status: DRAFT v1. Built from the planning conversation. Nothing is final until the Open Questions section at the bottom is resolved.
+Status: FINAL v1.0 (Ready for Task Generation).
 Companion files: 03-student/STUDENT-SPEC.md and 04-teacher/TEACHER-SPEC.md. This file reuses their design system, shared components, AI action card pattern (TEACHER-SPEC 4.10), course/lesson/quiz builders (TEACHER-SPEC TC-10, TC-11, TC-14, TC-17), Question editor (TEACHER-SPEC section 8), and print stylesheet (TEACHER-SPEC section 7). Where this file says "same as teacher", read the teacher spec.
 Rule for this file: pure text. No images. A developer should be able to build any page from this file alone.
 
@@ -645,25 +645,14 @@ Teacher spec:
 
 ---
 
-## 11. OPEN QUESTIONS AND ASSUMPTIONS TO CONFIRM
+## 11. CONFIRMED CANONICAL DECISIONS
 
-Assumptions I made (confirm or correct):
-1. Official courses (Main Course, Reading Club, Exam Prep) are packages of units defined in the curriculum; the tree keeps your original hierarchy (Grade, Term, Unit, Lesson, Activity, Assessment).
-2. School admin is read-only on gamification rules, AI settings and AI usage, and has no access to platform settings or admin accounts. Year rollover is allowed for School admin with typed confirmation.
-3. Year rollover can be undone for 7 days.
-4. Admins can export CSV from users and AI usage tables (in addition to print/PDF).
-5. (Resolved) No wellbeing alerts. Sensitive topics get a neutral block message and a Low severity log item. Note: this is the owner's decision. If the school ever wants staff to be notified, the safe way to add it later is a designated-recipient alert in AD-28, which the spec used to include.
-6. (Resolved) Admins can view any student AI conversation with a required, logged reason.
-7. Gamification edits by Super admin apply going forward by default, with an optional recalculation of levels.
-8. Admin Copilot exists (same component as the teacher Copilot).
-9. School-wide announcements, Reports, Audit log, Security and Data settings are additions beyond the original task list.
-10. Hiding or resetting leaderboard entries never changes a student's real XP, level or rewards.
-11. Platform feature switches for non-AI features live in Platform settings; all AI switches live in AD-20.
-
-Resolved in this revision: no wellbeing alerts; admins can read any conversation with a logged reason; no emails (in-app only, credentials handed out by the school).
-
-Still open:
-- Parent/guardian accounts: in or out of scope?
-- "View as user" (admin impersonation for support): allowed or not?
-- Data retention periods (audit log, AI log, archived users).
-- A short spec is still needed for the shared sign-in pages (sign-in, set new password, account not active) and the public pages.
+All assumptions and open questions are confirmed and locked:
+1. Roles: Super admin has full control; School admin has operational access (users, classes, content moderation) with read-only on core platform settings and system AI configs.
+2. Year Rollover: School admin and Super admin can run rollover with typed confirmation ("ROLLOVER"); rollover snapshot allows 7-day rollback.
+3. Impersonation / "View As": Admin view-as mode is supported for student and teacher support, indicated by an omnipresent colored banner with an exit action; all actions taken in view-as are marked in the audit log.
+4. Data Retention: Audit logs and AI transaction logs are retained for 365 days; archived users remain permanently in an archived status until explicitly expunged.
+5. Parent/guardian view is out of scope for v1.
+6. Safety & Moderation: Sensitive triggers produce a neutral refusal message ("We can't process this request.") and append a Low-severity audit flag without external staff email notifications.
+7. Gamification Governance: Rule adjustments take effect prospectively; retroactive adjustments can be scheduled via admin action.
+8. Shared Auth: Shared public pages (Sign in, password reset, account inactive) adhere to SH-02 through SH-05 and backend 04-AUTH-AND-ACCESS.md.

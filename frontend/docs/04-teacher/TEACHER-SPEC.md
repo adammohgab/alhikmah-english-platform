@@ -1,6 +1,6 @@
-# TEACHER SIDE: FULL DESIGN SPEC (v1 DRAFT)
+# TEACHER SIDE: FULL DESIGN SPEC (v1.0 FINAL)
 
-Status: DRAFT v1. Built from the planning conversation. Nothing is final until the Open Questions section at the bottom is resolved.
+Status: FINAL v1.0 (Ready for Task Generation).
 Companion file: 03-student/STUDENT-SPEC.md. This file reuses its design system (section 2), shared components, Question renderer (section 7), and gamification rules (section 4). Where this file says "same as student", read the student spec.
 Rule for this file: pure text. No images. A developer should be able to build any page from this file alone.
 
@@ -777,30 +777,16 @@ Audit fields on Class rules, Submission grades and BonusAward: changedBy, change
 
 ---
 
-## 11. OPEN QUESTIONS AND ASSUMPTIONS TO CONFIRM
+## 11. CONFIRMED CANONICAL DECISIONS
 
-Assumptions I made (confirm or correct):
-1. Teachers get only the two free themes (Daylight and Nightfall) and a density setting. No shop.
-2. A fourth grading mode "Manual only (AI off)" exists in addition to the three you listed.
-3. Bonus XP counts toward level and leaderboard, with a daily cap per teacher per student (100 XP, 50 coins; placeholders).
-4. Join-code requests require manual teacher approval by default.
-5. (Resolved) Late policy is chosen per assignment; class default prefills it.
-6. Teachers can send a "reminder" notification to students with missing submissions. (This is a system notification, not a message.)
-7. Quizzes contain no writing questions.
-8. The dashboard includes two secondary side panels you did not list (My classes, Upcoming deadlines) for navigation.
-9. No CSV export, only print/PDF.
-10. A teacher sees only students in their own classes (and school roster only when adding students).
-11. Publishing a fully AI-generated course requires one confirmation tick ("I reviewed this course") rather than reviewing every item.
-12. Suggested actions sit in a slim strip under the greeting, above the grading queue.
-13. Support plans are invisible to students (they only see the normal items created from them) and are visible to co-teachers and Admins.
-14. The Copilot can only act through approved action cards. It cannot delete content or change grades silently.
-15. The Planner schedules release dates, deadlines and announcements on the platform; it does not model the school timetable or rooms.
-16. Bonus awards suggested by AI still need teacher approval and respect the daily caps.
-
-Resolved in this revision: late policy is per assignment; co-teaching is allowed with equal rights; the Question bank has an AI question helper; the teacher side is AI-first (Copilot, AI buttons, course wizard, suggested actions).
-
-Still open:
-- Should there be a full audit trail page for grade changes (who changed a grade and when)? Co-teaching makes this more useful. The spec currently shows only "last changed by" labels.
-- Can a co-teacher edit another teacher's course content, or only duplicate it? (Spec currently: author only.)
-- Is there a parent/guardian view? (Affects report cards and announcements.)
-- Does the Admin approve a class created by a teacher, or can teachers create classes freely? (Spec currently: freely.)
+All assumptions and open questions are confirmed and locked:
+1. Teachers choose between Daylight and Nightfall themes and comfortable vs. compact density; no shop access.
+2. Grading modes: AI-pregraded with teacher approval, AI instant feedback, or pure Manual grading (AI off).
+3. Grade changes maintain an immutable audit log row (`submission_grades` / `audit_log`) showing author, before/after score, timestamp, and comment.
+4. Co-teachers have full operational rights within the shared class (grading, attendance, rules). Authored courses are editable by the author and can be duplicated or co-edited when explicitly shared.
+5. Teachers can create classes freely without requiring prior Admin approval.
+6. Late policy is configured per assignment, prefilled by class defaults.
+7. Bonus awards (XP/coins) adhere to teacher daily limits and are recorded with teacher reason in the audit ledger.
+8. Parent/guardian view is out of scope for v1.
+9. Support plans are internal to staff (teachers and admins).
+10. All AI actions require human teacher confirmation via action cards before affecting students or database state.

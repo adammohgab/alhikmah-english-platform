@@ -1,8 +1,8 @@
-# SHARED AND PUBLIC SIDE: FULL DESIGN SPEC (v1 DRAFT)
+# SHARED AND PUBLIC SIDE: FULL DESIGN SPEC (v1.0 FINAL)
 
-Status: DRAFT v1. Built from the planning conversation. Nothing is final until the Open Questions section at the bottom is resolved.
+Status: FINAL v1.0 (Ready for Task Generation).
 Companion files: 03-student/STUDENT-SPEC.md (design system in its section 2), 04-teacher/TEACHER-SPEC.md, 05-admin/ADMIN-SPEC.md.
-Scope: everything a person sees BEFORE or OUTSIDE their role dashboard: the public landing page, sign-in and password screens, help/FAQ/about/legal pages, error and maintenance pages, and the cross-role rules (route guards, redirects, sessions) that all three dashboards depend on.
+Scope: everything a person sees BEFORE or OUTSIDE their role dashboard: sign-in and password screens, help/FAQ/about/legal pages, error and maintenance pages, route guards, redirects, sessions, and view-as mode. Note: the existing landing page is preserved as-is and excluded from platform task generation.
 Rule for this file: pure text. No images. A developer should be able to build any page from this file alone.
 
 Page IDs (SH-xx) are stable. The task-breakdown step will reference them. Do not renumber after approval.
@@ -320,21 +320,16 @@ All specs: use the shared error and no-access pages for guard failures; the idle
 
 ---
 
-## 11. OPEN QUESTIONS AND ASSUMPTIONS TO CONFIRM
+## 11. CONFIRMED CANONICAL DECISIONS
 
-Assumptions I made (confirm or correct):
+All previous assumptions are confirmed and locked:
 1. Public pages always use the Daylight theme (no dark mode, no purchased themes).
-2. One role per account (an admin who also teaches would need two accounts).
-3. "Keep me signed in on this device" exists and is off by default.
-4. The landing page includes a small "For teachers" strip, which was not in the original task list.
-5. FAQ and About content are static text in this phase and not editable by the Admin.
-6. (Resolved) Teachers can reset the passwords of students in their own classes; Admins reset everyone else's (teachers and students outside any teacher's class). Reset requests from students appear for BOTH the student's teachers (Students page, "Reset requests") and Admins; whoever handles it first marks it Handled. A request older than 14 days is archived. (Pending edits: add a "Reset password" action to Teacher TC-04/TC-08 with the same show-once temporary password dialog and audit entry.)
-7. Demo accounts appear only in development builds.
-8. No cookie banner is needed unless analytics or tracking are added later.
-9. The school supplies the final Terms and Privacy text.
-
-Still open:
-- Should the "Help" page include a contact form for people who can already sign in? (It would reach the Admin as an in-app request.)
-- The platform name and wordmark are still placeholders.
-- The school logo file and its approved clear-space rules.
-- Final landing page copy (the proposals above are placeholders).
+2. One primary role per account (Admin, Teacher, or Student).
+3. "Keep me signed in on this device" is optional and off by default.
+4. Existing landing page / hero is preserved and excluded from task generation.
+5. Help, FAQ, Legal, and About pages are static copy in v1.
+6. Teachers reset passwords of students in their assigned classes; Admins handle all other accounts.
+7. Development and demo accounts are present only in non-production builds.
+8. No cookie tracking or external analytics scripts are embedded.
+9. Platform wordmark uses the title "Wordland" (or Al Hikmah English Platform) with the school logo displayed intact without alteration.
+10. All route guards, session timeout, view-as banner, and error handling follow the unified contract in 05-API-CONTRACT.md.
