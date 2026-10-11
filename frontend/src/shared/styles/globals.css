@@ -1,4 +1,6 @@
 @import "./tokens.css";
+@import "./typography.css";
+@import "./base.css";
 
 @tailwind base;
 @tailwind components;
@@ -26,21 +28,12 @@ html.lenis body {
 }
 
 body {
-  @apply bg-surface-50 text-ink-900 font-sans antialiased;
+  @apply bg-surface-50 text-ink-900 font-body antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Visible focus ring: 2px gold, 2px offset — all surfaces */
-:where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid #d4a02b;
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-::selection {
-  background: #0f1d45;
-  color: #ffffff;
-}
+/* Focus rings, ::selection, scrollbars, box-sizing and the
+   prefers-reduced-motion killswitch live in base.css (single owner). */
 
 @keyframes pulse {
   0%, 100% { opacity: 0.35; transform: scaleY(0.6); }
@@ -50,14 +43,4 @@ body {
 @keyframes fadein {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }

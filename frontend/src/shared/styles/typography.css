@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Typography — font fallback stacks + utility classes (CLS prevention)
+   Webfonts are loaded via index.html (Google Fonts, display=swap).
+   The @font-face blocks below define metric-matched LOCAL fallbacks only,
+   so text keeps near-identical boxes while webfonts load (FOUT without CLS).
+   Tune size-adjust / ascent-override against Lighthouse CLS (< 0.05 target).
+   Spec: GLOBAL-STYLES-SPEC §5 (families + fluid scale).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Metric-matched fallback faces (local system fonts, no downloads)
+   NOTE: size-adjust / ascent-override / descent-override / line-gap-override
+   are @font-face descriptors — they belong here, not on utility classes.
+   -------------------------------------------------------------------------- */
+
+/* Fredoka (rounded display) fallback: rounded/bold system fonts */
+@font-face {
+  font-family: "Fredoka Fallback";
+  src: local("Arial Rounded MT Bold"), local("Arial Bold"), local("Arial");
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  size-adjust: 100.5%;
+  ascent-override: 84%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+/* Figtree (clean geometric body) fallback: system UI stack */
+@font-face {
+  font-family: "Figtree Fallback";
+  src: local("Segoe UI"), local("Inter"), local("Helvetica Neue"), local("Arial");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  size-adjust: 100%;
+  ascent-override: 92%;
+  descent-override: 26%;
+  line-gap-override: 0%;
+}
+
+/* Caveat (handwriting, decorative only) fallback: handwriting system fonts */
+@font-face {
+  font-family: "Caveat Fallback";
+  src: local("Segoe Print"), local("Comic Sans MS"), local("Chalkboard SE"), local("cursive");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  size-adjust: 104%;
+  ascent-override: 88%;
+  descent-override: 28%;
+  line-gap-override: 0%;
+}
+
+/* Amiri (Arabic naskh) fallback: system Arabic fonts */
+@font-face {
+  font-family: "Amiri Fallback";
+  src: local("Traditional Arabic"), local("Simplified Arabic"), local("Tahoma"), local("Arial");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  size-adjust: 108%;
+  ascent-override: 105%;
+  descent-override: 38%;
+  line-gap-override: 0%;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+/* --------------------------------------------------------------------------
+   2. Family stacks (webfont first, metric fallback second, system last)
+   -------------------------------------------------------------------------- */
+
+.font-heading {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+}
+
+.font-body {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+}
+
+.font-accent {
+  font-family: "Caveat", "Caveat Fallback", cursive;
+}
+
+.font-arabic {
+  font-family: "Amiri", "Scheherazade New", "Amiri Fallback", "Traditional Arabic", Tahoma, serif;
+}
+
+/* --------------------------------------------------------------------------
+   3. Automatic Arabic rendering
+   Any Arabic-language or RTL subtree renders in Amiri / Scheherazade New,
+   including headings (Arabic has no Fredoka glyphs; fallback is by design).
+   Google serves both fonts with Arabic unicode-ranges, so mixed
+   English/Arabic strings also pick the right face per codepoint.
+   -------------------------------------------------------------------------- */
+
+:where(:lang(ar), [lang^="ar"], [dir="rtl"]) {
+  font-family: "Amiri", "Scheherazade New", "Amiri Fallback", "Traditional Arabic", Tahoma, serif;
+}
+
+/* Keep tabular figures for stats/timers regardless of language */
+.number {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* --------------------------------------------------------------------------
+   4. Type scale (GLOBAL-STYLES-SPEC §5.2) — fluid where specified
+   -------------------------------------------------------------------------- */
+
+.display-xl {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(56px, 9vw, 140px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.display-lg {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(44px, 6vw, 96px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.h1 {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(36px, 4.2vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.h2 {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(28px, 3vw, 44px);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.h3 {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.h4 {
+  font-family: "Fredoka", "Fredoka Fallback", "Arial Rounded MT Bold", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.body-lg {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+}
+
+/* NOTE: `.body` class intentionally mirrors the `body` element default. */
+.body {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.body-sm {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.caption {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* Chips + field labels: sentence case per spec (never uppercase) */
+.label {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 16px;
+}
+
+/* Handwritten note: decorative only, max ~6 words, never for must-read info */
+.hand-note {
+  font-family: "Caveat", "Caveat Fallback", cursive;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+/* Reading text (lessons/passages): calm body-lg, max 70ch, ink on surface */
+.reading {
+  font-family: "Figtree", "Figtree Fallback", system-ui, "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+  max-width: 70ch;
+}

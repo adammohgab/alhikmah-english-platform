@@ -1,0 +1,154 @@
+/* ========================================
+   Base stylesheet — GLOBAL-STYLES-SPEC §10 (Visual Law)
+   - box-sizing reset
+   - high-contrast :focus-visible rings (2px + 2px offset)
+   - brand text-selection styling
+   - arcade-theme scrollbars
+   - prefers-reduced-motion global killswitch
+   Imported once via shared/styles/globals.css (unified import order:
+   tokens.css -> typography.css -> base.css -> tailwind).
+   ======================================== */
+
+/* ---- 1. Box-sizing reset (runs before Tailwind preflight additions) ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+/* Media elements never overflow their sticker frames */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Inherit font on form controls so sticker type stays consistent */
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---- 2. High-contrast accessibility focus rings ----
+   Task: universal 2px ring + 2px offset on :focus-visible.
+   Spec §10 visual law: ink ring with white gap so it reads on
+   every world tint/soft fill. Night surfaces override to paper. */
+:where(a, button, input, select, textarea, [tabindex], summary):focus-visible,
+:where([role="button"], [role="link"], [role="tab"], [role="checkbox"], [role="radio"], [role="switch"], [role="option"]):focus-visible {
+  outline: 2px solid var(--focus-ring, #1a1530);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Keep the ring legible on dark "Night" stages (§3.5): paper/soft outline. */
+:where([data-theme="dark"], .night, [data-world-stage="night"]) :where(:focus-visible),
+:where([data-theme="dark"], .night, [data-world-stage="night"]):focus-visible {
+  --focus-ring: #ffffff;
+}
+
+/* Windows High Contrast / forced-colors: let the OS draw the ring. */
+@media (forced-colors: active) {
+  :where(:focus-visible) {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+/* Never hide keyboard focus behind effects (§8.9). */
+:where(:focus-visible) {
+  z-index: auto;
+}
+
+/* ---- 3. Brand text-selection styling ----
+   Equivalent of `selection:bg-primary-300 selection:text-black`:
+   candy highlight fill with ink text. Uses the active world soft
+   token when present so selection follows the world morph (§3.4),
+   falling back to Learn pop yellow. */
+::selection {
+  background: var(--world-soft, #ffd93d);
+  color: #1a1530;
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background: var(--world-soft, #ffd93d);
+  color: #1a1530;
+  text-shadow: none;
+}
+
+/* ---- 4. Arcade-theme scrollbars (§10: thick pill thumbs, ink outline) ---- */
+:root {
+  --scrollbar-track: #f5f7fa;
+  --scrollbar-thumb: #ffd23f;
+  --scrollbar-thumb-border: #1a1530;
+}
+
+* {
+  scrollbar-width: auto;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: 2px solid var(--scrollbar-thumb-border);
+  border-radius: 999px;
+  min-height: 40px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--world-main, #ffb84d);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Nested scroll areas opt out of Lenis smoothing (SPEC §8.3) but keep the theme. */
+:where([data-lenis-prevent])::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* ---- 5. prefers-reduced-motion global killswitch (§8.9) ----
+   Instantly pauses all CSS keyframe animations and kills
+   transitions. Marquee/ambient drift stop; celebrations render static. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-play-state: paused !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
