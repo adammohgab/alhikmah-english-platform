@@ -14,13 +14,16 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "db:types": "supabase gen types typescript --local > src/shared/types/database.types.ts",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
-    "format:write": "prettier --write ."
+    "format:write": "prettier --write .",
+    "check:budget": "node scripts/check-bundle-size.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "@tanstack/react-query": "^5.104.1",
     "gsap": "^3.12.5",
     "lenis": "^1.1.14",
