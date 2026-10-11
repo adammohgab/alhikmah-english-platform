@@ -19,22 +19,12 @@ Welcome to the Al Hikmah English Platform engineering repository. This document 
 
 ---
 
-## 2. GIT BRANCHING & WORKFLOW CONVENTIONS
+## 2. WORKFLOW & CONFLICT PREVENTION (NO BRANCH BLOAT)
 
-### 2.1 Branch Naming Convention
-Every task must be implemented on its own dedicated git branch branched from `main`:
-```bash
-git checkout main
-git pull origin main
-git checkout -b task/{TASK_CODE}-{slug}
-# Example: git checkout -b task/FND-01-scaffold-cleanup
-# Example: git checkout -b task/BE-CORE-04-curriculum-schema
-# Example: git checkout -b task/UIK-08-avatar-component
-```
-
-### 2.2 Micro-Commit & PR Granularity
-- **Rule of One**: 1 Task = 1 Git Branch = 1 Pull Request = 1 Review = 1 Squash Merge.
-- Tasks are scoped to 1–2 hours of focused execution. Do not batch multiple task codes into a single branch.
+### 2.1 Pragmatic Workflow: Direct Main or Feature Lanes
+You do **NOT** need to create 224 separate git branches! Creating a branch for every 1-hour micro-task is complete overkill.
+- **Direct Commits / Push to `main`**: Autonomous agents or single developers can commit and push directly to `main` as tasks finish, provided tests pass and file ownership is respected.
+- **Feature / Block Branches (Optional)**: If working with a team or multiple AI agents concurrently, work on coarse block-level branches (e.g. `feat/fnd-foundation`, `feat/stu-core`, `feat/be-schema`) or keep short-lived feature branches that merge multiple related tasks together.
 
 ---
 
