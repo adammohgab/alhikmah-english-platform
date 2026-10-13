@@ -95,7 +95,12 @@ export function SoundProvider({ children }: SoundProviderProps) {
       const howl: Howl = new HowlClass({
         src,
         format,
-        sprite: { ...manifest.sprite } as Record<string, [number, number]>,
+        sprite: Object.fromEntries(
+          Object.entries(manifest.sprite).map(([name, [start, duration]]) => [
+            name,
+            [start, duration],
+          ]),
+        ),
         preload: true,
         onloaderror: () => {
           // Missing or undecodable audio: fall back to silence.
