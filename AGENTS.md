@@ -38,7 +38,25 @@ We maintain zero tolerance for **"AI Slop"**. AI slop happens when an agent writ
 
 ---
 
-## 2. Project Vision & Architecture Grounding
+## 2. Harmonization & Autonomous Decision Rules (NO PARALYSIS)
+
+When an AI agent is working autonomously, avoid stopping or questioning the user over subtle schema or specification variations. Follow these standardized rules:
+
+### Rule 2.1: Spec-Superset Strategy (Task-Literal vs. Spec-Rich)
+- **Problem**: A task description in `TASKS.md` might list simplified columns (e.g. `target_type`, `is_read`), while `backend/docs/` describes a richer schema (e.g. `audience jsonb`, `read_at`).
+- **Resolution**: **Always implement the Spec-Superset!** Include the columns specified in `backend/docs/` while ensuring any fields or criteria demanded by the task text and acceptance criteria are fully satisfied. Do NOT stop to debate or ask whether to use (a) task-literal or (b) spec-rich — ship the comprehensive superset.
+
+### Rule 2.2: Pragmatic, Self-Contained RLS
+- **Problem**: Architectural spec documents may describe future helper functions (e.g. `is_class_teacher()`, complex role lookups) that have not yet been defined in preceding migrations.
+- **Resolution**: Write clean, robust, and self-contained RLS policies matching existing migrations (`010`–`013`). Never block execution or crash migrations trying to invoke nonexistent helper functions. Defer complex cross-table helper function refactoring to dedicated authorization tasks.
+
+### Rule 2.3: Autonomy & No Trivial Clarifications
+- Do NOT pause or ask the human user trivial multiple-choice questions if the path forward is clear from existing migrations and docs.
+- Inspect the codebase and previous migrations (`supabase/migrations/`) to mirror existing conventions (naming, id generation with `gen_random_uuid()`, timestamps with `app_now()`, RLS patterns).
+
+---
+
+## 3. Project Vision & Architecture Grounding
 
 **Al Hikmah English Platform** is an English learning ecosystem for Libyan secondary students (Grades 7–12), built with institutional rigor and engaging gamification.
 
@@ -54,7 +72,7 @@ Before taking action, you **MUST** consult the exact markdown specification gove
 
 ---
 
-## 3. The Task-Claiming System Workflow
+## 4. The Task-Claiming System Workflow
 
 Tasks are claimed from the live task tracker ([https://mohammed054.github.io/task-claiming/tasks/](https://mohammed054.github.io/task-claiming/tasks/)) or found in [TASKS.md](file:///TASKS.md) / [tasks-registry.json](file:///tasks-registry.json).
 
@@ -78,7 +96,7 @@ Extract the following key items:
 - Write clean, type-safe, fully implemented code.
 - If writing a database migration:
   - Check existing migrations in `supabase/migrations/` to preserve sequential numbering and foreign key consistency.
-  - Cross-check table and column names with [backend/docs/02-DATA-MODEL-CORE.md](file:///backend/docs/02-DATA-MODEL-CORE.md).
+  - Cross-check table and column names with [backend/docs/02-DATA-MODEL-CORE.md](file:///backend/docs/02-DATA-MODEL-CORE.md) and related docs.
   - Add appropriate foreign key constraints, indexes, and unique constraints as specified in the acceptance criteria.
 - If writing frontend code:
   - Respect the design system tokens: 2px solid borders, solid offset shadows (`shadow-[2px_2px_0px_#000]`), appropriate `data-world` variables, and accessibility (ARIA, focus rings).
