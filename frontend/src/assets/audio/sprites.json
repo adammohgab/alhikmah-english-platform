@@ -1,0 +1,13 @@
+{
+  "description": "Audio sprite map for SoundProvider (Howler format: [startMs, durationMs]). The audio files listed in src must follow this layout: every sound starts on a 1000 ms boundary (fanfare uses two slots), normalized, under 400 ms except fanfare, 300 KB total (GLOBAL-STYLES-SPEC 8.8). Without these files in this folder the app stays silent.",
+  "src": ["sprites.webm", "sprites.mp3"],
+  "sprite": {
+    "click": [0, 120],
+    "success": [1000, 350],
+    "fanfare": [2000, 1800],
+    "coin": [4000, 300],
+    "whoosh": [5000, 350],
+    "buzz": [6000, 300],
+    "pop": [7000, 150]
+  }
+}
