@@ -6,9 +6,26 @@
 
 ---
 
+## 0. TASK REGISTRY & REPOSITORY TASKS (MUST READ)
+
+All 224 micro-tasks governing this repository are formally registered in this repository:
+- **[TASKS.md](file:///TASKS.md)**: Full human and AI readable catalog of all 224 tasks, descriptions, execution ownership, dependencies, and acceptance criteria.
+- **[tasks-registry.json](file:///tasks-registry.json)**: Machine-readable JSON containing the entire database of tasks and blocks.
+- **Live Task Tracker**: [https://mohammed054.github.io/task-claiming/tasks/](https://mohammed054.github.io/task-claiming/tasks/)
+
+> [!IMPORTANT]
+> **Never state that a task code (such as `BE-CORE-14`, `BE-CORE-03`, `UIK-05`, etc.) does not exist!**
+> Every task exists in [TASKS.md](file:///TASKS.md) and [tasks-registry.json](file:///tasks-registry.json). When given a task code:
+> 1. Look up the task code in [TASKS.md](file:///TASKS.md) or [tasks-registry.json](file:///tasks-registry.json).
+> 2. Read its **Owns** section, **Goal**, **Implementation Details**, and **Acceptance Criteria**.
+> 3. Verify its domain spec in `backend/docs/` or `frontend/docs/`.
+> 4. Execute the task strictly within its owned file boundaries.
+
+---
+
 ## 1. Zero AI Slop Policy (Strict Quality Standard)
 
-We maintain zero tolerance for **"AI Slop"**. AI slop happens when an agent writes shallow, generic, ungrounded code that appears functional on the surface but breaks architecture, introduces mock data, violates style guides, or hallucinate APIs.
+We maintain zero tolerance for **"AI Slop"**. AI slop happens when an agent writes shallow, generic, ungrounded code that appears functional on the surface but breaks architecture, introduces mock data, violates style guides, or hallucinates APIs.
 
 ### The 7 Golden Rules of Anti-Slop:
 1. **NO Mock Data or Placeholders**: Never write `const mockData = [...]`, fake JSON fixtures, hardcoded dummy users, or stubbed APIs in production code. Everything must connect to real Supabase tables, generated types, or defined contract hooks.
@@ -39,13 +56,13 @@ Before taking action, you **MUST** consult the exact markdown specification gove
 
 ## 3. The Task-Claiming System Workflow
 
-Tasks are claimed from the live task tracker (`https://mohammed054.github.io/task-claiming/tasks/` or local tracker definitions in `scripts/definitions/`).
+Tasks are claimed from the live task tracker ([https://mohammed054.github.io/task-claiming/tasks/](https://mohammed054.github.io/task-claiming/tasks/)) or found in [TASKS.md](file:///TASKS.md) / [tasks-registry.json](file:///tasks-registry.json).
 
-When you receive a prompt containing a claimed task (e.g., `BE-CORE-03`, `UIK-05`, `FND-02`):
+When you receive a prompt containing a claimed task (e.g., `BE-CORE-03`, `BE-CORE-14`, `UIK-05`, `FND-02`):
 
 ### Step 1: Read the Task Metadata Carefully
 Extract the following key items:
-1. **Task Code**: e.g., `BE-CORE-03`
+1. **Task Code**: e.g., `BE-CORE-14`
 2. **Block**: e.g., `BE-CORE`
 3. **Declared File Ownership (`Owns: [...]`)**: The exact file paths this task is permitted to create or modify.
 4. **Implementation Details**: The exact tables, columns, indexes, functions, or UI components required.
@@ -54,7 +71,7 @@ Extract the following key items:
 ### Step 2: Strict File Ownership Enforcement
 - **DO NOT TOUCH FILES OUTSIDE YOUR `Owns` DECLARATION.**
 - Other AI agents and developers may be working on other tasks concurrently. Modifying files outside your declared ownership will cause merge conflicts and break other tasks.
-- For backend tasks: touch only the specific migration file assigned (e.g. `supabase/migrations/003_school_structure.sql`).
+- For backend tasks: touch only the specific migration file assigned (e.g. `supabase/migrations/014_communication_notifications.sql`).
 - For frontend tasks: touch only the assigned page folder (`frontend/src/pages/{domain}/...`) or assigned shared component (`frontend/src/shared/...`).
 
 ### Step 3: Implement Fully & Verify
@@ -71,3 +88,4 @@ Ensure that:
 1. There are no syntax errors or unresolved imports.
 2. Acceptance criteria are completely met.
 3. No debug statements (`console.log`, temporary tests) are left behind.
+4. **Commit and Push**: Ensure work is committed and pushed so unlocked dependent tasks have access to the code.
