@@ -632,10 +632,11 @@ export function validateUnitQuiz(
     if (!prompt) throw new Error(`${qPath}.prompt is required`);
     const explanation = asNonEmptyString(q["explanation"]);
     if (!explanation) throw new Error(`${qPath}.explanation is required (1-2 sentences)`);
-    const difficulty = asNonEmptyString(q["difficulty"]);
-    if (difficulty !== "easy" && difficulty !== "medium" && difficulty !== "hard") {
+    const rawDifficulty = asNonEmptyString(q["difficulty"]);
+    if (rawDifficulty !== "easy" && rawDifficulty !== "medium" && rawDifficulty !== "hard") {
       throw new Error(`${qPath}.difficulty must be easy, medium or hard`);
     }
+    const difficulty: "easy" | "medium" | "hard" = rawDifficulty;
     const skill = asNonEmptyString(q["skill"]) ?? "reading";
     const base = {
       type: type as QuizQuestionType,
