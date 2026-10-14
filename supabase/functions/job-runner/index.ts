@@ -183,7 +183,7 @@ async function finishJob(
   broadcastJob(supabase, jobId, {
     status,
     completed_at: now,
-    ...(status === "completed" ? { result_payload } : { error_message: errorMessage }),
+    ...(status === "completed" ? { result_payload: resultPayload } : { error_message: errorMessage }),
   });
 }
 
@@ -272,7 +272,12 @@ app.get("/", async (c) => {
  */
 app.post(
   "/",
-  corsMiddleware(),
+  async (c, next) => {
+    // CORS preflight via the shared helper (takes the native Request).
+    const corsRes = corsMiddleware(c.req.raw);
+    if (corsRes) return corsRes;
+    await next();
+  },
   async (c, next) => {
     // Auth guard: allow service-role (no auth header) for cron triggers,
     // or require 'admin' role for manual invocation.
