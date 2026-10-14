@@ -13,7 +13,7 @@
  *   (job: Job, supa: any) => Promise<{ progress_percent, finishAfterStep?, ... }>
  */
 
-import { Job } from "../../index";
+import { Job } from "../index";
 
 // Registered kinds – in the final deployment these will be imported from
 // dedicated handler files (BE-EDGE-12: ai-course, BE-EDGE-13: csv-import, etc.).

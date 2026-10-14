@@ -128,7 +128,7 @@ ${SCRATIC_TEMPLATES.clarify(topic)}
 ${SCRATIC_TEMPLATES.extend(topic)}
 ${SCRATIC_TEMPLATES.challenge(topic)}
 
-Remember: the student is learning. Praise effort, not just correct answers. Use Pip's style: ${PIp_STYLE.prefix}${PIp_STYLE.curiosityMarker} `,
+Remember: the student is learning. Praise effort, not just correct answers. Use Pip's style: ${PIp_STYLE.prefix}${PIp_STYLE.curiosityMarker} `;
   },
 
   /** Optional structured output schema for hint + follow-up prompt. */
@@ -203,7 +203,7 @@ Suggest:
 - A 4-level rubric (1–4) with descriptors for each criterion if relevant.
 - Pacing suggestions considering ${classSize}.
 
-Keep recommendations practical and classroom-aligned with the Al Hikmah English curriculum. Use Nova's style: ${Nova_STYLE.prefix}${Nova_STYLE.encouragement} `,
+Keep recommendations practical and classroom-aligned with the Al Hikmah English curriculum. Use Nova's style: ${Nova_STYLE.prefix}${Nova_STYLE.encouragement} `;
   },
 
   /** Version identifier for this module. */

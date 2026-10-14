@@ -45,7 +45,7 @@ const DEFAULT_BLOCKED_CATEGORIES = [
 ];
 
 const DEFAULT_SENSITIVE_PATTERNS = [
-  /phone/\d{3}-\d{3}-\d{4}/i,
+  /\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/,
   /\b[\w\.-]+@[\w\.-]+\.\w{2,}\b/,
   /[\d\s]{10,}/, // long digit strings (potential addresses/ssn)
 ];
@@ -283,7 +283,7 @@ function preCheck(
   gradeLevel?: CEFRLevel
 ): PreCheckResult {
   // 1. Normalize: strip control characters, Unicode normalize
-  let cleaned = message.replace(/[\x00-\x control]/g, " ").trim();
+  let cleaned = message.replace(/[\x00-\x1F\x7F]/g, " ").trim();
 
   // 2. PII redaction — mask before model call
   const piiResult = redactPII(cleaned);
@@ -391,8 +391,7 @@ function postCheck(
 ): PostCheckResult {
   // 1. Rule-layer check: sliding window on last 200 characters (AI-BEHAVIOR §4.2)
   const window = text.slice(-200);
-  const { isInappropriate: windowResult, category: windowCategory, severity: windowSeverity } =
-    checkInappropriateContent(window, gradeLevel);
+  const windowCheck = checkInappropriateContent(window, gradeLevel);
 
   // 2. Classifier check: for student-facing features, when response > 40 words (AI-BEHAVIOR §4.3)
   const wordCount = text.trim().split(/\s+/).length;
@@ -402,7 +401,7 @@ function postCheck(
 
   // 3. Combine results: if either check flags content, we need repair or block
   const combinedInappropriate =
-    windowResult.isInappropriate || classifierResult.isInappropriate;
+    windowCheck.isInappropriate || classifierResult.isInappropriate;
 
   let status: "ok" | "blocked" | "repair_attempt" = "ok";
   let safety: PostCheckResult["safety"] = { blocked: false, repaired: false };
@@ -413,7 +412,7 @@ function postCheck(
     // If post-check flags content, attempt one repair by removing flagged segments
     repairCount = 1;
     // Simple repair: remove the problematic window or replace with neutral phrase
-    if (windowResult.isInappropriate) {
+    if (windowCheck.isInappropriate) {
       finalText = text.slice(0, text.length - 200) + " [content removed for safety]";
     } else {
       finalText = classifierResult.category === "sensitive_personal"
@@ -458,20 +457,27 @@ async function runSafetyPipeline(
   // 2. If blocked/redirect, skip model call and log violation
   if (preCheckResult.status === "blocked" || preCheckResult.status === "redirect") {
     // Log the safety violation
-    const violationLogged = await logSafetyViolation(
-      `${conversationId}-${Date.now()}`,
-      preCheckResult.safety.category || "blocked_category",
-      preCheckResult.safety.severity || "medium",
-      newMessage,
-      preCheckResult.redactedMessage,
-      conversationId
-    );
+    const violationLogged = (
+      await logSafetyViolation(
+        `${conversationId}-${Date.now()}`,
+        preCheckResult.safety.category || "blocked_category",
+        preCheckResult.safety.severity || "medium",
+        newMessage,
+        preCheckResult.redactedMessage,
+        conversationId
+      )
+    ).success;
 
     return {
       preCheckResult,
       postCheckResult: {
-        status: preCheckResult.status === "redirect" ? "redirect" : "blocked",
-        safety: { ...preCheckResult.safety, blocked: true },
+        status: "blocked",
+        safety: {
+          blocked: true,
+          category: preCheckResult.safety.category,
+          severity: preCheckResult.safety.severity,
+          repaired: false,
+        },
         finalText: preCheckResult.status === "redirect" ? getRedirectMessage() : getNeutralMessage(),
         repairCount: 0,
       },
@@ -489,14 +495,16 @@ async function runSafetyPipeline(
   // 4. If post-check flagged content and it wasn't caught by pre-check, log it
   let violationLogged = false;
   if (postCheckResult.status === "repair_attempt" || postCheckResult.status === "blocked") {
-    violationLogged = await logSafetyViolation(
-      `${conversationId}-${Date.now()}-post`,
-      postCheckResult.safety.category || "blocked_category",
-      postCheckResult.safety.severity || "medium",
-      hypotheticalModelOutput,
-      postCheckResult.finalText,
-      conversationId
-    );
+    violationLogged = (
+      await logSafetyViolation(
+        `${conversationId}-${Date.now()}-post`,
+        postCheckResult.safety.category || "blocked_category",
+        postCheckResult.safety.severity || "medium",
+        hypotheticalModelOutput,
+        postCheckResult.finalText,
+        conversationId
+      )
+    ).success;
   }
 
   return {
