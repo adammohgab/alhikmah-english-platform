@@ -109,10 +109,12 @@ function motionAllowed(): boolean {
 function DialogLayer({
   size,
   className,
+  hasDescription,
   children,
 }: {
   size: DialogSize;
   className: string | undefined;
+  hasDescription: boolean;
   children: ReactNode;
 }) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -149,7 +151,8 @@ function DialogLayer({
       />
       {/* The wrapper centers the panel so the animated transform is free of positioning. */}
       <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
-        <RadixDialog.Content asChild>
+        {/* Without a Description, an explicit undefined drops the dangling aria-describedby. */}
+        <RadixDialog.Content asChild {...(hasDescription ? {} : { "aria-describedby": undefined })}>
           <Surface
             ref={panelRef}
             shadow="lg"
@@ -198,7 +201,7 @@ export function Dialog({
         <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>
       )}
       <RadixDialog.Portal>
-        <DialogLayer size={size} className={className}>
+        <DialogLayer size={size} className={className} hasDescription={hasDescription}>
           <header
             className={cn(
               "flex flex-col gap-1 px-6 pt-6",
