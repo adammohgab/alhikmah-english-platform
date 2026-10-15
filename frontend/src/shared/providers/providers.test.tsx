@@ -131,8 +131,7 @@ describe("UIK-02: EffectsProvider and useEffectsTier", () => {
   });
 
   it("respects prefers-reduced-motion media query", () => {
-    const originalMatchMedia = window.matchMedia;
-    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    const matchMediaSpy = vi.spyOn(window, "matchMedia").mockImplementation((query: string) => ({
       matches: query.includes("prefers-reduced-motion: reduce"),
       media: query,
       onchange: null,
@@ -154,7 +153,7 @@ describe("UIK-02: EffectsProvider and useEffectsTier", () => {
     expect(screen.getByTestId("fx-3d")).toHaveTextContent("false");
     expect(screen.getByTestId("fx-complex")).toHaveTextContent("false");
 
-    window.matchMedia = originalMatchMedia;
+    matchMediaSpy.mockRestore();
   });
 });
 

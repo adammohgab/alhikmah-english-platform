@@ -10,7 +10,7 @@ import { ShapeFrame, buildShapePath } from "./ShapeFrame";
 import { Sticker } from "./Sticker";
 import { Squiggle } from "./Squiggle";
 import { Card } from "./Card";
-import { Surface, RetroContainer } from "./Surface";
+import { Surface } from "./Surface";
 import { Avatar } from "./Avatar";
 import { LevelRing } from "./LevelRing";
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
