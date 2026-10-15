@@ -128,6 +128,7 @@ function notchSide(side: Side, radius: number, pitch: number): string {
 }
 
 /** The closed path for a `width` x `height` box whose outline stroke is `stroke` px wide. */
+// eslint-disable-next-line react-refresh/only-export-components -- Exported pure geometry helper for ShapeFrame.
 export function buildShapePath(
   shape: ShapeFrameShape,
   width: number,
