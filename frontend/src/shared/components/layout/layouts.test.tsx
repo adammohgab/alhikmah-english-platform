@@ -16,15 +16,15 @@ import { ToastProvider } from "@/app/providers/ToastProvider";
 import { WorldProvider } from "@/shared/providers/WorldProvider";
 import { ThemeProvider } from "@/shared/providers/ThemeProvider";
 import { EffectsProvider } from "@/shared/providers/EffectsProvider";
-import { SoundContext } from "@/shared/hooks/useSound";
+import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 
-const mockSoundValue = {
+const mockSoundValue: SoundContextValue = {
   play: vi.fn(),
   volume: 0.35,
   setVolume: vi.fn(),
-  isMuted: false,
+  muted: false,
+  setMuted: vi.fn(),
   toggleMute: vi.fn(),
-  audioState: "unlocked" as const,
 };
 
 function renderInProviders(

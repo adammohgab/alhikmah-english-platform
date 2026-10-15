@@ -13,16 +13,16 @@ import { FilterBar } from "./FilterBar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { SegmentedControl } from "./SegmentedControl";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./Accordion";
-import { SoundContext } from "@/shared/hooks/useSound";
+import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import type { ColumnDef } from "@tanstack/react-table";
 
-const mockSoundValue = {
+const mockSoundValue: SoundContextValue = {
   play: vi.fn(),
   volume: 0.35,
   setVolume: vi.fn(),
-  isMuted: false,
+  muted: false,
+  setMuted: vi.fn(),
   toggleMute: vi.fn(),
-  audioState: "unlocked" as const,
 };
 
 function renderWithSound(ui: React.ReactElement) {
@@ -180,7 +180,7 @@ describe("UIK-18: DataTable", () => {
 
     const checkboxes = screen.getAllByRole("checkbox");
     // Click first item checkbox (index 1, as index 0 is select all)
-    await user.click(checkboxes[1]);
+    await user.click(checkboxes[1]!);
 
     const bulkButton = await screen.findByRole("button", { name: /Delete Selected/i });
     expect(bulkButton).toBeInTheDocument();
