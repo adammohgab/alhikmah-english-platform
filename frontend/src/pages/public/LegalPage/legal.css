@@ -1,0 +1,53 @@
+/* LegalPage print stylesheet (PUB-10). A paper copy keeps only the active document: no site
+   header or footer, no tabs, no table of contents, no buttons. Text goes black on white with
+   no width cap, and headings stay with the text that follows them. */
+
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+
+  .legal-print-hide {
+    display: none !important;
+  }
+
+  .legal-page {
+    background: #fff !important;
+  }
+
+  .legal-shell {
+    display: block !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .legal-article {
+    max-width: none !important;
+    color: #000 !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+  }
+
+  .legal-article h1,
+  .legal-article h2,
+  .legal-article h3 {
+    break-after: avoid;
+    color: #000 !important;
+  }
+
+  .legal-article li,
+  .legal-promises {
+    break-inside: avoid;
+  }
+
+  .legal-promises {
+    box-shadow: none !important;
+    background: #fff !important;
+    border-color: #000 !important;
+  }
+
+  .legal-article a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+}
