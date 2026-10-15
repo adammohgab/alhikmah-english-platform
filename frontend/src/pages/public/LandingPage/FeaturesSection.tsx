@@ -183,8 +183,8 @@ const ICON_CLASS = "h-5 w-5 shrink-0 text-stroke [stroke-width:2.5]";
 const TAB_ICON_CLASS = "h-4 w-4";
 const AI_LAYOUT_CLASS = "grid grid-cols-1 items-start gap-8 lg:grid-cols-[5fr_7fr] lg:gap-12";
 const AI_TEXT_CLASS = "flex flex-col items-start gap-4";
-const AI_STICKER_CLASS =
-  "flex h-20 w-20 items-center justify-center bg-[var(--world-soft,#ffd93d)]";
+const AI_STICKER_FACE_CLASS =
+  "flex h-16 w-16 items-center justify-center bg-[var(--world-soft,#ffd93d)]";
 const AI_STICKER_ICON_CLASS = "h-10 w-10 text-stroke [stroke-width:2]";
 const AI_LIMIT_LIST_CLASS = "flex flex-col gap-2 font-body text-[15px] font-semibold text-stroke";
 const AI_LIMIT_ITEM_CLASS = "flex items-center gap-2";
@@ -241,8 +241,10 @@ function TutorBlock({ idPrefix }: { idPrefix: string }) {
   return (
     <div className={AI_LAYOUT_CLASS}>
       <div className={AI_TEXT_CLASS}>
-        <Sticker rotate={-4} shape="circle" className={AI_STICKER_CLASS} aria-hidden="true">
-          <Bot aria-hidden="true" focusable="false" className={AI_STICKER_ICON_CLASS} />
+        <Sticker rotate={-4} shape="circle" aria-hidden="true">
+          <span className={AI_STICKER_FACE_CLASS}>
+            <Bot aria-hidden="true" focusable="false" className={AI_STICKER_ICON_CLASS} />
+          </span>
         </Sticker>
         <p className={EYEBROW_CLASS}>Your study companion</p>
         <h3 id={headingId} className={SUBHEADING_CLASS}>
