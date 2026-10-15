@@ -18,6 +18,7 @@ export interface QuestionProps<TQuestion, TValue> {
 }
 
 /** Interaction is off for read-only, solution review, or when nothing listens to changes. */
+// eslint-disable-next-line react-refresh/only-export-components -- Shared question utility, not a component.
 export function isLocked(props: {
   readOnly?: boolean | undefined;
   showSolution?: boolean | undefined;
@@ -27,11 +28,13 @@ export function isLocked(props: {
 }
 
 /** Trim, collapse spaces, Unicode-normalize, case-insensitive unless asked (backend scoring rule). */
+// eslint-disable-next-line react-refresh/only-export-components -- Shared question utility, not a component.
 export function normalizeText(text: string, caseSensitive = false): string {
   const normalized = text.normalize("NFC").trim().replace(/\s+/g, " ");
   return caseSensitive ? normalized : normalized.toLowerCase();
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- Shared question utility, not a component.
 export function matchesAny(
   input: string,
   accepted: readonly string[],
@@ -41,6 +44,7 @@ export function matchesAny(
   return accepted.some((entry) => normalizeText(entry, caseSensitive) === target);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- Shared question styling constant.
 export const FOCUS_RING =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke";
 
