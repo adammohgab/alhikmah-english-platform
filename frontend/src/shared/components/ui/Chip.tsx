@@ -43,7 +43,8 @@ export interface ChipProps extends Omit<
    * Backspace or Delete is pressed while the chip or its remove button has focus.
    */
   onRemove?:
-    ((event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void) | undefined;
+    | ((event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void)
+    | undefined;
   /** Accessible name of the remove button. Defaults to "Remove <label>" for text labels. */
   removeLabel?: string | undefined;
   /** Leading icon (skill chips carry one). Decorative: hidden from assistive tech. */

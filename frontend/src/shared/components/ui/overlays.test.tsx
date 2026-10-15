@@ -19,11 +19,7 @@ const mockSoundValue: SoundContextValue = {
 };
 
 function renderWithSound(ui: React.ReactElement) {
-  return render(
-    <SoundContext.Provider value={mockSoundValue}>
-      {ui}
-    </SoundContext.Provider>
-  );
+  return render(<SoundContext.Provider value={mockSoundValue}>{ui}</SoundContext.Provider>);
 }
 
 describe("UIK-12: Dialog & Modal", () => {
@@ -38,7 +34,7 @@ describe("UIK-12: Dialog & Modal", () => {
         footer={<button>Claim Reward</button>}
       >
         <p>Here is your prize!</p>
-      </Dialog>
+      </Dialog>,
     );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -53,13 +49,9 @@ describe("UIK-12: Dialog & Modal", () => {
     const user = userEvent.setup();
     const handleOpenChange = vi.fn();
     renderWithSound(
-      <Dialog
-        open={true}
-        onOpenChange={handleOpenChange}
-        title="Settings"
-      >
+      <Dialog open={true} onOpenChange={handleOpenChange} title="Settings">
         <div>Content</div>
-      </Dialog>
+      </Dialog>,
     );
 
     const closeBtn = screen.getByRole("button", { name: /Close/i });
@@ -86,7 +78,7 @@ describe("UIK-12: Dialog & Modal", () => {
         }
       >
         <p>Are you sure?</p>
-      </Dialog>
+      </Dialog>,
     );
 
     const dismissBtn = screen.getByRole("button", { name: /Dismiss/i });
@@ -105,7 +97,7 @@ describe("UIK-13: Drawer", () => {
         footer={<button>Equip All</button>}
       >
         <div>Item 1: Golden Key</div>
-      </Drawer>
+      </Drawer>,
     );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -126,7 +118,7 @@ describe("UIK-13: Drawer", () => {
         closeLabel="Close Drawer"
       >
         <div>Items</div>
-      </Drawer>
+      </Drawer>,
     );
 
     const closeBtn = screen.getByRole("button", { name: /Close Drawer/i });
@@ -154,7 +146,7 @@ describe("UIK-14: DropdownMenu & ContextMenu", () => {
             Settings <DropdownMenu.Shortcut>⌘S</DropdownMenu.Shortcut>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     const trigger = screen.getByRole("button", { name: "Options" });
@@ -177,7 +169,7 @@ describe("UIK-14: DropdownMenu & ContextMenu", () => {
         <ContextMenu.Content>
           <ContextMenu.Item onSelect={vi.fn()}>Copy Link</ContextMenu.Item>
         </ContextMenu.Content>
-      </ContextMenu>
+      </ContextMenu>,
     );
 
     const area = screen.getByTestId("context-area");
@@ -201,7 +193,7 @@ describe("UIK-15: Tooltip & Popover", () => {
             <Tooltip.Arrow />
           </Tooltip.Content>
         </Tooltip>
-      </Tooltip.Provider>
+      </Tooltip.Provider>,
     );
 
     expect(screen.getByRole("button", { name: "Hover me" })).toBeInTheDocument();
@@ -221,7 +213,7 @@ describe("UIK-15: Tooltip & Popover", () => {
             <button>Got it</button>
           </Popover.Close>
         </Popover.Content>
-      </Popover>
+      </Popover>,
     );
 
     const trigger = screen.getByRole("button", { name: "Show Details" });

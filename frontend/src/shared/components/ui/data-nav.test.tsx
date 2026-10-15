@@ -26,16 +26,14 @@ const mockSoundValue: SoundContextValue = {
 };
 
 function renderWithSound(ui: React.ReactElement) {
-  return render(
-    <SoundContext.Provider value={mockSoundValue}>
-      {ui}
-    </SoundContext.Provider>
-  );
+  return render(<SoundContext.Provider value={mockSoundValue}>{ui}</SoundContext.Provider>);
 }
 
 describe("UIK-16: Progress & Gauges", () => {
   it("ProgressBar renders progressbar role, clamps values, and applies accessible labels", () => {
-    const { rerender } = renderWithSound(<ProgressBar value={40} max={100} label="Course Progress" />);
+    const { rerender } = renderWithSound(
+      <ProgressBar value={40} max={100} label="Course Progress" />,
+    );
     const bar = screen.getByRole("progressbar", { name: "Course Progress" });
     expect(bar).toHaveAttribute("aria-valuenow", "40");
     expect(bar).toHaveAttribute("aria-valuemax", "100");
@@ -43,7 +41,7 @@ describe("UIK-16: Progress & Gauges", () => {
     rerender(
       <SoundContext.Provider value={mockSoundValue}>
         <ProgressBar value={150} max={100} label="Course Progress" />
-      </SoundContext.Provider>
+      </SoundContext.Provider>,
     );
     expect(bar).toHaveAttribute("aria-valuenow", "100");
   });
@@ -52,7 +50,7 @@ describe("UIK-16: Progress & Gauges", () => {
     renderWithSound(
       <ProgressRing value={75} max={100} label="Level Ring">
         <span data-testid="ring-center">Lvl 5</span>
-      </ProgressRing>
+      </ProgressRing>,
     );
     const ring = screen.getByRole("progressbar", { name: "Level Ring" });
     expect(ring).toHaveAttribute("aria-valuenow", "75");
@@ -83,7 +81,7 @@ describe("UIK-17: Loading, Empty, and Error States", () => {
         description="You have cleared all pending homework."
         actionLabel="Create Assignment"
         onAction={handleAction}
-      />
+      />,
     );
 
     expect(screen.getByText("No Assignments Found")).toBeInTheDocument();
@@ -108,7 +106,7 @@ describe("UIK-17: Loading, Empty, and Error States", () => {
         description="Could not reach the server."
         retryLabel="Try Again"
         onRetry={handleRetry}
-      />
+      />,
     );
 
     expect(screen.getByText("Connection Failed")).toBeInTheDocument();
@@ -139,12 +137,7 @@ describe("UIK-18: DataTable", () => {
 
   it("renders table rows and columns correctly", () => {
     renderWithSound(
-      <DataTable
-        label="Students Table"
-        columns={columns}
-        data={data}
-        getRowId={(s) => s.id}
-      />
+      <DataTable label="Students Table" columns={columns} data={data} getRowId={(s) => s.id} />,
     );
 
     expect(screen.getByRole("grid", { name: "Students Table" })).toBeInTheDocument();
@@ -175,7 +168,7 @@ describe("UIK-18: DataTable", () => {
             },
           },
         ]}
-      />
+      />,
     );
 
     const checkboxes = screen.getAllByRole("checkbox");
@@ -195,12 +188,7 @@ describe("UIK-19: Pagination & FilterBar", () => {
     const handlePageChange = vi.fn();
 
     renderWithSound(
-      <Pagination
-        page={1}
-        pageSize={10}
-        totalItems={30}
-        onPageChange={handlePageChange}
-      />
+      <Pagination page={1} pageSize={10} totalItems={30} onPageChange={handlePageChange} />,
     );
 
     expect(screen.getByText(/Showing 1 to 10 of 30/i)).toBeInTheDocument();
@@ -234,7 +222,7 @@ describe("UIK-19: Pagination & FilterBar", () => {
         filterValues={{ grade: ["g7"] }}
         onFilterChange={handleFilterChange}
         onClearAll={handleClearAll}
-      />
+      />,
     );
 
     expect(screen.getByDisplayValue("Vocabulary")).toBeInTheDocument();
@@ -257,7 +245,7 @@ describe("UIK-20: Tabs & SegmentedControl", () => {
         </TabsList>
         <TabsContent value="tab1">Panel One Content</TabsContent>
         <TabsContent value="tab2">Panel Two Content</TabsContent>
-      </Tabs>
+      </Tabs>,
     );
 
     expect(screen.getByText("Panel One Content")).toBeInTheDocument();
@@ -283,7 +271,7 @@ describe("UIK-20: Tabs & SegmentedControl", () => {
           { value: "grid", label: "Grid View" },
           { value: "list", label: "List View" },
         ]}
-      />
+      />,
     );
 
     const listBtn = screen.getByRole("tab", { name: "List View" });
@@ -305,10 +293,12 @@ describe("UIK-21: Accordion", () => {
           <AccordionTrigger>How to earn XP?</AccordionTrigger>
           <AccordionContent>Complete lessons and quizzes daily.</AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </Accordion>,
     );
 
-    expect(screen.getByText("An English learning platform for Libyan students.")).toBeInTheDocument();
+    expect(
+      screen.getByText("An English learning platform for Libyan students."),
+    ).toBeInTheDocument();
     expect(screen.getByText("What is Al Hikmah?")).toBeInTheDocument();
     expect(screen.getByText("How to earn XP?")).toBeInTheDocument();
 

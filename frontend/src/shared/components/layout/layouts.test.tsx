@@ -30,7 +30,7 @@ const mockSoundValue: SoundContextValue = {
 function renderInProviders(
   ui: React.ReactElement,
   authOverrides?: Partial<typeof defaultAuthContext>,
-  initialEntries: string[] = ["/"]
+  initialEntries: string[] = ["/"],
 ) {
   const authValue = { ...defaultAuthContext, ...authOverrides };
   return render(
@@ -40,15 +40,13 @@ function renderInProviders(
           <ThemeProvider>
             <EffectsProvider>
               <ToastProvider>
-                <SoundContext.Provider value={mockSoundValue}>
-                  {ui}
-                </SoundContext.Provider>
+                <SoundContext.Provider value={mockSoundValue}>{ui}</SoundContext.Provider>
               </ToastProvider>
             </EffectsProvider>
           </ThemeProvider>
         </WorldProvider>
       </AuthContext.Provider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -59,7 +57,7 @@ describe("UIK-22: Public Header & Footer", () => {
 
     expect(screen.getByRole("link", { name: /Skip to content/i })).toHaveAttribute(
       "href",
-      "#main-content"
+      "#main-content",
     );
 
     const openMenuBtn = screen.getByRole("button", { name: "Open menu" });
@@ -83,27 +81,20 @@ describe("UIK-22: Public Header & Footer", () => {
       mustChangePassword: false,
     };
 
-    renderInProviders(
-      <PublicHeader />,
-      { isAuthenticated: true, user: mockUser }
-    );
+    renderInProviders(<PublicHeader />, { isAuthenticated: true, user: mockUser });
 
     expect(screen.getAllByText(/Open my dashboard/i).length).toBeGreaterThan(0);
   });
 
   it("PublicFooter renders school name, platform links, legal links, and accreditation", () => {
-    renderInProviders(
-      <PublicFooter accreditation="Licensed by Libyan Ministry of Education" />
-    );
+    renderInProviders(<PublicFooter accreditation="Licensed by Libyan Ministry of Education" />);
 
     expect(screen.getByText("Al Hikmah Private School")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "About" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "FAQ" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Help and contact" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Terms and Privacy" })).toBeInTheDocument();
-    expect(
-      screen.getByText("Licensed by Libyan Ministry of Education")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Licensed by Libyan Ministry of Education")).toBeInTheDocument();
   });
 });
 
@@ -127,7 +118,7 @@ describe("UIK-23: Student App Shell", () => {
         onOpenNav={vi.fn()}
         navOpen={false}
         navId="student-drawer"
-      />
+      />,
     );
 
     expect(screen.getAllByText(/Level 3/).length).toBeGreaterThan(0);
@@ -151,7 +142,7 @@ describe("UIK-23: Student App Shell", () => {
         <div data-testid="student-child">Dashboard Home Content</div>
       </StudentAppShell>,
       {},
-      ["/student"]
+      ["/student"],
     );
 
     expect(screen.getByTestId("student-child")).toBeInTheDocument();
@@ -180,7 +171,7 @@ describe("UIK-24: Teacher App Shell", () => {
         navOpen={false}
         navId="teacher-drawer"
         focused={false}
-      />
+      />,
     );
 
     expect(screen.getAllByText("Grade 7-A English").length).toBeGreaterThan(0);
@@ -189,14 +180,11 @@ describe("UIK-24: Teacher App Shell", () => {
 
   it("TeacherAppShell renders normal layout with navigation groups", () => {
     renderInProviders(
-      <TeacherAppShell
-        classes={dummyClasses}
-        pendingSubmissions={3}
-      >
+      <TeacherAppShell classes={dummyClasses} pendingSubmissions={3}>
         <div data-testid="teacher-content">Teacher Dashboard Overview</div>
       </TeacherAppShell>,
       {},
-      ["/teacher"]
+      ["/teacher"],
     );
 
     expect(screen.getByTestId("teacher-content")).toBeInTheDocument();
@@ -214,7 +202,7 @@ describe("UIK-24: Teacher App Shell", () => {
         <div data-testid="grading-view">Grading Submission #1</div>
       </TeacherAppShell>,
       {},
-      ["/teacher/grading/sub-1"]
+      ["/teacher/grading/sub-1"],
     );
 
     expect(screen.getByTestId("grading-view")).toBeInTheDocument();
@@ -232,13 +220,13 @@ describe("UIK-25: Admin App Shell & View-As Simulation", () => {
       <ViewAsBanner
         session={{ targetName: "Tariq Aziz", targetRole: "teacher" }}
         onExit={handleExit}
-      />
+      />,
     );
 
     expect(screen.getByRole("region", { name: "View-as simulation" })).toBeInTheDocument();
     expect(screen.getByText(/Viewing as Tariq Aziz \(Teacher\)\./i)).toBeInTheDocument();
     expect(
-      screen.getByText(/This simulation is read-only: nothing you do here changes their data\./i)
+      screen.getByText(/This simulation is read-only: nothing you do here changes their data\./i),
     ).toBeInTheDocument();
 
     const exitBtn = screen.getByRole("button", { name: "Exit simulation" });
@@ -263,7 +251,7 @@ describe("UIK-25: Admin App Shell & View-As Simulation", () => {
         <div data-testid="admin-panel">Admin Users Table</div>
       </AdminAppShell>,
       { isAuthenticated: true, user: mockAdmin },
-      ["/admin/users"]
+      ["/admin/users"],
     );
 
     expect(screen.getByTestId("admin-panel")).toBeInTheDocument();

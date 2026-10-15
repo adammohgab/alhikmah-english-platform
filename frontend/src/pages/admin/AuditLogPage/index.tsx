@@ -1,6 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, ChevronDown, FileSearch, RefreshCw, Search, ShieldCheck } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  FileSearch,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { env } from "@/shared/config/env";
 import { supabase } from "@/shared/api/supabase";
@@ -72,7 +79,12 @@ export default function AuditLogPage() {
 
   const rows = useMemo(() => auditQuery.data ?? [], [auditQuery.data]);
   const actionTypes = useMemo(
-    () => [...new Set(rows.map((row) => row.action_type).filter((type): type is string => Boolean(type)))].sort(),
+    () =>
+      [
+        ...new Set(
+          rows.map((row) => row.action_type).filter((type): type is string => Boolean(type)),
+        ),
+      ].sort(),
     [rows],
   );
 
@@ -106,7 +118,10 @@ export default function AuditLogPage() {
   }, [actionType, fromDate, rows, search, toDate]);
 
   return (
-    <main data-world="coral" className="min-h-screen bg-world-coral-50 px-4 py-8 text-stroke sm:px-6 lg:px-10">
+    <main
+      data-world="coral"
+      className="min-h-screen bg-world-coral-50 px-4 py-8 text-stroke sm:px-6 lg:px-10"
+    >
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="rounded-[26px] border-2 border-stroke bg-world-coral-200 p-6 shadow-retro-md sm:p-8">
           <Link to="/admin" className="text-sm font-bold underline underline-offset-4">
@@ -118,7 +133,9 @@ export default function AuditLogPage() {
                 <ShieldCheck size={15} aria-hidden="true" /> Immutable records
               </p>
               <h1 className="mt-3 font-heading text-4xl font-bold">Audit Log</h1>
-              <p className="mt-2 text-muted">Review administrative changes and compare before-and-after values.</p>
+              <p className="mt-2 text-muted">
+                Review administrative changes and compare before-and-after values.
+              </p>
             </div>
             <button
               type="button"
@@ -126,7 +143,11 @@ export default function AuditLogPage() {
               disabled={auditQuery.isFetching}
               className="inline-flex min-h-11 items-center gap-2 rounded-xl border-2 border-stroke bg-surface-0 px-4 font-bold shadow-retro-sm disabled:opacity-60"
             >
-              <RefreshCw size={17} className={auditQuery.isFetching ? "animate-spin" : ""} aria-hidden="true" />
+              <RefreshCw
+                size={17}
+                className={auditQuery.isFetching ? "animate-spin" : ""}
+                aria-hidden="true"
+              />
               Refresh
             </button>
           </div>
@@ -136,7 +157,11 @@ export default function AuditLogPage() {
           <div className="grid gap-3 md:grid-cols-4">
             <label className="relative md:col-span-2">
               <span className="sr-only">Search audit events</span>
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                aria-hidden="true"
+              />
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
@@ -153,9 +178,17 @@ export default function AuditLogPage() {
                 className="min-h-11 w-full appearance-none rounded-xl border-2 border-stroke bg-surface-0 px-3 pr-9 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 <option value="all">All action types</option>
-                {actionTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+                {actionTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
               </select>
-              <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
+              <ChevronDown
+                size={16}
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+                aria-hidden="true"
+              />
             </label>
 
             <div className="flex items-center gap-2 text-sm font-bold text-muted">
@@ -185,7 +218,10 @@ export default function AuditLogPage() {
         </section>
 
         {auditQuery.isError && (
-          <div role="alert" className="rounded-2xl border-2 border-stroke bg-world-rose-100 p-4 shadow-retro-sm">
+          <div
+            role="alert"
+            className="rounded-2xl border-2 border-stroke bg-world-rose-100 p-4 shadow-retro-sm"
+          >
             <p className="font-bold">Audit entries could not be loaded.</p>
             <p className="mt-1 text-sm">{auditQuery.error.message}</p>
           </div>
@@ -196,52 +232,87 @@ export default function AuditLogPage() {
             <table className="w-full min-w-[900px] border-collapse text-left">
               <thead className="bg-world-sky-100">
                 <tr className="border-b-2 border-stroke text-xs uppercase tracking-wider">
-                  <th scope="col" className="px-4 py-3">Timestamp</th>
-                  <th scope="col" className="px-4 py-3">Admin</th>
-                  <th scope="col" className="px-4 py-3">Action</th>
-                  <th scope="col" className="px-4 py-3">Target</th>
-                  <th scope="col" className="px-4 py-3">IP address</th>
-                  <th scope="col" className="px-4 py-3"><span className="sr-only">Details</span></th>
+                  <th scope="col" className="px-4 py-3">
+                    Timestamp
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Admin
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Action
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Target
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    IP address
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <span className="sr-only">Details</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {auditQuery.isLoading ? (
-                  <tr><td colSpan={6} className="px-4 py-10 text-center font-semibold">Loading audit records…</td></tr>
+                  <tr>
+                    <td colSpan={6} className="px-4 py-10 text-center font-semibold">
+                      Loading audit records…
+                    </td>
+                  </tr>
                 ) : filteredRows.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-12 text-center">
                       <FileSearch className="mx-auto mb-2" size={25} aria-hidden="true" />
                       <p className="font-bold">No matching audit records</p>
-                      <p className="mt-1 text-sm text-muted">Try changing the search or date filters.</p>
+                      <p className="mt-1 text-sm text-muted">
+                        Try changing the search or date filters.
+                      </p>
                     </td>
                   </tr>
-                ) : filteredRows.map((row) => (
-                  <tr key={row.id} className="border-b border-stroke/10 last:border-0 hover:bg-world-coral-50">
-                    <td className="whitespace-nowrap px-4 py-4 text-sm">{formatDate(row.created_at)}</td>
-                    <td className="px-4 py-4">
-                      <p className="font-bold">{row.actor?.display_name ?? row.actor?.username ?? "Admin account"}</p>
-                      <p className="text-xs text-muted">{row.actor_id ?? row.user_id ?? "System"}</p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <p className="font-bold">{row.action.replace(/_/g, " ")}</p>
-                      {row.action_type && <p className="mt-1 text-xs text-muted">{row.action_type}</p>}
-                    </td>
-                    <td className="px-4 py-4 text-sm">
-                      <span className="font-semibold">{row.target_table ?? row.target_type ?? "—"}</span>
-                      {row.target_id && <span className="ml-2 text-xs text-muted">{row.target_id}</span>}
-                    </td>
-                    <td className="px-4 py-4 font-mono text-xs">{row.ip_address ?? "—"}</td>
-                    <td className="px-4 py-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => setSelected(row)}
-                        className="min-h-9 rounded-lg border-2 border-stroke bg-surface-0 px-3 text-sm font-bold shadow-retro-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                      >
-                        View diff
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                ) : (
+                  filteredRows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="border-b border-stroke/10 last:border-0 hover:bg-world-coral-50"
+                    >
+                      <td className="whitespace-nowrap px-4 py-4 text-sm">
+                        {formatDate(row.created_at)}
+                      </td>
+                      <td className="px-4 py-4">
+                        <p className="font-bold">
+                          {row.actor?.display_name ?? row.actor?.username ?? "Admin account"}
+                        </p>
+                        <p className="text-xs text-muted">
+                          {row.actor_id ?? row.user_id ?? "System"}
+                        </p>
+                      </td>
+                      <td className="px-4 py-4">
+                        <p className="font-bold">{row.action.replace(/_/g, " ")}</p>
+                        {row.action_type && (
+                          <p className="mt-1 text-xs text-muted">{row.action_type}</p>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 text-sm">
+                        <span className="font-semibold">
+                          {row.target_table ?? row.target_type ?? "—"}
+                        </span>
+                        {row.target_id && (
+                          <span className="ml-2 text-xs text-muted">{row.target_id}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 font-mono text-xs">{row.ip_address ?? "—"}</td>
+                      <td className="px-4 py-4 text-right">
+                        <button
+                          type="button"
+                          onClick={() => setSelected(row)}
+                          className="min-h-9 rounded-lg border-2 border-stroke bg-surface-0 px-3 text-sm font-bold shadow-retro-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        >
+                          View diff
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -271,7 +342,8 @@ export default function AuditLogPage() {
                   {selected.action.replace(/_/g, " ")}
                 </h2>
                 <p className="mt-1 text-sm text-muted">
-                  {selected.target_table ?? selected.target_type ?? "Target"} · {selected.target_id ?? "No target ID"}
+                  {selected.target_table ?? selected.target_type ?? "Target"} ·{" "}
+                  {selected.target_id ?? "No target ID"}
                 </p>
               </div>
               <button

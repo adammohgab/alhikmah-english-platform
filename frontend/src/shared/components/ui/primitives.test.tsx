@@ -30,20 +30,28 @@ function renderWithSound(ui: React.ReactElement) {
 
 describe("UIK-04: Button and IconButton primitives", () => {
   it("renders button variants and sizes", () => {
-    const { rerender } = renderWithSound(<Button variant="primary" size="md">Click Me</Button>);
+    const { rerender } = renderWithSound(
+      <Button variant="primary" size="md">
+        Click Me
+      </Button>,
+    );
     expect(screen.getByRole("button", { name: "Click Me" })).toBeInTheDocument();
 
     rerender(
       <SoundContext.Provider value={mockSoundValue}>
-        <Button variant="danger" size="pill">Danger Pill</Button>
-      </SoundContext.Provider>
+        <Button variant="danger" size="pill">
+          Danger Pill
+        </Button>
+      </SoundContext.Provider>,
     );
     expect(screen.getByRole("button", { name: "Danger Pill" })).toHaveClass("rounded-full");
 
     rerender(
       <SoundContext.Provider value={mockSoundValue}>
-        <Button variant="secondary" size="lg">Secondary Large</Button>
-      </SoundContext.Provider>
+        <Button variant="secondary" size="lg">
+          Secondary Large
+        </Button>
+      </SoundContext.Provider>,
     );
     expect(screen.getByRole("button", { name: "Secondary Large" })).toBeInTheDocument();
   });
@@ -51,7 +59,11 @@ describe("UIK-04: Button and IconButton primitives", () => {
   it("handles loading state by disabling clicks and showing retro spinner", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
-    renderWithSound(<Button loading onClick={onClick}>Loading Action</Button>);
+    renderWithSound(
+      <Button loading onClick={onClick}>
+        Loading Action
+      </Button>,
+    );
 
     const button = screen.getByRole("button", { name: "Loading Action" });
     expect(button).toHaveAttribute("aria-busy", "true");
@@ -70,7 +82,11 @@ describe("UIK-04: Button and IconButton primitives", () => {
   });
 
   it("renders IconButton with accessible name and circular geometry", () => {
-    renderWithSound(<IconButton aria-label="Favorite"><span data-testid="star">★</span></IconButton>);
+    renderWithSound(
+      <IconButton aria-label="Favorite">
+        <span data-testid="star">★</span>
+      </IconButton>,
+    );
     const button = screen.getByRole("button", { name: "Favorite" });
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass("rounded-full");
@@ -154,7 +170,11 @@ describe("UIK-06: ShapeFrame, Sticker, and Squiggle arcade primitives", () => {
   });
 
   it("renders Sticker with tilt and white border", () => {
-    render(<Sticker rotate={-3} tilt={4} shape="squircle">Sticker Content</Sticker>);
+    render(
+      <Sticker rotate={-3} tilt={4} shape="squircle">
+        Sticker Content
+      </Sticker>,
+    );
     expect(screen.getByText("Sticker Content")).toBeInTheDocument();
   });
 
@@ -166,7 +186,11 @@ describe("UIK-06: ShapeFrame, Sticker, and Squiggle arcade primitives", () => {
 
 describe("UIK-07: Card, Surface, and RetroContainer", () => {
   it("renders Surface with semantic tag and shadow depths", () => {
-    render(<Surface as="article" shadow="lg" data-testid="surface">Article Content</Surface>);
+    render(
+      <Surface as="article" shadow="lg" data-testid="surface">
+        Article Content
+      </Surface>,
+    );
     const el = screen.getByTestId("surface");
     expect(el.tagName.toLowerCase()).toBe("article");
     expect(el).toHaveClass("shadow-retro-lg");
@@ -174,12 +198,7 @@ describe("UIK-07: Card, Surface, and RetroContainer", () => {
 
   it("renders Card and RetroContainer with header band and hoverable lift", () => {
     render(
-      <Card
-        header={<span>Card Header</span>}
-        headerTone="main"
-        hoverable
-        data-testid="retro-card"
-      >
+      <Card header={<span>Card Header</span>} headerTone="main" hoverable data-testid="retro-card">
         Card Body
       </Card>,
     );

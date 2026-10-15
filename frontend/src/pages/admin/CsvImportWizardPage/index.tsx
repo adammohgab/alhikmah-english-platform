@@ -224,10 +224,12 @@ export default function CsvImportWizardPage() {
     detectedHeaders.forEach((h) => {
       const low = h.toLowerCase().replace(/[\s_-]/g, "");
       if (low.includes("first") || low === "fname") autoMap.first_name = h;
-      else if (low.includes("last") || low === "lname" || low.includes("family")) autoMap.last_name = h;
+      else if (low.includes("last") || low === "lname" || low.includes("family"))
+        autoMap.last_name = h;
       else if (low.includes("user") || low === "login" || low === "id") autoMap.username = h;
       else if (low.includes("grade") || low === "year") autoMap.grade = h;
-      else if (low.includes("class") || low.includes("section") || low.includes("group")) autoMap.class_code = h;
+      else if (low.includes("class") || low.includes("section") || low.includes("group"))
+        autoMap.class_code = h;
       else if (low.includes("email") || low.includes("mail")) autoMap.email = h;
     });
 
@@ -259,18 +261,29 @@ export default function CsvImportWizardPage() {
     const autoMap = { ...mapping };
     headers.forEach((h) => {
       const low = h.toLowerCase().trim();
-      if (!autoMap.first_name && (low.includes("first") || low.includes("given") || low.includes("name")))
+      if (
+        !autoMap.first_name &&
+        (low.includes("first") || low.includes("given") || low.includes("name"))
+      )
         autoMap.first_name = h;
       if (!autoMap.last_name && (low.includes("last") || low.includes("surname")))
         autoMap.last_name = h;
-      if (!autoMap.username && (low.includes("user") || low.includes("acc") || low.includes("handle")))
+      if (
+        !autoMap.username &&
+        (low.includes("user") || low.includes("acc") || low.includes("handle"))
+      )
         autoMap.username = h;
-      if (!autoMap.grade && (low.includes("grade") || low.includes("level") || low.includes("year")))
+      if (
+        !autoMap.grade &&
+        (low.includes("grade") || low.includes("level") || low.includes("year"))
+      )
         autoMap.grade = h;
-      if (!autoMap.class_code && (low.includes("class") || low.includes("code") || low.includes("room")))
+      if (
+        !autoMap.class_code &&
+        (low.includes("class") || low.includes("code") || low.includes("room"))
+      )
         autoMap.class_code = h;
-      if (!autoMap.email && (low.includes("mail") || low.includes("contact")))
-        autoMap.email = h;
+      if (!autoMap.email && (low.includes("mail") || low.includes("contact"))) autoMap.email = h;
     });
     setMapping(autoMap);
     toast.show({
@@ -366,11 +379,7 @@ export default function CsvImportWizardPage() {
   // -------------------------------------------------------------
   // Step 3: Interactive Cell Editing & AI Fixes
   // -------------------------------------------------------------
-  const handleUpdateCell = (
-    rowNumber: number,
-    field: keyof ParsedRow["mapped"],
-    value: string
-  ) => {
+  const handleUpdateCell = (rowNumber: number, field: keyof ParsedRow["mapped"], value: string) => {
     setParsedRows((prev) =>
       prev.map((r) => {
         if (r.rowNumber !== rowNumber) return r;
@@ -400,13 +409,13 @@ export default function CsvImportWizardPage() {
           errors,
           isValid: Object.keys(errors).length === 0,
         };
-      })
+      }),
     );
   };
 
   const handleToggleExcludeRow = (rowNumber: number) => {
     setParsedRows((prev) =>
-      prev.map((r) => (r.rowNumber === rowNumber ? { ...r, excluded: !r.excluded } : r))
+      prev.map((r) => (r.rowNumber === rowNumber ? { ...r, excluded: !r.excluded } : r)),
     );
   };
 
@@ -447,7 +456,7 @@ export default function CsvImportWizardPage() {
           errors: newErrors,
           isValid: Object.keys(newErrors).length === 0,
         };
-      })
+      }),
     );
 
     toast.show({
@@ -460,11 +469,23 @@ export default function CsvImportWizardPage() {
   const handleDownloadErrorReport = () => {
     const errorRows = parsedRows.filter((r) => !r.isValid);
     if (errorRows.length === 0) {
-      toast.show({ title: "No errors", description: "All rows are currently valid.", type: "success" });
+      toast.show({
+        title: "No errors",
+        description: "All rows are currently valid.",
+        type: "success",
+      });
       return;
     }
 
-    const reportHeaders = ["Row", "First Name", "Last Name", "Username", "Grade", "Class", "Errors"];
+    const reportHeaders = [
+      "Row",
+      "First Name",
+      "Last Name",
+      "Username",
+      "Grade",
+      "Class",
+      "Errors",
+    ];
     const csvContent = [
       reportHeaders.join(","),
       ...errorRows.map((r) =>
@@ -476,7 +497,7 @@ export default function CsvImportWizardPage() {
           `"${r.mapped.grade}"`,
           `"${r.mapped.class_code}"`,
           `"${Object.values(r.errors).join("; ")}"`,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -653,7 +674,14 @@ export default function CsvImportWizardPage() {
   const handleDownloadCredentialsCsv = () => {
     if (generatedCredentials.length === 0) return;
 
-    const credHeaders = ["Full Name", "Username", "Initial Temporary Password", "Role", "Grade", "Class Code"];
+    const credHeaders = [
+      "Full Name",
+      "Username",
+      "Initial Temporary Password",
+      "Role",
+      "Grade",
+      "Class Code",
+    ];
     const csvContent = [
       credHeaders.join(","),
       ...generatedCredentials.map((c) =>
@@ -664,7 +692,7 @@ export default function CsvImportWizardPage() {
           `"${c.role}"`,
           `"${c.grade}"`,
           `"${c.classCode}"`,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -672,7 +700,10 @@ export default function CsvImportWizardPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `credentials_distribution_${importType}_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute(
+      "download",
+      `credentials_distribution_${importType}_${new Date().toISOString().slice(0, 10)}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -719,7 +750,7 @@ export default function CsvImportWizardPage() {
                 <div class="row"><span>Password:</span> <span class="val">${c.password}</span></div>
                 <div class="row"><span>Grade / Class:</span> <span>Grade ${c.grade} (${c.classCode})</span></div>
               </div>
-            `
+            `,
               )
               .join("")}
           </div>
@@ -749,7 +780,8 @@ export default function CsvImportWizardPage() {
               CSV Bulk Import Wizard
             </h1>
             <p className="font-body text-sm text-muted mt-1">
-              Upload class rosters, map fields flexibly, correct errors interactively, and dispatch bulk accounts.
+              Upload class rosters, map fields flexibly, correct errors interactively, and dispatch
+              bulk accounts.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -802,11 +834,16 @@ export default function CsvImportWizardPage() {
       {currentStep === 1 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <h2 className="font-display text-lg font-bold text-ink mb-4">Step 1: Choose Import Type & Upload</h2>
+            <h2 className="font-display text-lg font-bold text-ink mb-4">
+              Step 1: Choose Import Type & Upload
+            </h2>
 
             {/* Import Type Selector */}
             <div className="mb-6 max-w-sm">
-              <label htmlFor={`${importId}-role`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
+              <label
+                htmlFor={`${importId}-role`}
+                className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5"
+              >
                 Target Role
               </label>
               <Select
@@ -849,7 +886,8 @@ export default function CsvImportWizardPage() {
                 Click to browse or drop your CSV file here
               </h3>
               <p className="font-body text-xs text-muted mt-1 max-w-md">
-                Standard UTF-8 comma-separated file with header row. Up to 2,000 rows supported per batch.
+                Standard UTF-8 comma-separated file with header row. Up to 2,000 rows supported per
+                batch.
               </p>
             </div>
           </div>
@@ -864,7 +902,8 @@ export default function CsvImportWizardPage() {
               <div>
                 <h2 className="font-display text-lg font-bold text-ink">Step 2: Map Columns</h2>
                 <p className="font-body text-xs text-muted mt-1">
-                  Connect headers from <span className="font-semibold text-ink">{fileName}</span> to the platform fields.
+                  Connect headers from <span className="font-semibold text-ink">{fileName}</span> to
+                  the platform fields.
                 </p>
               </div>
               <Button variant="outline" size="sm" onClick={handleAiSuggestMapping}>
@@ -939,9 +978,12 @@ export default function CsvImportWizardPage() {
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
               <div>
-                <h2 className="font-display text-lg font-bold text-ink">Step 3: Validation & Error Correction</h2>
+                <h2 className="font-display text-lg font-bold text-ink">
+                  Step 3: Validation & Error Correction
+                </h2>
                 <p className="font-body text-xs text-muted mt-1">
-                  Review detected rows. Fix invalid cells directly in the grid, or use AI to correct common issues.
+                  Review detected rows. Fix invalid cells directly in the grid, or use AI to correct
+                  common issues.
                 </p>
               </div>
 
@@ -1040,7 +1082,9 @@ export default function CsvImportWizardPage() {
                             type="text"
                             value={row.mapped.first_name}
                             disabled={row.excluded}
-                            onChange={(e) => handleUpdateCell(row.rowNumber, "first_name", e.target.value)}
+                            onChange={(e) =>
+                              handleUpdateCell(row.rowNumber, "first_name", e.target.value)
+                            }
                             className="w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1 focus:ring-ink"
                           />
                         </td>
@@ -1049,7 +1093,9 @@ export default function CsvImportWizardPage() {
                             type="text"
                             value={row.mapped.last_name}
                             disabled={row.excluded}
-                            onChange={(e) => handleUpdateCell(row.rowNumber, "last_name", e.target.value)}
+                            onChange={(e) =>
+                              handleUpdateCell(row.rowNumber, "last_name", e.target.value)
+                            }
                             className="w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1 focus:ring-ink"
                           />
                         </td>
@@ -1058,9 +1104,13 @@ export default function CsvImportWizardPage() {
                             type="text"
                             value={row.mapped.username}
                             disabled={row.excluded}
-                            onChange={(e) => handleUpdateCell(row.rowNumber, "username", e.target.value)}
+                            onChange={(e) =>
+                              handleUpdateCell(row.rowNumber, "username", e.target.value)
+                            }
                             className={`w-full rounded-md border px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-ink ${
-                              row.errors["username"] ? "border-danger-500 bg-red-50 text-danger-800" : "border-stroke"
+                              row.errors["username"]
+                                ? "border-danger-500 bg-red-50 text-danger-800"
+                                : "border-stroke"
                             }`}
                           />
                         </td>
@@ -1069,9 +1119,13 @@ export default function CsvImportWizardPage() {
                             type="text"
                             value={row.mapped.grade}
                             disabled={row.excluded}
-                            onChange={(e) => handleUpdateCell(row.rowNumber, "grade", e.target.value)}
+                            onChange={(e) =>
+                              handleUpdateCell(row.rowNumber, "grade", e.target.value)
+                            }
                             className={`w-full rounded-md border px-2 py-1 text-xs focus:ring-1 focus:ring-ink ${
-                              row.errors["grade"] ? "border-danger-500 bg-red-50 text-danger-800" : "border-stroke"
+                              row.errors["grade"]
+                                ? "border-danger-500 bg-red-50 text-danger-800"
+                                : "border-stroke"
                             }`}
                           />
                         </td>
@@ -1080,7 +1134,9 @@ export default function CsvImportWizardPage() {
                             type="text"
                             value={row.mapped.class_code}
                             disabled={row.excluded}
-                            onChange={(e) => handleUpdateCell(row.rowNumber, "class_code", e.target.value)}
+                            onChange={(e) =>
+                              handleUpdateCell(row.rowNumber, "class_code", e.target.value)
+                            }
                             className="w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1 focus:ring-ink"
                           />
                         </td>
@@ -1122,24 +1178,32 @@ export default function CsvImportWizardPage() {
       {currentStep === 4 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <h2 className="font-display text-lg font-bold text-ink mb-4">Step 4: Pre-flight Summary & Job Dispatch</h2>
+            <h2 className="font-display text-lg font-bold text-ink mb-4">
+              Step 4: Pre-flight Summary & Job Dispatch
+            </h2>
 
             {/* Impact Preview */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="rounded-xl border-2 border-stroke bg-emerald-50/50 p-4">
-                <span className="text-xs font-bold uppercase text-emerald-800">Ready to Create</span>
+                <span className="text-xs font-bold uppercase text-emerald-800">
+                  Ready to Create
+                </span>
                 <p className="font-display text-2xl font-bold text-emerald-900 mt-1">
                   {validIncludedRows.length} Accounts
                 </p>
               </div>
               <div className="rounded-xl border-2 border-stroke bg-amber-50/50 p-4">
-                <span className="text-xs font-bold uppercase text-amber-800">Excluded by Admin</span>
+                <span className="text-xs font-bold uppercase text-amber-800">
+                  Excluded by Admin
+                </span>
                 <p className="font-display text-2xl font-bold text-amber-900 mt-1">
                   {parsedRows.filter((r) => r.excluded).length} Rows
                 </p>
               </div>
               <div className="rounded-xl border-2 border-stroke bg-red-50/50 p-4">
-                <span className="text-xs font-bold uppercase text-danger-800">Invalid / Skipped</span>
+                <span className="text-xs font-bold uppercase text-danger-800">
+                  Invalid / Skipped
+                </span>
                 <p className="font-display text-2xl font-bold text-danger-900 mt-1">
                   {parsedRows.filter((r) => !r.isValid && !r.excluded).length} Rows
                 </p>
@@ -1148,7 +1212,10 @@ export default function CsvImportWizardPage() {
 
             {/* Duplicates Policy */}
             <div className="rounded-xl border-2 border-stroke/60 bg-surface-50 p-4 mb-6 max-w-md">
-              <label htmlFor={`${importId}-duplicates`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
+              <label
+                htmlFor={`${importId}-duplicates`}
+                className="block text-xs font-bold uppercase tracking-wider text-muted mb-2"
+              >
                 Duplicates Handling Policy
               </label>
               <Select
@@ -1223,15 +1290,21 @@ export default function CsvImportWizardPage() {
               </div>
               <div className="p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-center">
                 <span className="text-xs text-emerald-800 font-semibold">Created Accounts</span>
-                <p className="font-display text-lg font-bold text-emerald-900">{importSummary.created}</p>
+                <p className="font-display text-lg font-bold text-emerald-900">
+                  {importSummary.created}
+                </p>
               </div>
               <div className="p-3 rounded-xl border border-amber-300 bg-amber-50 text-center">
                 <span className="text-xs text-amber-800 font-semibold">Excluded</span>
-                <p className="font-display text-lg font-bold text-amber-900">{importSummary.skipped}</p>
+                <p className="font-display text-lg font-bold text-amber-900">
+                  {importSummary.skipped}
+                </p>
               </div>
               <div className="p-3 rounded-xl border border-danger-300 bg-red-50 text-center">
                 <span className="text-xs text-danger-800 font-semibold">Failed / Invalid</span>
-                <p className="font-display text-lg font-bold text-danger-900">{importSummary.failed}</p>
+                <p className="font-display text-lg font-bold text-danger-900">
+                  {importSummary.failed}
+                </p>
               </div>
             </div>
 
@@ -1241,8 +1314,8 @@ export default function CsvImportWizardPage() {
                 Download Distribution Credentials
               </h3>
               <p className="text-xs text-muted mb-4 max-w-2xl">
-                Temporary passwords are generated once and never stored in plain text. Download the CSV
-                distribution file or print the credential handouts immediately for your records.
+                Temporary passwords are generated once and never stored in plain text. Download the
+                CSV distribution file or print the credential handouts immediately for your records.
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" onClick={handleDownloadCredentialsCsv}>
@@ -1276,7 +1349,9 @@ export default function CsvImportWizardPage() {
                     <tr key={cred.username} className="hover:bg-surface-50">
                       <td className="p-2.5 font-bold">{cred.fullName}</td>
                       <td className="p-2.5 font-mono">{cred.username}</td>
-                      <td className="p-2.5 font-mono text-ink bg-surface-100/50 font-bold">{cred.password}</td>
+                      <td className="p-2.5 font-mono text-ink bg-surface-100/50 font-bold">
+                        {cred.password}
+                      </td>
                       <td className="p-2.5 capitalize">{cred.role}</td>
                       <td className="p-2.5">Grade {cred.grade}</td>
                     </tr>

@@ -282,9 +282,7 @@ export function useViewAs(): ViewAsState {
 
   // Map the stored session to the shape expected by <ViewAsBanner>.
   const session: ViewAsSession | null =
-    stored !== null
-      ? { targetName: stored.targetName, targetRole: stored.targetRole }
-      : null;
+    stored !== null ? { targetName: stored.targetName, targetRole: stored.targetRole } : null;
 
   return {
     session,

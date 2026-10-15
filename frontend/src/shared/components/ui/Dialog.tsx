@@ -114,15 +114,7 @@ const DialogLayer = forwardRef<
     hasDescription: boolean;
     children: ReactNode;
   }
->(function DialogLayer(
-  {
-    size,
-    className,
-    hasDescription,
-    children,
-  },
-  ref,
-) {
+>(function DialogLayer({ size, className, hasDescription, children }, ref) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLElement>(null);
 
@@ -156,7 +148,10 @@ const DialogLayer = forwardRef<
         className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
       />
       {/* The wrapper centers the panel so the animated transform is free of positioning. */}
-      <div ref={ref} className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        ref={ref}
+        className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
         {/* Without a Description, an explicit undefined drops the dangling aria-describedby. */}
         <RadixDialog.Content asChild {...(hasDescription ? {} : { "aria-describedby": undefined })}>
           <Surface

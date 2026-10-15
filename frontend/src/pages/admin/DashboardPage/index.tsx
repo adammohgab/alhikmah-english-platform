@@ -57,7 +57,9 @@ async function fetchCount(resource: string): Promise<number> {
     headers: await requestHeaders("0-0"),
   });
   if (!response.ok) {
-    throw new Error(`${resource.split("?")[0]} returned ${response.status}: ${await response.text()}`);
+    throw new Error(
+      `${resource.split("?")[0]} returned ${response.status}: ${await response.text()}`,
+    );
   }
 
   const contentRange = response.headers.get("content-range");
@@ -77,7 +79,9 @@ async function fetchAllRows<T>(resource: string): Promise<T[]> {
       headers: await requestHeaders(`${offset}-${offset + pageSize - 1}`),
     });
     if (!response.ok) {
-      throw new Error(`${resource.split("?")[0]} returned ${response.status}: ${await response.text()}`);
+      throw new Error(
+        `${resource.split("?")[0]} returned ${response.status}: ${await response.text()}`,
+      );
     }
     const page = (await response.json()) as T[];
     rows.push(...page);
@@ -85,11 +89,7 @@ async function fetchAllRows<T>(resource: string): Promise<T[]> {
   }
 }
 
-async function capture<T>(
-  label: string,
-  request: Promise<T>,
-  errors: string[],
-): Promise<T | null> {
+async function capture<T>(label: string, request: Promise<T>, errors: string[]): Promise<T | null> {
   try {
     return await request;
   } catch (error) {
@@ -126,11 +126,7 @@ async function loadDashboardMetrics(): Promise<DashboardMetrics> {
       fetchCount("moderation_queue?select=id&status=in.(pending,new,in_review)"),
       errors,
     ),
-    capture(
-      "Failed background jobs",
-      fetchCount("jobs?select=id&status=eq.failed"),
-      errors,
-    ),
+    capture("Failed background jobs", fetchCount("jobs?select=id&status=eq.failed"), errors),
     capture(
       "Pending password resets",
       fetchCount("password_reset_requests?select=id&status=in.(pending,new)"),
@@ -139,9 +135,7 @@ async function loadDashboardMetrics(): Promise<DashboardMetrics> {
   ]);
 
   return {
-    enrolledStudents: enrollments
-      ? new Set(enrollments.map((row) => row.student_id)).size
-      : null,
+    enrolledStudents: enrollments ? new Set(enrollments.map((row) => row.student_id)).size : null,
     activeTeachers: teachers,
     completedLessonsToday: lessons,
     moderationReports: moderation,
@@ -210,7 +204,9 @@ function AlertRow({
 
   return (
     <div className="flex flex-wrap items-center gap-3 border-b-2 border-stroke/10 py-4 last:border-0">
-      <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border-2 border-stroke ${toneClass}`}>
+      <span
+        className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl border-2 border-stroke ${toneClass}`}
+      >
         <Icon size={19} aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1">
@@ -279,7 +275,10 @@ export default function DashboardPage() {
         : "Partially Available";
 
   return (
-    <main data-world="coral" className="min-h-screen bg-world-coral-50 px-4 py-8 text-stroke sm:px-6 lg:px-10">
+    <main
+      data-world="coral"
+      className="min-h-screen bg-world-coral-50 px-4 py-8 text-stroke sm:px-6 lg:px-10"
+    >
       <div className="mx-auto max-w-7xl space-y-7">
         <header className="relative overflow-hidden rounded-[28px] border-2 border-stroke bg-world-coral-200 p-6 shadow-retro-md sm:p-8">
           <div
@@ -323,17 +322,25 @@ export default function DashboardPage() {
         </header>
 
         {dashboard.isError && (
-          <div role="alert" className="rounded-2xl border-2 border-stroke bg-world-rose-100 p-4 shadow-retro-sm">
+          <div
+            role="alert"
+            className="rounded-2xl border-2 border-stroke bg-world-rose-100 p-4 shadow-retro-sm"
+          >
             <p className="font-bold">Dashboard data could not be loaded.</p>
             <p className="mt-1 text-sm">{dashboard.error.message}</p>
           </div>
         )}
 
         {!!metrics?.errors.length && (
-          <section role="status" className="rounded-2xl border-2 border-stroke bg-world-amber-100 p-4 shadow-retro-sm">
+          <section
+            role="status"
+            className="rounded-2xl border-2 border-stroke bg-world-amber-100 p-4 shadow-retro-sm"
+          >
             <p className="font-bold">Some counts are unavailable.</p>
             <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
-              {metrics.errors.map((error) => <li key={error}>{error}</li>)}
+              {metrics.errors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
             </ul>
           </section>
         )}
@@ -369,7 +376,11 @@ export default function DashboardPage() {
                 : "Database and job queue status"
             }
             icon={databaseAvailable && metrics?.failedJobs === 0 ? Check : Activity}
-            color={databaseAvailable && metrics?.failedJobs === 0 ? "bg-world-mint-200" : "bg-world-rose-200"}
+            color={
+              databaseAvailable && metrics?.failedJobs === 0
+                ? "bg-world-mint-200"
+                : "bg-world-rose-200"
+            }
           />
         </section>
 

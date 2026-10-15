@@ -15,8 +15,18 @@ interface Course {
   author_id: string | null;
   updated_at: string;
 }
-interface Unit { id: string; course_id: string; title: string; order_index: number; }
-interface Lesson { id: string; unit_id: string; title: string; order_index: number; }
+interface Unit {
+  id: string;
+  course_id: string;
+  title: string;
+  order_index: number;
+}
+interface Lesson {
+  id: string;
+  unit_id: string;
+  title: string;
+  order_index: number;
+}
 
 const base = env.VITE_SUPABASE_URL.replace(/\/$/, "") + "/rest/v1";
 
@@ -41,9 +51,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error((await response.text()) || "Curriculum request failed.");
   }
 
-  return response.status === 204
-    ? (undefined as T)
-    : (await response.json()) as T;
+  return response.status === 204 ? (undefined as T) : ((await response.json()) as T);
 }
 
 const grades = Array.from({ length: 12 }, (_, index) => String(index + 1));
@@ -65,18 +73,14 @@ export default function CurriculumAdminPage() {
   });
 
   const courses = useMemo(() => coursesQuery.data ?? [], [coursesQuery.data]);
-  const shown = courses.filter(
-    (course) => grade === "all" || course.grade_level === grade,
-  );
+  const shown = courses.filter((course) => grade === "all" || course.grade_level === grade);
 
   const officialByGrade = useMemo(
     () =>
       new Map(
         grades.map((item) => [
           item,
-          courses.filter(
-            (course) => course.grade_level === item && course.is_official,
-          ),
+          courses.filter((course) => course.grade_level === item && course.is_official),
         ]),
       ),
     [courses],
@@ -86,13 +90,10 @@ export default function CurriculumAdminPage() {
     setNotice("");
 
     try {
-      await request<Course[]>(
-        "courses?id=eq." + encodeURIComponent(course.id),
-        {
-          method: "PATCH",
-          body: JSON.stringify({ is_official: official }),
-        },
-      );
+      await request<Course[]>("courses?id=eq." + encodeURIComponent(course.id), {
+        method: "PATCH",
+        body: JSON.stringify({ is_official: official }),
+      });
 
       await client.invalidateQueries({
         queryKey: ["admin-curriculum-courses"],
@@ -104,9 +105,7 @@ export default function CurriculumAdminPage() {
           : "Official status removed; teacher editing follows course permissions.",
       );
     } catch (error) {
-      setNotice(
-        error instanceof Error ? error.message : "Could not update the course.",
-      );
+      setNotice(error instanceof Error ? error.message : "Could not update the course.");
     }
   }
 
@@ -120,9 +119,7 @@ export default function CurriculumAdminPage() {
           <p className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest">
             <ShieldCheck size={16} /> Official learning plan
           </p>
-          <h1 className="mt-2 font-heading text-4xl font-bold">
-            Curriculum repository
-          </h1>
+          <h1 className="mt-2 font-heading text-4xl font-bold">Curriculum repository</h1>
           <p className="mt-1">Courses and their published units and lessons.</p>
         </div>
 
@@ -134,7 +131,11 @@ export default function CurriculumAdminPage() {
         </button>
       </header>
 
-      {notice && <p role="status" className={frame + " p-4"}>{notice}</p>}
+      {notice && (
+        <p role="status" className={frame + " p-4"}>
+          {notice}
+        </p>
+      )}
 
       {coursesQuery.isError && (
         <p role="alert" className="rounded-xl border-2 border-stroke bg-world-rose-100 p-4">
@@ -143,7 +144,9 @@ export default function CurriculumAdminPage() {
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <label className="font-bold" htmlFor="curriculum-grade">Grade</label>
+        <label className="font-bold" htmlFor="curriculum-grade">
+          Grade
+        </label>
 
         <select
           id="curriculum-grade"
@@ -153,13 +156,15 @@ export default function CurriculumAdminPage() {
         >
           <option value="all">All grades</option>
           {grades.map((item) => (
-            <option key={item} value={item}>Grade {item}</option>
+            <option key={item} value={item}>
+              Grade {item}
+            </option>
           ))}
         </select>
 
         <span className="text-sm text-muted">
-          Official courses use the database is_official flag; published
-          curriculum is protected by the course access rules.
+          Official courses use the database is_official flag; published curriculum is protected by
+          the course access rules.
         </span>
       </div>
 
@@ -174,17 +179,13 @@ export default function CurriculumAdminPage() {
               className="mb-2 flex w-full items-center justify-between rounded-xl border-2 border-stroke bg-world-amber-100 px-3 py-2 text-left font-bold"
             >
               Grade {item}
-              <span className="text-sm">
-                {officialByGrade.get(item)?.length ?? 0} official
-              </span>
+              <span className="text-sm">{officialByGrade.get(item)?.length ?? 0} official</span>
             </button>
           ))}
         </aside>
 
         <section className="space-y-3" aria-label="Curriculum courses">
-          {coursesQuery.isLoading && (
-            <p className={frame + " p-5"}>Loading curriculum…</p>
-          )}
+          {coursesQuery.isLoading && <p className={frame + " p-5"}>Loading curriculum…</p>}
 
           {!coursesQuery.isLoading && shown.length === 0 && (
             <p className={frame + " p-5"}>No courses match this grade.</p>
@@ -195,9 +196,7 @@ export default function CurriculumAdminPage() {
               key={course.id}
               course={course}
               selected={selected === course.id}
-              onSelect={() =>
-                setSelected(selected === course.id ? null : course.id)
-              }
+              onSelect={() => setSelected(selected === course.id ? null : course.id)}
               onToggle={() => void setOfficial(course, !course.is_official)}
             />
           ))}
@@ -249,12 +248,10 @@ function CourseRow({
         <BookOpen aria-hidden="true" />
 
         <button onClick={onSelect} className="min-w-0 flex-1 text-left">
-          <span className="block font-heading text-xl font-bold">
-            {course.title}
-          </span>
+          <span className="block font-heading text-xl font-bold">{course.title}</span>
           <span className="text-sm text-muted">
-            Grade {course.grade_level ?? "Unassigned"} · {course.status} ·
-            Updated {new Date(course.updated_at).toLocaleDateString()}
+            Grade {course.grade_level ?? "Unassigned"} · {course.status} · Updated{" "}
+            {new Date(course.updated_at).toLocaleDateString()}
           </span>
         </button>
 
@@ -267,9 +264,13 @@ function CourseRow({
           className="inline-flex min-h-10 items-center gap-2 rounded-xl border-2 border-stroke bg-surface-0 px-3 font-bold"
         >
           {course.is_official ? (
-            <><UnlockKeyhole size={16} /> Remove official</>
+            <>
+              <UnlockKeyhole size={16} /> Remove official
+            </>
           ) : (
-            <><LockKeyhole size={16} /> Promote official</>
+            <>
+              <LockKeyhole size={16} /> Promote official
+            </>
           )}
         </button>
       </div>

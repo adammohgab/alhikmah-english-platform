@@ -1,5 +1,16 @@
 import { useEffect, useId, useState } from "react";
-import { Check, Copy, Eye, EyeOff, Loader2, Printer, RefreshCw, UserCheck, UserPlus, XCircle } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Eye,
+  EyeOff,
+  Loader2,
+  Printer,
+  RefreshCw,
+  UserCheck,
+  UserPlus,
+  XCircle,
+} from "lucide-react";
 import { supabase } from "@/shared/api/supabase";
 import { Dialog } from "@/shared/components/ui/Dialog";
 import { Input } from "@/shared/components/ui/Input";
@@ -78,7 +89,8 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
   useEffect(() => {
     if (!usernameManuallyEdited && fullName.trim()) {
       const parts = fullName.trim().toLowerCase().split(/\s+/);
-      const generated = parts.length > 1 ? `${parts[0]}.${parts[parts.length - 1]}` : (parts[0] ?? "");
+      const generated =
+        parts.length > 1 ? `${parts[0]}.${parts[parts.length - 1]}` : (parts[0] ?? "");
       const cleaned = generated.replace(/[^a-z0-9._-]/g, "").slice(0, 24);
       setUsername(cleaned);
     }
@@ -224,7 +236,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           status: "active",
           must_change_password: mustChangePassword,
         },
-        { onConflict: "id" }
+        { onConflict: "id" },
       );
 
       if (profileErr) {
@@ -391,7 +403,9 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               {createdCredentials.gradeLevel && (
                 <div className="flex justify-between items-center py-1.5">
                   <span className="text-muted font-medium">Grade Level</span>
-                  <span className="font-semibold text-ink">Grade {createdCredentials.gradeLevel}</span>
+                  <span className="font-semibold text-ink">
+                    Grade {createdCredentials.gradeLevel}
+                  </span>
                 </div>
               )}
             </div>
@@ -444,7 +458,13 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           </div>
         </div>
       ) : (
-        <form id={formId} onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4 py-2">
+        <form
+          id={formId}
+          onSubmit={(e) => {
+            void handleSubmit(e);
+          }}
+          className="space-y-4 py-2"
+        >
           {submitError && (
             <div className="flex items-center gap-2 rounded-xl border-2 border-danger-500 bg-red-50 p-3 text-sm font-medium text-danger-700">
               <XCircle className="h-4 w-4 shrink-0" />
@@ -454,7 +474,10 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
 
           {/* Role selector */}
           <div>
-            <label htmlFor={`${formId}-role`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
+            <label
+              htmlFor={`${formId}-role`}
+              className="block text-xs font-bold uppercase tracking-wider text-muted mb-1"
+            >
               Account Role
             </label>
             <Select
@@ -532,7 +555,10 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           {/* Grade level for students */}
           {role === "student" && (
             <div>
-              <label htmlFor={`${formId}-grade`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
+              <label
+                htmlFor={`${formId}-grade`}
+                className="block text-xs font-bold uppercase tracking-wider text-muted mb-1"
+              >
                 Grade Level
               </label>
               <Select
@@ -547,7 +573,10 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
 
           {/* Temporary Password */}
           <div>
-            <label htmlFor={`${formId}-password`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
+            <label
+              htmlFor={`${formId}-password`}
+              className="block text-xs font-bold uppercase tracking-wider text-muted mb-1"
+            >
               Initial Temporary Password
             </label>
             <div className="flex gap-2">

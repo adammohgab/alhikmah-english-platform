@@ -143,9 +143,7 @@ describe("UIK-10: Select, Checkbox, RadioGroup, and Switch selection controls", 
     const user = userEvent.setup();
     const onCheckedChange = vi.fn();
 
-    renderWithSound(
-      <Switch label="Sound Effects" onCheckedChange={onCheckedChange} />,
-    );
+    renderWithSound(<Switch label="Sound Effects" onCheckedChange={onCheckedChange} />);
 
     const switchBtn = screen.getByRole("switch", { name: "Sound Effects" });
     expect(switchBtn).toHaveAttribute("aria-checked", "false");
