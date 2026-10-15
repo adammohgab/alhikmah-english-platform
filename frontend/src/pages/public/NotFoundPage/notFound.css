@@ -1,0 +1,92 @@
+/* NotFoundPage easter egg motion (PUB-12 / SH-10).
+   Coins pop out of Pip and bounce once. Reduced motion and the "low" effects tier
+   (GLOBAL-STYLES-SPEC §8.9) drop the movement and keep a short fade, so the reward
+   still reads without animation. */
+
+@keyframes nf-coin-bounce {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  15% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate(var(--nf-dx), calc(var(--nf-rise) * -1)) scale(1);
+  }
+  62% {
+    transform: translate(calc(var(--nf-dx) * 1.35), 0) scale(1);
+  }
+  76% {
+    transform: translate(calc(var(--nf-dx) * 1.5), calc(var(--nf-rise) * -0.35)) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(calc(var(--nf-dx) * 1.6), 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--nf-dx) * 1.6), 0) scale(1);
+  }
+}
+
+@keyframes nf-coin-fade {
+  0% {
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes nf-pip-hop {
+  0%,
+  100% {
+    transform: rotate(-6deg) translateY(0);
+  }
+  35% {
+    transform: rotate(4deg) translateY(-14px);
+  }
+  60% {
+    transform: rotate(-6deg) translateY(0);
+  }
+}
+
+.nf-coin {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  opacity: 0;
+  pointer-events: none;
+  animation: nf-coin-bounce 1.5s cubic-bezier(0.3, 0.7, 0.4, 1) var(--nf-delay, 0ms) both;
+}
+
+.nf-pip-hop {
+  animation: nf-pip-hop 0.55s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-coin {
+    animation: nf-coin-fade 1.5s linear var(--nf-delay, 0ms) both;
+    transform: translate(var(--nf-dx), 0);
+  }
+  .nf-pip-hop {
+    animation: none;
+  }
+}
+
+[data-effects-tier="low"] .nf-coin {
+  animation: nf-coin-fade 1.5s linear var(--nf-delay, 0ms) both;
+  transform: translate(var(--nf-dx), 0);
+}
+
+[data-effects-tier="low"] .nf-pip-hop {
+  animation: none;
+}
