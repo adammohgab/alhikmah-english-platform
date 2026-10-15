@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { forwardRef, useLayoutEffect, useRef, type ReactNode } from "react";
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
@@ -106,17 +106,23 @@ function motionAllowed(): boolean {
 }
 
 /** The overlay and panel pair. Mounted by the Portal only while open, so the effect is the entrance. */
-function DialogLayer({
-  size,
-  className,
-  hasDescription,
-  children,
-}: {
-  size: DialogSize;
-  className: string | undefined;
-  hasDescription: boolean;
-  children: ReactNode;
-}) {
+const DialogLayer = forwardRef<
+  HTMLDivElement,
+  {
+    size: DialogSize;
+    className: string | undefined;
+    hasDescription: boolean;
+    children: ReactNode;
+  }
+>(function DialogLayer(
+  {
+    size,
+    className,
+    hasDescription,
+    children,
+  },
+  _ref,
+) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLElement>(null);
 
@@ -170,7 +176,7 @@ function DialogLayer({
       </div>
     </>
   );
-}
+});
 
 export function Dialog({
   open,
