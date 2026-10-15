@@ -1,0 +1,49 @@
+name: Format fix (temporary)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/format-fix-temp.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    name: Run Prettier write and commit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run format:write
+
+      - run: pnpm run format:check
+
+      - name: Commit formatting changes
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "style: apply Prettier with Tailwind class sorting"
+          git pull --rebase origin main
+          git push origin HEAD:main
