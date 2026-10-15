@@ -5,7 +5,7 @@ import { BookOpen, LockKeyhole, RefreshCw, ShieldCheck, UnlockKeyhole } from "lu
 import { env } from "@/shared/config/env";
 import { supabase } from "@/shared/api/supabase";
 
-type Course = {
+interface Course {
   id: string;
   title: string;
   description: string | null;
@@ -14,9 +14,9 @@ type Course = {
   status: string;
   author_id: string | null;
   updated_at: string;
-};
-type Unit = { id: string; course_id: string; title: string; order_index: number };
-type Lesson = { id: string; unit_id: string; title: string; order_index: number };
+}
+interface Unit { id: string; course_id: string; title: string; order_index: number; }
+interface Lesson { id: string; unit_id: string; title: string; order_index: number; }
 
 const base = env.VITE_SUPABASE_URL.replace(/\/$/, "") + "/rest/v1";
 
@@ -64,7 +64,7 @@ export default function CurriculumAdminPage() {
     staleTime: 30_000,
   });
 
-  const courses = coursesQuery.data ?? [];
+  const courses = useMemo(() => coursesQuery.data ?? [], [coursesQuery.data]);
   const shown = courses.filter(
     (course) => grade === "all" || course.grade_level === grade,
   );

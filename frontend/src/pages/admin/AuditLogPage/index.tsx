@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { env } from "@/shared/config/env";
 import { supabase } from "@/shared/api/supabase";
 
-type AuditRow = {
+interface AuditRow {
   id: string;
   user_id: string | null;
   actor_id: string | null;
@@ -19,7 +19,7 @@ type AuditRow = {
   new_values: unknown;
   created_at: string;
   actor?: { display_name: string | null; username: string | null } | null;
-};
+}
 
 const restUrl = `${env.VITE_SUPABASE_URL.replace(/\/$/, "")}/rest/v1`;
 
@@ -70,7 +70,7 @@ export default function AuditLogPage() {
   const [toDate, setToDate] = useState("");
   const [selected, setSelected] = useState<AuditRow | null>(null);
 
-  const rows = auditQuery.data ?? [];
+  const rows = useMemo(() => auditQuery.data ?? [], [auditQuery.data]);
   const actionTypes = useMemo(
     () => [...new Set(rows.map((row) => row.action_type).filter((type): type is string => Boolean(type)))].sort(),
     [rows],
@@ -223,7 +223,7 @@ export default function AuditLogPage() {
                       <p className="text-xs text-muted">{row.actor_id ?? row.user_id ?? "System"}</p>
                     </td>
                     <td className="px-4 py-4">
-                      <p className="font-bold">{row.action.replaceAll("_", " ")}</p>
+                      <p className="font-bold">{row.action.replace(/_/g, " ")}</p>
                       {row.action_type && <p className="mt-1 text-xs text-muted">{row.action_type}</p>}
                     </td>
                     <td className="px-4 py-4 text-sm">
@@ -268,7 +268,7 @@ export default function AuditLogPage() {
                   {formatDate(selected.created_at)}
                 </p>
                 <h2 id="audit-diff-title" className="mt-1 font-heading text-2xl font-bold">
-                  {selected.action.replaceAll("_", " ")}
+                  {selected.action.replace(/_/g, " ")}
                 </h2>
                 <p className="mt-1 text-sm text-muted">
                   {selected.target_table ?? selected.target_type ?? "Target"} · {selected.target_id ?? "No target ID"}

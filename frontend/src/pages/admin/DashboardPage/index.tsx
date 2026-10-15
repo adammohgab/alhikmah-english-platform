@@ -21,7 +21,9 @@ import { Link } from "react-router-dom";
 import { env } from "@/shared/config/env";
 import { supabase } from "@/shared/api/supabase";
 
-type EnrollmentRow = { student_id: string };
+interface EnrollmentRow {
+  student_id: string;
+}
 type CountValue = number | null;
 
 interface DashboardMetrics {
@@ -173,7 +175,7 @@ function MetricCard({
         <div>
           <p className="text-sm font-bold text-muted">{label}</p>
           <p className="mt-3 font-heading text-4xl font-bold tracking-tight text-stroke">
-            {value === null ? "—" : value}
+            {value ?? "—"}
           </p>
           <p className="mt-1 text-sm text-muted">{detail}</p>
         </div>
@@ -216,7 +218,7 @@ function AlertRow({
         <p className="text-sm text-muted">{description}</p>
       </div>
       <span className="min-w-10 rounded-lg border-2 border-stroke bg-surface-0 px-2 py-1 text-center text-sm font-extrabold">
-        {count === null ? "—" : count}
+        {count ?? "—"}
       </span>
       <Link
         to={href}
@@ -267,7 +269,7 @@ export default function DashboardPage() {
     metrics?.failedJobs,
     metrics?.pendingPasswordResets,
   ].some((count) => count === null);
-  const databaseAvailable = Boolean(metrics && metrics.errors.length === 0);
+  const databaseAvailable = Boolean(metrics?.errors.length === 0);
   const systemHealth = dashboard.isLoading
     ? "Checking…"
     : databaseAvailable && metrics?.failedJobs === 0
@@ -415,7 +417,7 @@ export default function DashboardPage() {
                 tone="neutral"
               />
             </div>
-            {metrics && metrics.moderationReports === 0 && metrics.failedJobs === 0 && (
+            {metrics?.moderationReports === 0 && metrics?.failedJobs === 0 && (
               <p className="mt-4 flex items-center gap-2 rounded-xl border-2 border-stroke bg-world-mint-100 p-3 text-sm font-semibold">
                 <Check size={18} aria-hidden="true" /> No open moderation reports or failed jobs.
               </p>
