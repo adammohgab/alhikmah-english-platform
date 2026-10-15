@@ -11,14 +11,23 @@ const envSchema = z.object({
   VITE_APP_VERSION: z.string().optional().default("0.1.0"),
 });
 
+export type Env = z.infer<typeof envSchema>;
+
 const parsedEnv = envSchema.safeParse(import.meta.env);
 
-if (!parsedEnv.success) {
+export const env: Env = (() => {
+  if (parsedEnv.success) return parsedEnv.data;
   const formattedErrors = parsedEnv.error.issues
     .map((issue) => `  - ${issue.path.join(".")}: ${issue.message}`)
     .join("\n");
-  throw new Error(`[Env Validation Error] Invalid environment configuration:\n${formattedErrors}`);
-}
-
-export const env = parsedEnv.data;
-export type Env = z.infer<typeof envSchema>;
+  console.warn(
+    `[Env Warning] Invalid environment configuration, using fallbacks:\n${formattedErrors}`,
+  );
+  return {
+    VITE_APP_ENV: "local",
+    VITE_SUPABASE_URL: "https://placeholder-project-ref.supabase.co",
+    VITE_SUPABASE_ANON_KEY: "placeholder-anon-key",
+    VITE_ENABLE_MOCKS: true,
+    VITE_APP_VERSION: "0.1.0",
+  };
+})();
