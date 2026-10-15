@@ -769,24 +769,24 @@ export default function CsvImportWizardPage() {
       <div className="mb-6">
         <Link
           to="/admin/users"
-          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted hover:text-ink transition-colors mb-2"
+          className="hover:text-ink mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to User Management
         </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-ink">
+            <h1 className="font-display text-ink text-2xl font-bold sm:text-3xl">
               CSV Bulk Import Wizard
             </h1>
-            <p className="font-body text-sm text-muted mt-1">
+            <p className="mt-1 font-body text-sm text-muted">
               Upload class rosters, map fields flexibly, correct errors interactively, and dispatch
               bulk accounts.
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleDownloadSample}>
-              <Download className="h-4 w-4 mr-1.5" />
+              <Download className="mr-1.5 h-4 w-4" />
               Download Sample CSV
             </Button>
           </div>
@@ -807,7 +807,7 @@ export default function CsvImportWizardPage() {
                       isCompleted
                         ? "border-emerald-600 bg-emerald-500 text-surface-0"
                         : isCurrent
-                          ? "border-ink bg-[var(--world-main,#ffb84d)] text-ink"
+                          ? "border-ink text-ink bg-[var(--world-main,#ffb84d)]"
                           : "border-stroke bg-surface-100 text-muted"
                     }`}
                   >
@@ -821,7 +821,7 @@ export default function CsvImportWizardPage() {
                     {step.name}
                   </span>
                   {step.id < STEPS.length && (
-                    <ChevronRight className="h-4 w-4 text-muted/40 hidden md:block" />
+                    <ChevronRight className="hidden h-4 w-4 text-muted/40 md:block" />
                   )}
                 </li>
               );
@@ -834,7 +834,7 @@ export default function CsvImportWizardPage() {
       {currentStep === 1 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <h2 className="font-display text-lg font-bold text-ink mb-4">
+            <h2 className="font-display text-ink mb-4 text-lg font-bold">
               Step 1: Choose Import Type & Upload
             </h2>
 
@@ -842,7 +842,7 @@ export default function CsvImportWizardPage() {
             <div className="mb-6 max-w-sm">
               <label
                 htmlFor={`${importId}-role`}
-                className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5"
+                className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted"
               >
                 Target Role
               </label>
@@ -870,7 +870,7 @@ export default function CsvImportWizardPage() {
                   fileInputRef.current?.click();
                 }
               }}
-              className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-stroke bg-surface-50 p-12 text-center hover:bg-surface-100 transition-colors cursor-pointer group"
+              className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-stroke bg-surface-50 p-12 text-center transition-colors hover:bg-surface-100"
             >
               <input
                 ref={fileInputRef}
@@ -879,13 +879,13 @@ export default function CsvImportWizardPage() {
                 className="hidden"
                 onChange={handleFileUpload}
               />
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-stroke bg-[var(--world-main,#ffb84d)] text-ink shadow-retro-sm group-hover:scale-105 transition-transform">
+              <div className="text-ink flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-stroke bg-[var(--world-main,#ffb84d)] shadow-retro-sm transition-transform group-hover:scale-105">
                 <Upload className="h-8 w-8" />
               </div>
-              <h3 className="font-display text-lg font-bold text-ink mt-4">
+              <h3 className="font-display text-ink mt-4 text-lg font-bold">
                 Click to browse or drop your CSV file here
               </h3>
-              <p className="font-body text-xs text-muted mt-1 max-w-md">
+              <p className="mt-1 max-w-md font-body text-xs text-muted">
                 Standard UTF-8 comma-separated file with header row. Up to 2,000 rows supported per
                 batch.
               </p>
@@ -898,22 +898,22 @@ export default function CsvImportWizardPage() {
       {currentStep === 2 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="font-display text-lg font-bold text-ink">Step 2: Map Columns</h2>
-                <p className="font-body text-xs text-muted mt-1">
-                  Connect headers from <span className="font-semibold text-ink">{fileName}</span> to
+                <h2 className="font-display text-ink text-lg font-bold">Step 2: Map Columns</h2>
+                <p className="mt-1 font-body text-xs text-muted">
+                  Connect headers from <span className="text-ink font-semibold">{fileName}</span> to
                   the platform fields.
                 </p>
               </div>
               <Button variant="outline" size="sm" onClick={handleAiSuggestMapping}>
-                <Wand2 className="h-4 w-4 mr-1.5 text-amber-500" />
+                <Wand2 className="mr-1.5 h-4 w-4 text-amber-500" />
                 AI Auto-Detect Mapping
               </Button>
             </div>
 
             {/* Mapping Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {(
                 [
                   { field: "first_name", label: "First Name", required: true },
@@ -932,14 +932,14 @@ export default function CsvImportWizardPage() {
                 return (
                   <div
                     key={field}
-                    className="flex flex-col justify-between rounded-xl border-2 border-stroke/60 p-4 bg-surface-50"
+                    className="flex flex-col justify-between rounded-xl border-2 border-stroke/60 bg-surface-50 p-4"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-display text-sm font-bold text-ink">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="font-display text-ink text-sm font-bold">
                         {label} {required && <span className="text-danger-500">*</span>}
                       </span>
                       {mapping[field] ? (
-                        <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300">
+                        <span className="rounded border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600">
                           Mapped
                         </span>
                       ) : (
@@ -958,14 +958,14 @@ export default function CsvImportWizardPage() {
             </div>
 
             {/* Navigation Footer */}
-            <div className="flex justify-between items-center mt-8 pt-4 border-t border-stroke/20">
+            <div className="mt-8 flex items-center justify-between border-t border-stroke/20 pt-4">
               <Button variant="ghost" onClick={() => setCurrentStep(1)}>
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                <ArrowLeft className="mr-1.5 h-4 w-4" />
                 Back to Upload
               </Button>
               <Button variant="primary" onClick={runValidation}>
                 Validate Rows
-                <ArrowRight className="h-4 w-4 ml-1.5" />
+                <ArrowRight className="ml-1.5 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -976,12 +976,12 @@ export default function CsvImportWizardPage() {
       {currentStep === 3 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h2 className="font-display text-lg font-bold text-ink">
+                <h2 className="font-display text-ink text-lg font-bold">
                   Step 3: Validation & Error Correction
                 </h2>
-                <p className="font-body text-xs text-muted mt-1">
+                <p className="mt-1 font-body text-xs text-muted">
                   Review detected rows. Fix invalid cells directly in the grid, or use AI to correct
                   common issues.
                 </p>
@@ -989,25 +989,25 @@ export default function CsvImportWizardPage() {
 
               <div className="flex flex-wrap items-center gap-2">
                 <Button variant="outline" size="sm" onClick={handleAiAutoFix}>
-                  <Sparkles className="h-4 w-4 mr-1.5 text-amber-500" />
+                  <Sparkles className="mr-1.5 h-4 w-4 text-amber-500" />
                   Fix with AI
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleDownloadErrorReport}>
-                  <Download className="h-4 w-4 mr-1.5" />
+                  <Download className="mr-1.5 h-4 w-4" />
                   Download Error Report
                 </Button>
               </div>
             </div>
 
             {/* Filter Pills & Counts */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="mb-4 flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setFilterMode("all")}
-                className={`rounded-xl px-3 py-1.5 text-xs font-bold border-2 transition-colors ${
+                className={`rounded-xl border-2 px-3 py-1.5 text-xs font-bold transition-colors ${
                   filterMode === "all"
                     ? "border-ink bg-ink text-surface-0"
-                    : "border-stroke bg-surface-0 text-ink hover:bg-surface-100"
+                    : "text-ink border-stroke bg-surface-0 hover:bg-surface-100"
                 }`}
               >
                 All Rows ({parsedRows.length})
@@ -1015,7 +1015,7 @@ export default function CsvImportWizardPage() {
               <button
                 type="button"
                 onClick={() => setFilterMode("errors")}
-                className={`rounded-xl px-3 py-1.5 text-xs font-bold border-2 transition-colors ${
+                className={`rounded-xl border-2 px-3 py-1.5 text-xs font-bold transition-colors ${
                   filterMode === "errors"
                     ? "border-danger-600 bg-danger-600 text-surface-0"
                     : "border-stroke bg-surface-0 text-danger-600 hover:bg-red-50"
@@ -1028,19 +1028,19 @@ export default function CsvImportWizardPage() {
             {/* Editable Data Grid */}
             <div className="overflow-x-auto rounded-xl border-2 border-stroke">
               <table className="w-full text-left text-xs">
-                <thead className="border-b-2 border-stroke bg-surface-100 text-ink uppercase tracking-wider font-bold">
+                <thead className="text-ink border-b-2 border-stroke bg-surface-100 font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="p-3 w-14 text-center">Row</th>
-                    <th className="p-3 w-28">Status</th>
+                    <th className="w-14 p-3 text-center">Row</th>
+                    <th className="w-28 p-3">Status</th>
                     <th className="p-3">First Name</th>
                     <th className="p-3">Last Name</th>
                     <th className="p-3">Username</th>
-                    <th className="p-3 w-28">Grade</th>
-                    <th className="p-3 w-32">Class Code</th>
-                    <th className="p-3 w-20 text-center">Exclude</th>
+                    <th className="w-28 p-3">Grade</th>
+                    <th className="w-32 p-3">Class Code</th>
+                    <th className="w-20 p-3 text-center">Exclude</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-stroke/30 bg-surface-0 font-medium text-ink">
+                <tbody className="text-ink divide-y divide-stroke/30 bg-surface-0 font-medium">
                   {parsedRows
                     .filter((r) => {
                       if (filterMode === "errors") return !r.isValid;
@@ -1052,7 +1052,7 @@ export default function CsvImportWizardPage() {
                         key={row.rowNumber}
                         className={`transition-colors ${
                           row.excluded
-                            ? "bg-surface-100/60 opacity-60 line-through"
+                            ? "bg-surface-100/60 line-through opacity-60"
                             : !row.isValid
                               ? "bg-red-50/40"
                               : "hover:bg-surface-50"
@@ -1061,16 +1061,16 @@ export default function CsvImportWizardPage() {
                         <td className="p-3 text-center font-bold text-muted">{row.rowNumber}</td>
                         <td className="p-3">
                           {row.excluded ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-muted bg-surface-200 px-2 py-0.5 rounded">
+                            <span className="inline-flex items-center gap-1 rounded bg-surface-200 px-2 py-0.5 text-[11px] font-bold text-muted">
                               Excluded
                             </span>
                           ) : row.isValid ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
+                            <span className="inline-flex items-center gap-1 rounded border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
                               <CheckCircle2 className="h-3.5 w-3.5" /> OK
                             </span>
                           ) : (
                             <span
-                              className="inline-flex items-center gap-1 text-[11px] font-bold text-danger-700 bg-red-100 px-2 py-0.5 rounded border border-danger-300"
+                              className="text-danger-700 border-danger-300 inline-flex items-center gap-1 rounded border bg-red-100 px-2 py-0.5 text-[11px] font-bold"
                               title={Object.values(row.errors).join("; ")}
                             >
                               <XCircle className="h-3.5 w-3.5" /> Error
@@ -1085,7 +1085,7 @@ export default function CsvImportWizardPage() {
                             onChange={(e) =>
                               handleUpdateCell(row.rowNumber, "first_name", e.target.value)
                             }
-                            className="w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1 focus:ring-ink"
+                            className="focus:ring-ink w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1"
                           />
                         </td>
                         <td className="p-2">
@@ -1096,7 +1096,7 @@ export default function CsvImportWizardPage() {
                             onChange={(e) =>
                               handleUpdateCell(row.rowNumber, "last_name", e.target.value)
                             }
-                            className="w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1 focus:ring-ink"
+                            className="focus:ring-ink w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1"
                           />
                         </td>
                         <td className="p-2">
@@ -1107,9 +1107,9 @@ export default function CsvImportWizardPage() {
                             onChange={(e) =>
                               handleUpdateCell(row.rowNumber, "username", e.target.value)
                             }
-                            className={`w-full rounded-md border px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-ink ${
+                            className={`focus:ring-ink w-full rounded-md border px-2 py-1 font-mono text-xs focus:ring-1 ${
                               row.errors["username"]
-                                ? "border-danger-500 bg-red-50 text-danger-800"
+                                ? "border-danger-500 text-danger-800 bg-red-50"
                                 : "border-stroke"
                             }`}
                           />
@@ -1122,9 +1122,9 @@ export default function CsvImportWizardPage() {
                             onChange={(e) =>
                               handleUpdateCell(row.rowNumber, "grade", e.target.value)
                             }
-                            className={`w-full rounded-md border px-2 py-1 text-xs focus:ring-1 focus:ring-ink ${
+                            className={`focus:ring-ink w-full rounded-md border px-2 py-1 text-xs focus:ring-1 ${
                               row.errors["grade"]
-                                ? "border-danger-500 bg-red-50 text-danger-800"
+                                ? "border-danger-500 text-danger-800 bg-red-50"
                                 : "border-stroke"
                             }`}
                           />
@@ -1137,17 +1137,17 @@ export default function CsvImportWizardPage() {
                             onChange={(e) =>
                               handleUpdateCell(row.rowNumber, "class_code", e.target.value)
                             }
-                            className="w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1 focus:ring-ink"
+                            className="focus:ring-ink w-full rounded-md border border-stroke px-2 py-1 text-xs focus:ring-1"
                           />
                         </td>
                         <td className="p-2 text-center">
                           <button
                             type="button"
                             onClick={() => handleToggleExcludeRow(row.rowNumber)}
-                            className={`rounded px-2 py-1 text-xs font-bold border transition-colors ${
+                            className={`rounded border px-2 py-1 text-xs font-bold transition-colors ${
                               row.excluded
                                 ? "border-ink bg-ink text-surface-0"
-                                : "border-stroke bg-surface-50 text-muted hover:text-ink"
+                                : "hover:text-ink border-stroke bg-surface-50 text-muted"
                             }`}
                           >
                             {row.excluded ? "Include" : "Exclude"}
@@ -1160,14 +1160,14 @@ export default function CsvImportWizardPage() {
             </div>
 
             {/* Navigation Footer */}
-            <div className="flex justify-between items-center mt-8 pt-4 border-t border-stroke/20">
+            <div className="mt-8 flex items-center justify-between border-t border-stroke/20 pt-4">
               <Button variant="ghost" onClick={() => setCurrentStep(2)}>
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                <ArrowLeft className="mr-1.5 h-4 w-4" />
                 Back to Mapping
               </Button>
               <Button variant="primary" onClick={() => setCurrentStep(4)}>
                 Review Summary ({validIncludedRows.length} Ready)
-                <ArrowRight className="h-4 w-4 ml-1.5" />
+                <ArrowRight className="ml-1.5 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -1178,17 +1178,17 @@ export default function CsvImportWizardPage() {
       {currentStep === 4 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <h2 className="font-display text-lg font-bold text-ink mb-4">
+            <h2 className="font-display text-ink mb-4 text-lg font-bold">
               Step 4: Pre-flight Summary & Job Dispatch
             </h2>
 
             {/* Impact Preview */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="rounded-xl border-2 border-stroke bg-emerald-50/50 p-4">
                 <span className="text-xs font-bold uppercase text-emerald-800">
                   Ready to Create
                 </span>
-                <p className="font-display text-2xl font-bold text-emerald-900 mt-1">
+                <p className="font-display mt-1 text-2xl font-bold text-emerald-900">
                   {validIncludedRows.length} Accounts
                 </p>
               </div>
@@ -1196,25 +1196,25 @@ export default function CsvImportWizardPage() {
                 <span className="text-xs font-bold uppercase text-amber-800">
                   Excluded by Admin
                 </span>
-                <p className="font-display text-2xl font-bold text-amber-900 mt-1">
+                <p className="font-display mt-1 text-2xl font-bold text-amber-900">
                   {parsedRows.filter((r) => r.excluded).length} Rows
                 </p>
               </div>
               <div className="rounded-xl border-2 border-stroke bg-red-50/50 p-4">
-                <span className="text-xs font-bold uppercase text-danger-800">
+                <span className="text-danger-800 text-xs font-bold uppercase">
                   Invalid / Skipped
                 </span>
-                <p className="font-display text-2xl font-bold text-danger-900 mt-1">
+                <p className="font-display text-danger-900 mt-1 text-2xl font-bold">
                   {parsedRows.filter((r) => !r.isValid && !r.excluded).length} Rows
                 </p>
               </div>
             </div>
 
             {/* Duplicates Policy */}
-            <div className="rounded-xl border-2 border-stroke/60 bg-surface-50 p-4 mb-6 max-w-md">
+            <div className="mb-6 max-w-md rounded-xl border-2 border-stroke/60 bg-surface-50 p-4">
               <label
                 htmlFor={`${importId}-duplicates`}
-                className="block text-xs font-bold uppercase tracking-wider text-muted mb-2"
+                className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted"
               >
                 Duplicates Handling Policy
               </label>
@@ -1232,10 +1232,10 @@ export default function CsvImportWizardPage() {
 
             {/* Asynchronous processing indicator if submitting */}
             {isSubmittingJob && (
-              <div className="rounded-xl border-2 border-stroke bg-surface-50 p-6 mb-6 text-center space-y-3">
+              <div className="mb-6 space-y-3 rounded-xl border-2 border-stroke bg-surface-50 p-6 text-center">
                 <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="h-5 w-5 animate-spin text-ink" />
-                  <span className="font-display font-bold text-ink">{jobStepName}</span>
+                  <Loader2 className="text-ink h-5 w-5 animate-spin" />
+                  <span className="font-display text-ink font-bold">{jobStepName}</span>
                 </div>
                 <ProgressBar value={jobProgress} max={100} />
                 <p className="text-xs text-muted">
@@ -1245,9 +1245,9 @@ export default function CsvImportWizardPage() {
             )}
 
             {/* Navigation Footer */}
-            <div className="flex justify-between items-center mt-8 pt-4 border-t border-stroke/20">
+            <div className="mt-8 flex items-center justify-between border-t border-stroke/20 pt-4">
               <Button variant="ghost" onClick={() => setCurrentStep(3)} disabled={isSubmittingJob}>
-                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                <ArrowLeft className="mr-1.5 h-4 w-4" />
                 Back to Error Grid
               </Button>
               <Button
@@ -1258,7 +1258,7 @@ export default function CsvImportWizardPage() {
                 loading={isSubmittingJob}
                 disabled={isSubmittingJob || validIncludedRows.length === 0}
               >
-                <Play className="h-4 w-4 mr-1.5" />
+                <Play className="mr-1.5 h-4 w-4" />
                 Execute Import Job
               </Button>
             </div>
@@ -1270,12 +1270,12 @@ export default function CsvImportWizardPage() {
       {currentStep === 5 && (
         <div className="space-y-6">
           <div className="rounded-2xl border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-surface-0 shadow-retro-sm">
                 <Check className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="font-display text-xl font-bold text-ink">Import Job Completed</h2>
+                <h2 className="font-display text-ink text-xl font-bold">Import Job Completed</h2>
                 <p className="font-body text-xs text-muted">
                   Job #{jobId} successfully processed and committed to the database.
                 </p>
@@ -1283,59 +1283,59 @@ export default function CsvImportWizardPage() {
             </div>
 
             {/* Summary statistics */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              <div className="p-3 rounded-xl border border-stroke bg-surface-50 text-center">
+            <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="rounded-xl border border-stroke bg-surface-50 p-3 text-center">
                 <span className="text-xs text-muted">Total CSV Rows</span>
-                <p className="font-display text-lg font-bold text-ink">{importSummary.total}</p>
+                <p className="font-display text-ink text-lg font-bold">{importSummary.total}</p>
               </div>
-              <div className="p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-center">
-                <span className="text-xs text-emerald-800 font-semibold">Created Accounts</span>
+              <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-center">
+                <span className="text-xs font-semibold text-emerald-800">Created Accounts</span>
                 <p className="font-display text-lg font-bold text-emerald-900">
                   {importSummary.created}
                 </p>
               </div>
-              <div className="p-3 rounded-xl border border-amber-300 bg-amber-50 text-center">
-                <span className="text-xs text-amber-800 font-semibold">Excluded</span>
+              <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-center">
+                <span className="text-xs font-semibold text-amber-800">Excluded</span>
                 <p className="font-display text-lg font-bold text-amber-900">
                   {importSummary.skipped}
                 </p>
               </div>
-              <div className="p-3 rounded-xl border border-danger-300 bg-red-50 text-center">
-                <span className="text-xs text-danger-800 font-semibold">Failed / Invalid</span>
-                <p className="font-display text-lg font-bold text-danger-900">
+              <div className="border-danger-300 rounded-xl border bg-red-50 p-3 text-center">
+                <span className="text-danger-800 text-xs font-semibold">Failed / Invalid</span>
+                <p className="font-display text-danger-900 text-lg font-bold">
                   {importSummary.failed}
                 </p>
               </div>
             </div>
 
             {/* Credentials Download Banner */}
-            <div className="rounded-xl border-2 border-stroke bg-amber-50/60 p-5 mb-6">
-              <h3 className="font-display font-bold text-ink text-base mb-1">
+            <div className="mb-6 rounded-xl border-2 border-stroke bg-amber-50/60 p-5">
+              <h3 className="font-display text-ink mb-1 text-base font-bold">
                 Download Distribution Credentials
               </h3>
-              <p className="text-xs text-muted mb-4 max-w-2xl">
+              <p className="mb-4 max-w-2xl text-xs text-muted">
                 Temporary passwords are generated once and never stored in plain text. Download the
                 CSV distribution file or print the credential handouts immediately for your records.
               </p>
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="primary" onClick={handleDownloadCredentialsCsv}>
-                  <Download className="h-4 w-4 mr-1.5" />
+                  <Download className="mr-1.5 h-4 w-4" />
                   Download Credentials CSV
                 </Button>
                 <Button variant="outline" onClick={handlePrintCredentials}>
-                  <Printer className="h-4 w-4 mr-1.5" />
+                  <Printer className="mr-1.5 h-4 w-4" />
                   Print Credential Cards
                 </Button>
               </div>
             </div>
 
             {/* Preview of Generated Credentials */}
-            <div className="rounded-xl border-2 border-stroke overflow-hidden mb-6">
-              <div className="bg-surface-100 p-3 font-bold text-xs uppercase tracking-wider text-ink border-b border-stroke">
+            <div className="mb-6 overflow-hidden rounded-xl border-2 border-stroke">
+              <div className="text-ink border-b border-stroke bg-surface-100 p-3 text-xs font-bold uppercase tracking-wider">
                 Generated Credentials Preview (First 5 Rows)
               </div>
               <table className="w-full text-left text-xs">
-                <thead className="bg-surface-50 border-b border-stroke/40 font-semibold text-muted">
+                <thead className="border-b border-stroke/40 bg-surface-50 font-semibold text-muted">
                   <tr>
                     <th className="p-2.5">Name</th>
                     <th className="p-2.5">Username</th>
@@ -1349,7 +1349,7 @@ export default function CsvImportWizardPage() {
                     <tr key={cred.username} className="hover:bg-surface-50">
                       <td className="p-2.5 font-bold">{cred.fullName}</td>
                       <td className="p-2.5 font-mono">{cred.username}</td>
-                      <td className="p-2.5 font-mono text-ink bg-surface-100/50 font-bold">
+                      <td className="text-ink bg-surface-100/50 p-2.5 font-mono font-bold">
                         {cred.password}
                       </td>
                       <td className="p-2.5 capitalize">{cred.role}</td>
@@ -1361,10 +1361,10 @@ export default function CsvImportWizardPage() {
             </div>
 
             {/* Finish action */}
-            <div className="flex justify-end pt-4 border-t border-stroke/20">
+            <div className="flex justify-end border-t border-stroke/20 pt-4">
               <Link to="/admin/users">
                 <Button variant="outline">
-                  <UserCheck className="h-4 w-4 mr-1.5" />
+                  <UserCheck className="mr-1.5 h-4 w-4" />
                   Return to Users List
                 </Button>
               </Link>

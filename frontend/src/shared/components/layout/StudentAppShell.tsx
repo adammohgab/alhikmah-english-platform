@@ -44,14 +44,7 @@ import { StudentTopBar, type StudentShellStats } from "./StudentTopBar";
    ======================================== */
 
 type StudentNavId =
-  | "dashboard"
-  | "courses"
-  | "quizzes"
-  | "assignments"
-  | "practice"
-  | "ai-tutor"
-  | "games"
-  | "shop";
+  "dashboard" | "courses" | "quizzes" | "assignments" | "practice" | "ai-tutor" | "games" | "shop";
 
 interface NavItem {
   id: StudentNavId;
@@ -508,8 +501,7 @@ export interface StudentAppShellProps {
   navBadges?: Partial<Record<StudentNavId, number>> | undefined;
   /** Pending counts on the mobile tabs. */
   tabBadges?:
-    | Partial<Record<"home" | "learn" | "practice" | "play" | "rewards", number>>
-    | undefined;
+    Partial<Record<"home" | "learn" | "practice" | "play" | "rewards", number>> | undefined;
   /** Title for pages that are not in the navigation. Default "Al Hikmah English". */
   fallbackTitle?: string | undefined;
   /** Page content. Defaults to the matched child route (`<Outlet />`). */

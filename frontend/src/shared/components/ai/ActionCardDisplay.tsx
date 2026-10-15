@@ -34,13 +34,7 @@ import { TypingIndicator } from "./TypingIndicator";
    itself and its status message is announced. */
 
 export type ActionCardStatus =
-  | "generating"
-  | "ready"
-  | "approved"
-  | "edited"
-  | "discarded"
-  | "stale"
-  | "failed";
+  "generating" | "ready" | "approved" | "edited" | "discarded" | "stale" | "failed";
 
 export type ActionChangeOp =
   | "create_draft"

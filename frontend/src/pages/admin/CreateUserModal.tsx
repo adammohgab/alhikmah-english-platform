@@ -372,38 +372,38 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
         <div className="space-y-6 py-2">
           {/* Success Credential Card */}
           <div className="rounded-2xl border-2 border-stroke bg-amber-50/50 p-5 shadow-retro-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-surface-0 shadow-retro-xs">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="shadow-retro-xs flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-surface-0">
                 <Check className="h-5 w-5" />
               </div>
-              <h3 className="font-display text-lg font-bold text-ink">Login Credentials Card</h3>
+              <h3 className="font-display text-ink text-lg font-bold">Login Credentials Card</h3>
             </div>
 
             <div className="space-y-3 font-body text-sm">
-              <div className="flex justify-between items-center py-1.5 border-b border-stroke/20">
-                <span className="text-muted font-medium">Full Name</span>
-                <span className="font-semibold text-ink">{createdCredentials.fullName}</span>
+              <div className="flex items-center justify-between border-b border-stroke/20 py-1.5">
+                <span className="font-medium text-muted">Full Name</span>
+                <span className="text-ink font-semibold">{createdCredentials.fullName}</span>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-stroke/20">
-                <span className="text-muted font-medium">Username</span>
-                <code className="rounded-md border border-stroke bg-surface-0 px-2.5 py-1 font-mono font-bold text-ink">
+              <div className="flex items-center justify-between border-b border-stroke/20 py-1.5">
+                <span className="font-medium text-muted">Username</span>
+                <code className="text-ink rounded-md border border-stroke bg-surface-0 px-2.5 py-1 font-mono font-bold">
                   {createdCredentials.username}
                 </code>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-stroke/20">
-                <span className="text-muted font-medium">Initial Password</span>
-                <code className="rounded-md border border-stroke bg-surface-0 px-2.5 py-1 font-mono font-bold text-ink">
+              <div className="flex items-center justify-between border-b border-stroke/20 py-1.5">
+                <span className="font-medium text-muted">Initial Password</span>
+                <code className="text-ink rounded-md border border-stroke bg-surface-0 px-2.5 py-1 font-mono font-bold">
                   {createdCredentials.password}
                 </code>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-stroke/20">
-                <span className="text-muted font-medium">Account Role</span>
-                <span className="capitalize font-semibold text-ink">{createdCredentials.role}</span>
+              <div className="flex items-center justify-between border-b border-stroke/20 py-1.5">
+                <span className="font-medium text-muted">Account Role</span>
+                <span className="text-ink font-semibold capitalize">{createdCredentials.role}</span>
               </div>
               {createdCredentials.gradeLevel && (
-                <div className="flex justify-between items-center py-1.5">
-                  <span className="text-muted font-medium">Grade Level</span>
-                  <span className="font-semibold text-ink">
+                <div className="flex items-center justify-between py-1.5">
+                  <span className="font-medium text-muted">Grade Level</span>
+                  <span className="text-ink font-semibold">
                     Grade {createdCredentials.gradeLevel}
                   </span>
                 </div>
@@ -416,7 +416,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
             <Button
               type="button"
               variant="primary"
@@ -427,12 +427,12 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
             >
               {copied ? (
                 <>
-                  <Check className="h-4 w-4 mr-2 text-emerald-600" />
+                  <Check className="mr-2 h-4 w-4 text-emerald-600" />
                   Copied!
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4 mr-2" />
+                  <Copy className="mr-2 h-4 w-4" />
                   Copy Credentials
                 </>
               )}
@@ -443,7 +443,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               className="w-full sm:w-auto"
               onClick={handlePrintCredentials}
             >
-              <Printer className="h-4 w-4 mr-2" />
+              <Printer className="mr-2 h-4 w-4" />
               Print
             </Button>
             <Button
@@ -452,7 +452,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               className="w-full sm:w-auto"
               onClick={handleReset}
             >
-              <UserPlus className="h-4 w-4 mr-2" />
+              <UserPlus className="mr-2 h-4 w-4" />
               Add Another
             </Button>
           </div>
@@ -466,7 +466,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           className="space-y-4 py-2"
         >
           {submitError && (
-            <div className="flex items-center gap-2 rounded-xl border-2 border-danger-500 bg-red-50 p-3 text-sm font-medium text-danger-700">
+            <div className="border-danger-500 text-danger-700 flex items-center gap-2 rounded-xl border-2 bg-red-50 p-3 text-sm font-medium">
               <XCircle className="h-4 w-4 shrink-0" />
               <span>{submitError}</span>
             </div>
@@ -476,7 +476,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           <div>
             <label
               htmlFor={`${formId}-role`}
-              className="block text-xs font-bold uppercase tracking-wider text-muted mb-1"
+              className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted"
             >
               Account Role
             </label>
@@ -524,7 +524,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
                 ) : usernameAvailable === true ? (
                   <UserCheck className="h-4 w-4 text-emerald-600" />
                 ) : usernameAvailable === false ? (
-                  <XCircle className="h-4 w-4 text-danger-500" />
+                  <XCircle className="text-danger-500 h-4 w-4" />
                 ) : null
               }
               required
@@ -557,7 +557,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
             <div>
               <label
                 htmlFor={`${formId}-grade`}
-                className="block text-xs font-bold uppercase tracking-wider text-muted mb-1"
+                className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted"
               >
                 Grade Level
               </label>
@@ -575,7 +575,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           <div>
             <label
               htmlFor={`${formId}-password`}
-              className="block text-xs font-bold uppercase tracking-wider text-muted mb-1"
+              className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted"
             >
               Initial Temporary Password
             </label>
@@ -591,7 +591,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-muted hover:text-ink transition-colors"
+                  className="hover:text-ink absolute right-3 top-3 text-muted transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -619,7 +619,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           </div>
 
           {/* Form action footer */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-stroke/20">
+          <div className="flex justify-end gap-3 border-t border-stroke/20 pt-4">
             <Button type="button" variant="ghost" onClick={handleClose}>
               Cancel
             </Button>
@@ -629,7 +629,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               loading={isSubmitting}
               disabled={isSubmitting || usernameAvailable === false}
             >
-              <UserPlus className="h-4 w-4 mr-2" />
+              <UserPlus className="mr-2 h-4 w-4" />
               Create Account
             </Button>
           </div>
