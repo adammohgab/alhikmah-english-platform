@@ -17,7 +17,7 @@ export interface CreateUserModalProps {
 export type UserRole = "student" | "teacher" | "admin";
 
 const UNAMBIGUOUS_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
-export function generateRandomPassword(length = 10): string {
+function generateRandomPassword(length = 10): string {
   let result = "";
   for (let i = 0; i < length; i++) {
     result += UNAMBIGUOUS_CHARS.charAt(Math.floor(Math.random() * UNAMBIGUOUS_CHARS.length));
@@ -105,31 +105,33 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
       return;
     }
 
-    const timer = setTimeout(async () => {
-      setIsCheckingUsername(true);
-      setUsernameError(null);
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("username", trimmed)
-          .maybeSingle();
+    const timer = setTimeout(() => {
+      void (async () => {
+        setIsCheckingUsername(true);
+        setUsernameError(null);
+        try {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("username", trimmed)
+            .maybeSingle();
 
-        if (error) {
-          // If network / RLS issue, assume valid format but warn
+          if (error) {
+            // If network / RLS issue, assume valid format but warn
+            setUsernameAvailable(null);
+          } else if (data) {
+            setUsernameAvailable(false);
+            setUsernameError("This username is already taken");
+          } else {
+            setUsernameAvailable(true);
+            setUsernameError(null);
+          }
+        } catch {
           setUsernameAvailable(null);
-        } else if (data) {
-          setUsernameAvailable(false);
-          setUsernameError("This username is already taken");
-        } else {
-          setUsernameAvailable(true);
-          setUsernameError(null);
+        } finally {
+          setIsCheckingUsername(false);
         }
-      } catch {
-        setUsernameAvailable(null);
-      } finally {
-        setIsCheckingUsername(false);
-      }
+      })();
     }, 350);
 
     return () => clearTimeout(timer);
@@ -174,7 +176,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
       return;
     }
     if (usernameAvailable === false) {
-      setSubmitError(usernameError || "Please choose a different username.");
+      setSubmitError(usernameError ?? "Please choose a different username.");
       return;
     }
     if (role === "teacher" && !trimmedEmail) {
@@ -405,7 +407,9 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               type="button"
               variant="primary"
               className="w-full flex-1"
-              onClick={handleCopyCredentials}
+              onClick={() => {
+                void handleCopyCredentials();
+              }}
             >
               {copied ? (
                 <>
@@ -440,7 +444,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           </div>
         </div>
       ) : (
-        <form id={formId} onSubmit={handleSubmit} className="space-y-4 py-2">
+        <form id={formId} onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4 py-2">
           {submitError && (
             <div className="flex items-center gap-2 rounded-xl border-2 border-danger-500 bg-red-50 p-3 text-sm font-medium text-danger-700">
               <XCircle className="h-4 w-4 shrink-0" />
@@ -450,10 +454,11 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
 
           {/* Role selector */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
+            <label htmlFor={`${formId}-role`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
               Account Role
             </label>
             <Select
+              id={`${formId}-role`}
               aria-label="Account Role"
               value={role}
               onValueChange={(val) => setRole(val as UserRole)}
@@ -527,10 +532,11 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           {/* Grade level for students */}
           {role === "student" && (
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
+              <label htmlFor={`${formId}-grade`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
                 Grade Level
               </label>
               <Select
+                id={`${formId}-grade`}
                 aria-label="Grade Level"
                 value={gradeLevel}
                 onValueChange={setGradeLevel}
@@ -541,12 +547,13 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
 
           {/* Temporary Password */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
+            <label htmlFor={`${formId}-password`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1">
               Initial Temporary Password
             </label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Input
+                  id={`${formId}-password`}
                   type={showPassword ? "text" : "password"}
                   value={initialPassword}
                   onChange={(e) => setInitialPassword(e.target.value)}

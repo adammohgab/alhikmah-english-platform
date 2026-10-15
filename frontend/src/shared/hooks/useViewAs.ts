@@ -75,12 +75,12 @@ function readSession(): StoredViewAsSession | null {
     }
 
     return {
-      targetId: s["targetId"] as string,
-      targetName: s["targetName"] as string,
-      targetRole: s["targetRole"] as ViewAsTargetRole,
+      targetId: s["targetId"],
+      targetName: s["targetName"],
+      targetRole: s["targetRole"],
       expiresAt: typeof s["expiresAt"] === "string" ? s["expiresAt"] : undefined,
       sessionId: typeof s["sessionId"] === "string" ? s["sessionId"] : undefined,
-      startedAt: typeof s["startedAt"] === "number" ? (s["startedAt"] as number) : Date.now(),
+      startedAt: typeof s["startedAt"] === "number" ? s["startedAt"] : Date.now(),
     };
   } catch {
     // sessionStorage blocked or corrupt value — treat as no session.

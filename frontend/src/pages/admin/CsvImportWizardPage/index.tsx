@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useId } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -83,6 +83,7 @@ export default function CsvImportWizardPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Wizard state
+  const importId = useId();
   const [currentStep, setCurrentStep] = useState(1);
   const [importType, setImportType] = useState<ImportType>("students");
   const [fileName, setFileName] = useState("");
@@ -291,7 +292,7 @@ export default function CsvImportWizardPage() {
     }
 
     const seenUsernames = new Set<string>();
-    const getVal = (r: Record<string, string>, col: string) => (col && r[col] ? r[col]! : "");
+    const getVal = (r: Record<string, string>, col: string) => (col && r[col] ? r[col] : "");
 
     const evaluated: ParsedRow[] = rawRows.map((row, idx) => {
       const rowNum = idx + 1;
@@ -418,7 +419,7 @@ export default function CsvImportWizardPage() {
 
         // Fix grade format (e.g., "Grade 8", "G8", "8th" -> "8")
         if (newErrors["grade"]) {
-          const match = r.mapped.grade.match(/\d+/);
+          const match = /\d+/.exec(r.mapped.grade);
           if (match) {
             const parsedG = parseInt(match[0], 10);
             if (parsedG >= 7 && parsedG <= 12) {
@@ -805,10 +806,11 @@ export default function CsvImportWizardPage() {
 
             {/* Import Type Selector */}
             <div className="mb-6 max-w-sm">
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
+              <label htmlFor={`${importId}-role`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
                 Target Role
               </label>
               <Select
+                id={`${importId}-role`}
                 aria-label="Target Role"
                 value={importType}
                 onValueChange={(val) => setImportType(val as ImportType)}
@@ -822,7 +824,15 @@ export default function CsvImportWizardPage() {
 
             {/* Drop Zone */}
             <div
+              role="button"
+              tabIndex={0}
               onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
               className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-stroke bg-surface-50 p-12 text-center hover:bg-surface-100 transition-colors cursor-pointer group"
             >
               <input
@@ -1138,10 +1148,11 @@ export default function CsvImportWizardPage() {
 
             {/* Duplicates Policy */}
             <div className="rounded-xl border-2 border-stroke/60 bg-surface-50 p-4 mb-6 max-w-md">
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
+              <label htmlFor={`${importId}-duplicates`} className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
                 Duplicates Handling Policy
               </label>
               <Select
+                id={`${importId}-duplicates`}
                 aria-label="Duplicates Handling Policy"
                 value={duplicatesPolicy}
                 onValueChange={(val) => setDuplicatesPolicy(val as DuplicatesPolicy)}
@@ -1174,7 +1185,9 @@ export default function CsvImportWizardPage() {
               </Button>
               <Button
                 variant="primary"
-                onClick={handleDispatchImport}
+                onClick={() => {
+                  void handleDispatchImport();
+                }}
                 loading={isSubmittingJob}
                 disabled={isSubmittingJob || validIncludedRows.length === 0}
               >
