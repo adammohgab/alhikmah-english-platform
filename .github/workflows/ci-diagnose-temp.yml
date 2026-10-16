@@ -40,8 +40,12 @@ jobs:
             body=$(tail -c 12000 "$RUNNER_TEMP/out.txt" | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
             echo "::warning title=$name exit=$code::$body"
           }
-          report prettier pnpm exec prettier --check .
-          report typecheck pnpm run typecheck
-          report lint pnpm run lint
-          report vitest pnpm test
+          pnpm test > "$RUNNER_TEMP/vitest.txt" 2>&1
+          code=$?
+          sed -i 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/vitest.txt"
+          body=$(grep -a -E "FAIL|AssertionError|TestingLibraryElementError|Unable to find|Error:|Test Files|Tests  |expected" "$RUNNER_TEMP/vitest.txt" | grep -v "stderr" | head -c 12000 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+          echo "::warning title=vitest-failures exit=$code::$body"
+          pnpm exec prettier --write src/pages/public/LoginPage/login-logic.ts > /dev/null 2>&1
+          diffbody=$(git diff -- src/pages/public/LoginPage/login-logic.ts | head -c 8000 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+          echo "::warning title=prettier-diff::$diffbody"
           exit 0
