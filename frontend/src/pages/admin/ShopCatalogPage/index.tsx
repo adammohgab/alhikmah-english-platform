@@ -61,7 +61,11 @@ export default function ShopCatalogPage({ items, save, setAvailability, reorder 
     const nextIndex = index + delta;
     if (nextIndex < 0 || nextIndex >= sorted.length) return;
 
-    [sorted[index], sorted[nextIndex]] = [sorted[nextIndex], sorted[index]];
+    const current = sorted[index];
+    const target = sorted[nextIndex];
+    if (current === undefined || target === undefined) return;
+    sorted[index] = target;
+    sorted[nextIndex] = current;
     try {
       await reorder(sorted.map((item) => item.id));
     } catch (error) {

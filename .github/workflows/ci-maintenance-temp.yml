@@ -33,29 +33,31 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Add dependencies, apply Prettier, report checks, push
+      - name: Pin ranges, auto-fix lint, apply Prettier, report checks, push
         run: |
           set +e
           enc() { sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g'; }
           strip() { sed 's/\x1b\[[0-9;]*m//g'; }
 
           apply() {
-            pnpm add react-hook-form@^7 @hookform/resolvers@^5 recharts@^2 > "$RUNNER_TEMP/add.txt" 2>&1 || return 1
+            pnpm add react-hook-form@^7.90.0 @hookform/resolvers@^5.9.1 recharts@^2.15.4 > "$RUNNER_TEMP/add.txt" 2>&1 || return 1
+            pnpm exec eslint . --fix > /dev/null 2>&1
             pnpm run format:write > /dev/null 2>&1
             git add -A
-            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "chore: add react-hook-form, @hookform/resolvers and recharts; apply Prettier"
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "chore: pin dependency ranges, apply ESLint fixes and Prettier"
           }
 
           apply
-          echo "::warning title=pnpm-add exit=$?::$(strip < "$RUNNER_TEMP/add.txt" | tail -c 3000 | enc)"
+          echo "::warning title=apply exit=$?::$(git log --oneline -1 | enc)"
 
           pnpm exec tsc --noEmit -p tsconfig.app.json > "$RUNNER_TEMP/tsc.txt" 2>&1
           code=$?
           echo "::warning title=typecheck-app exit=$code::$(strip < "$RUNNER_TEMP/tsc.txt" | grep -a 'error TS' | head -c 10000 | enc)"
 
-          pnpm exec eslint . > "$RUNNER_TEMP/eslint.txt" 2>&1
+          pnpm exec eslint . -f json -o "$RUNNER_TEMP/eslint.json" > /dev/null 2>&1
           code=$?
-          echo "::warning title=eslint exit=$code::$(strip < "$RUNNER_TEMP/eslint.txt" | head -c 10000 | enc)"
+          lint=$(node -e 'const r=JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"));const root=process.cwd()+"/";const out=[];for(const f of r){for(const m of f.messages){out.push(f.filePath.replace(root,"")+":"+m.line+" "+m.ruleId+" "+m.message.slice(0,100));}}console.log(out.join("\n"));' "$RUNNER_TEMP/eslint.json" | head -c 12000 | enc)
+          echo "::warning title=eslint-remaining exit=$code::$lint"
 
           pnpm exec prettier --check . > "$RUNNER_TEMP/prettier.txt" 2>&1
           code=$?
