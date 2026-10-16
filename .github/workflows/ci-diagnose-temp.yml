@@ -1,0 +1,83 @@
+name: CI diagnose (temporary)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/ci-diagnose-temp.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    name: Diagnose
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run every check and publish the output as annotations
+        run: |
+          set +e
+          emit() {
+            title="$1"; file="$2"
+            sed -i 's/\x1b\[[0-9;]*m//g' "$file"
+            total=$(wc -c < "$file")
+            if [ "$total" -eq 0 ]; then
+              echo "::warning title=$title::(no output)"
+              return
+            fi
+            split -b 3500 -d -a 2 "$file" "$RUNNER_TEMP/chunk-$title-"
+            n=0
+            for part in "$RUNNER_TEMP"/chunk-"$title"-*; do
+              n=$((n+1))
+              body=$(sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g' "$part")
+              echo "::warning title=$title part $n::$body"
+              [ "$n" -ge 8 ] && break
+            done
+          }
+
+          pnpm exec tsc --noEmit -p tsconfig.app.json > "$RUNNER_TEMP/tsc-app.txt" 2>&1
+          echo "tsc app exit $?"
+          grep -a "error TS" "$RUNNER_TEMP/tsc-app.txt" | sed 's|^src/||' > "$RUNNER_TEMP/tsc-errors.txt"
+          emit "tsc-app" "$RUNNER_TEMP/tsc-errors.txt"
+
+          pnpm exec tsc --noEmit -p tsconfig.node.json > "$RUNNER_TEMP/tsc-node.txt" 2>&1
+          echo "tsc node exit $?"
+          grep -a "error TS" "$RUNNER_TEMP/tsc-node.txt" > "$RUNNER_TEMP/tsc-node-errors.txt"
+          emit "tsc-node" "$RUNNER_TEMP/tsc-node-errors.txt"
+
+          pnpm exec eslint . -f unix > "$RUNNER_TEMP/eslint.txt" 2>&1
+          echo "eslint exit $?"
+          grep -a -E "\[(Error|Warning)/" "$RUNNER_TEMP/eslint.txt" | sed 's|^/home/runner/work/[^/]*/[^/]*/frontend/src/||' > "$RUNNER_TEMP/eslint-errors.txt"
+          emit "eslint" "$RUNNER_TEMP/eslint-errors.txt"
+
+          pnpm exec prettier --check . > "$RUNNER_TEMP/prettier.txt" 2>&1
+          echo "prettier exit $?"
+          grep -a "warn" "$RUNNER_TEMP/prettier.txt" > "$RUNNER_TEMP/prettier-files.txt"
+          emit "prettier" "$RUNNER_TEMP/prettier-files.txt"
+
+          pnpm test > "$RUNNER_TEMP/vitest.txt" 2>&1
+          echo "vitest exit $?"
+          grep -a -E "FAIL|AssertionError|Unable to find|Test Files|Tests  |Error:" "$RUNNER_TEMP/vitest.txt" | grep -a -v "Future Flag" > "$RUNNER_TEMP/vitest-failures.txt"
+          emit "vitest" "$RUNNER_TEMP/vitest-failures.txt"
+
+          pnpm exec vite build > "$RUNNER_TEMP/build.txt" 2>&1
+          echo "vite build exit $?"
+          tail -n 40 "$RUNNER_TEMP/build.txt" > "$RUNNER_TEMP/build-tail.txt"
+          emit "vite-build" "$RUNNER_TEMP/build-tail.txt"
+          exit 0
