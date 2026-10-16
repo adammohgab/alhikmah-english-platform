@@ -146,9 +146,12 @@ export default function AvatarStudioAdminPage({ assets, saveAsset, deleteAsset }
         </select>
       </label>
 
-      <form onSubmit={(event) => {
+      <form
+        onSubmit={(event) => {
           void upload(event);
-        }} style={{ border: "1px solid #ddd", padding: 16, marginTop: 16 }}>
+        }}
+        style={{ border: "1px solid #ddd", padding: 16, marginTop: 16 }}
+      >
         <h2>Add {category}</h2>
 
         <p>

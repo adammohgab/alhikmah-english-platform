@@ -162,8 +162,8 @@ export default function ShopCatalogPage({ items, save, setAvailability, reorder 
         >
           <form
             onSubmit={(event) => {
-          void commit(event);
-        }}
+              void commit(event);
+            }}
             style={{
               background: "white",
               padding: 24,

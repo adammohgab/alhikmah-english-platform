@@ -71,9 +71,11 @@ export default function ModerationQueuePage({ items, resolve }: Props) {
             }}
           >
             <strong>{item.entityType}</strong> · {item.triggerReason}
-            <p>{item.excerpt !== undefined && item.excerpt !== ""
-              ? item.excerpt
-              : "Content details are available to authorized moderators."}</p>
+            <p>
+              {item.excerpt !== undefined && item.excerpt !== ""
+                ? item.excerpt
+                : "Content details are available to authorized moderators."}
+            </p>
             <small>
               {new Date(item.createdAt).toLocaleString()} · {item.urgency.toUpperCase()} urgency
             </small>
@@ -134,9 +136,12 @@ export default function ModerationQueuePage({ items, resolve }: Props) {
               </label>
             </p>
             {error && <p role="alert">{error}</p>}
-            <button disabled={busy || !note.trim()} onClick={() => {
-              void submit();
-            }}>
+            <button
+              disabled={busy || !note.trim()}
+              onClick={() => {
+                void submit();
+              }}
+            >
               {busy ? "Saving…" : "Save resolution"}
             </button>{" "}
             <button onClick={() => setSelected(null)}>Cancel</button>

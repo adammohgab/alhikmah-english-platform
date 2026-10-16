@@ -146,9 +146,12 @@ export default function LeaderboardModerationPage({
 
       {student && (
         <div role="dialog" aria-modal="true" style={dialogStyle}>
-          <form onSubmit={(event) => {
-          void submitAdjustment(event);
-        }} style={formStyle}>
+          <form
+            onSubmit={(event) => {
+              void submitAdjustment(event);
+            }}
+            style={formStyle}
+          >
             <h2>Adjust XP for {student.name}</h2>
             <p>
               <label>

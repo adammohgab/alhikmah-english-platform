@@ -61,9 +61,11 @@ export default function PlatformSettingsPage({
       <h1>Platform Settings</h1>
       <p>Changes affect the whole platform. Confirm your password before saving.</p>
 
-      <form onSubmit={(event) => {
+      <form
+        onSubmit={(event) => {
           void submit(event);
-        }}>
+        }}
+      >
         <label style={{ display: "block", padding: 16 }}>
           <input
             type="checkbox"
