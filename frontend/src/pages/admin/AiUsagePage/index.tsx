@@ -1,12 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 import {
-  Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
-} from 'recharts';
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export type DailyUsage = { date: string; tokens: number; cost: number };
 export type FeatureUsage = {
-  feature: 'Tutor' | 'Writing' | 'Copilot';
+  feature: "Tutor" | "Writing" | "Copilot";
   cost: number;
   tokens: number;
 };
@@ -18,12 +26,10 @@ export type AiUsageReport = {
 };
 type Props = { report: AiUsageReport; currency?: string };
 
-export default function AiUsagePage({ report, currency = 'USD' }: Props) {
-  const [query, setQuery] = useState('');
+export default function AiUsagePage({ report, currency = "USD" }: Props) {
+  const [query, setQuery] = useState("");
   const filteredClasses = useMemo(
-    () => report.classes.filter(row =>
-      row.className.toLowerCase().includes(query.toLowerCase()),
-    ),
+    () => report.classes.filter((row) => row.className.toLowerCase().includes(query.toLowerCase())),
     [report.classes, query],
   );
 
@@ -32,39 +38,49 @@ export default function AiUsagePage({ report, currency = 'USD' }: Props) {
 
   function exportCsv() {
     const lines = [
-      ['section', 'date_or_name', 'tokens', 'cost', 'feature'],
-      ...report.daily.map(row => [
-        'daily', row.date, String(row.tokens), row.cost.toFixed(4), '',
+      ["section", "date_or_name", "tokens", "cost", "feature"],
+      ...report.daily.map((row) => [
+        "daily",
+        row.date,
+        String(row.tokens),
+        row.cost.toFixed(4),
+        "",
       ]),
-      ...report.features.map(row => [
-        'feature', row.feature, String(row.tokens), row.cost.toFixed(4), row.feature,
+      ...report.features.map((row) => [
+        "feature",
+        row.feature,
+        String(row.tokens),
+        row.cost.toFixed(4),
+        row.feature,
       ]),
-      ...report.classes.map(row => [
-        'class', row.className, String(row.tokens), row.cost.toFixed(4), '',
+      ...report.classes.map((row) => [
+        "class",
+        row.className,
+        String(row.tokens),
+        row.cost.toFixed(4),
+        "",
       ]),
     ];
 
     const csv = lines
-      .map(line => line.map(value => `"${value.replace(/"/g, '""')}"`).join(','))
-      .join('\r\n');
+      .map((line) => line.map((value) => `"${value.replace(/"/g, '""')}"`).join(","))
+      .join("\r\n");
 
-    const url = URL.createObjectURL(
-      new Blob([csv], { type: 'text/csv;charset=utf-8' }),
-    );
-    const link = document.createElement('a');
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
     link.href = url;
-    link.download = 'ai-usage-report.csv';
+    link.download = "ai-usage-report.csv";
     link.click();
     URL.revokeObjectURL(url);
   }
 
   return (
-    <main style={{ maxWidth: 1100, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 1100, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>AI Usage &amp; Cost</h1>
       <p>
-        Historical usage summary · {totalTokens.toLocaleString()} tokens ·{' '}
+        Historical usage summary · {totalTokens.toLocaleString()} tokens ·{" "}
         {new Intl.NumberFormat(undefined, {
-          style: 'currency',
+          style: "currency",
           currency,
         }).format(totalCost)}
       </p>
@@ -72,7 +88,7 @@ export default function AiUsagePage({ report, currency = 'USD' }: Props) {
 
       <section>
         <h2>Daily token consumption and spend</h2>
-        <div style={{ width: '100%', height: 320 }}>
+        <div style={{ width: "100%", height: 320 }}>
           <ResponsiveContainer>
             <LineChart data={report.daily}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -102,7 +118,7 @@ export default function AiUsagePage({ report, currency = 'USD' }: Props) {
 
       <section>
         <h2>Cost breakdown by feature</h2>
-        <div style={{ width: '100%', height: 280 }}>
+        <div style={{ width: "100%", height: 280 }}>
           <ResponsiveContainer>
             <BarChart data={report.features}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -118,10 +134,9 @@ export default function AiUsagePage({ report, currency = 'USD' }: Props) {
       <section>
         <h2>Token spend per class</h2>
         <label>
-          Filter classes{' '}
-          <input value={query} onChange={event => setQuery(event.target.value)} />
+          Filter classes <input value={query} onChange={(event) => setQuery(event.target.value)} />
         </label>
-        <div style={{ width: '100%', height: 320 }}>
+        <div style={{ width: "100%", height: 320 }}>
           <ResponsiveContainer>
             <BarChart data={filteredClasses}>
               <CartesianGrid strokeDasharray="3 3" />

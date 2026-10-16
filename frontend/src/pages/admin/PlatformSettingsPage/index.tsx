@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export type PlatformSettings = {
   emergencyMaintenance: boolean;
@@ -20,9 +20,9 @@ export default function PlatformSettingsPage({
   save,
 }: Props) {
   const [settings, setSettings] = useState(initial);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   if (!isSuperAdmin) {
     return (
@@ -33,60 +33,60 @@ export default function PlatformSettingsPage({
     );
   }
 
-  const toggle = (key: 'emergencyMaintenance' | 'publicRegistration') =>
-    setSettings(current => ({ ...current, [key]: !current[key] }));
+  const toggle = (key: "emergencyMaintenance" | "publicRegistration") =>
+    setSettings((current) => ({ ...current, [key]: !current[key] }));
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
-    setMessage('');
+    setMessage("");
 
     try {
       if (!(await verifyPassword(password))) {
-        throw new Error('Password verification failed.');
+        throw new Error("Password verification failed.");
       }
 
       await save(settings);
-      setMessage('Settings saved. Maintenance state is now published.');
-      setPassword('');
+      setMessage("Settings saved. Maintenance state is now published.");
+      setPassword("");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Could not save settings.');
+      setMessage(error instanceof Error ? error.message : "Could not save settings.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 760, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>Platform Settings</h1>
       <p>Changes affect the whole platform. Confirm your password before saving.</p>
 
       <form onSubmit={submit}>
-        <label style={{ display: 'block', padding: 16 }}>
+        <label style={{ display: "block", padding: 16 }}>
           <input
             type="checkbox"
             checked={settings.emergencyMaintenance}
-            onChange={() => toggle('emergencyMaintenance')}
-          />{' '}
+            onChange={() => toggle("emergencyMaintenance")}
+          />{" "}
           Emergency Maintenance Mode
           <small> Show a friendly maintenance notice and block non-admin access.</small>
         </label>
 
-        <label style={{ display: 'block', padding: 16 }}>
+        <label style={{ display: "block", padding: 16 }}>
           <input
             type="checkbox"
             checked={settings.publicRegistration}
-            onChange={() => toggle('publicRegistration')}
-          />{' '}
+            onChange={() => toggle("publicRegistration")}
+          />{" "}
           Public Registration Allowed
         </label>
 
-        <label style={{ display: 'block', padding: 16 }}>
-          Default World Theme{' '}
+        <label style={{ display: "block", padding: 16 }}>
+          Default World Theme{" "}
           <select
             value={settings.defaultWorldTheme}
-            onChange={event =>
-              setSettings(current => ({
+            onChange={(event) =>
+              setSettings((current) => ({
                 ...current,
                 defaultWorldTheme: event.target.value,
               }))
@@ -100,19 +100,18 @@ export default function PlatformSettingsPage({
         </label>
 
         <label>
-          Password verification{' '}
+          Password verification{" "}
           <input
             type="password"
             value={password}
-            onChange={event => setPassword(event.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
             required
             autoComplete="current-password"
           />
         </label>
 
         <p>
-          <button disabled={busy}>{busy ? 'Saving…' : 'Verify and save'}</button>{' '}
-          {message}
+          <button disabled={busy}>{busy ? "Saving…" : "Verify and save"}</button> {message}
         </p>
       </form>
     </main>

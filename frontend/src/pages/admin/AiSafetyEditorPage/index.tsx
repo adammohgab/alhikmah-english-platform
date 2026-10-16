@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export type SafetyConfig = {
   schoolInstructions: string;
@@ -20,19 +20,19 @@ type Props = {
 
 export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props) {
   const [config, setConfig] = useState(initial);
-  const [keyword, setKeyword] = useState('');
-  const [query, setQuery] = useState('');
+  const [keyword, setKeyword] = useState("");
+  const [query, setQuery] = useState("");
   const [result, setResult] = useState<SandboxResult | null>(null);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function persist() {
     setBusy(true);
     try {
       await save(config);
-      setMessage('Safety instructions saved.');
+      setMessage("Safety instructions saved.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Save failed.');
+      setMessage(error instanceof Error ? error.message : "Save failed.");
     } finally {
       setBusy(false);
     }
@@ -44,7 +44,7 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
     try {
       setResult(await runSandbox(query, config));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Sandbox request failed.');
+      setMessage(error instanceof Error ? error.message : "Sandbox request failed.");
     } finally {
       setBusy(false);
     }
@@ -54,16 +54,16 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
     event.preventDefault();
     const value = keyword.trim();
     if (value && !config.prohibitedKeywords.includes(value)) {
-      setConfig(current => ({
+      setConfig((current) => ({
         ...current,
         prohibitedKeywords: [...current.prohibitedKeywords, value],
       }));
     }
-    setKeyword('');
+    setKeyword("");
   }
 
   return (
-    <main style={{ maxWidth: 950, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 950, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>AI Safety Instructions</h1>
       <p>School-specific guidance is appended by the server to the platform prompt.</p>
 
@@ -71,25 +71,23 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
         School guidelines
         <textarea
           rows={8}
-          style={{ display: 'block', width: '100%' }}
+          style={{ display: "block", width: "100%" }}
           value={config.schoolInstructions}
-          onChange={event =>
-            setConfig({ ...config, schoolInstructions: event.target.value })
-          }
+          onChange={(event) => setConfig({ ...config, schoolInstructions: event.target.value })}
           placeholder="Prefer British English spelling; encourage learners with our school motto…"
         />
       </label>
 
       <h2>Prohibited topic keywords</h2>
       <div>
-        {config.prohibitedKeywords.map(term => (
+        {config.prohibitedKeywords.map((term) => (
           <span
             key={term}
             style={{
-              display: 'inline-block',
+              display: "inline-block",
               padding: 6,
               margin: 4,
-              background: '#eee',
+              background: "#eee",
               borderRadius: 8,
             }}
           >
@@ -99,11 +97,12 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
               onClick={() =>
                 setConfig({
                   ...config,
-                  prohibitedKeywords: config.prohibitedKeywords.filter(item => item !== term),
+                  prohibitedKeywords: config.prohibitedKeywords.filter((item) => item !== term),
                 })
               }
             >
-              {' '}×
+              {" "}
+              ×
             </button>
           </span>
         ))}
@@ -112,13 +111,15 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
       <form onSubmit={addKeyword}>
         <input
           value={keyword}
-          onChange={event => setKeyword(event.target.value)}
+          onChange={(event) => setKeyword(event.target.value)}
           placeholder="Add keyword"
         />
         <button>Add keyword</button>
       </form>
 
-      <button disabled={busy} onClick={persist}>Save instructions</button>
+      <button disabled={busy} onClick={persist}>
+        Save instructions
+      </button>
 
       <h2>Test sandbox</h2>
       <label>
@@ -126,22 +127,24 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
         <textarea
           rows={3}
           value={query}
-          onChange={event => setQuery(event.target.value)}
-          style={{ display: 'block', width: '100%' }}
+          onChange={(event) => setQuery(event.target.value)}
+          style={{ display: "block", width: "100%" }}
         />
       </label>
       <button disabled={busy || !query.trim()} onClick={test}>
-        {busy ? 'Working…' : 'Run test'}
+        {busy ? "Working…" : "Run test"}
       </button>
 
       {result && (
         <section>
           <h3>Sandbox response</h3>
           <p>{result.reply}</p>
-          <p>Tokens: {result.tokens} · Safety verdict: {result.safetyVerdict}</p>
+          <p>
+            Tokens: {result.tokens} · Safety verdict: {result.safetyVerdict}
+          </p>
           <details>
             <summary>Assembled prompt preview</summary>
-            <pre style={{ whiteSpace: 'pre-wrap' }}>{result.promptPreview}</pre>
+            <pre style={{ whiteSpace: "pre-wrap" }}>{result.promptPreview}</pre>
           </details>
         </section>
       )}

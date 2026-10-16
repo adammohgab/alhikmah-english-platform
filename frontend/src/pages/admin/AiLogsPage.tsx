@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
 export type AiLog = {
   id: string;
@@ -9,24 +9,24 @@ export type AiLog = {
   promptPreview: string;
   tokens: number;
   latencyMs: number;
-  safetyStatus: 'passed' | 'flagged' | 'blocked';
+  safetyStatus: "passed" | "flagged" | "blocked";
 };
 
 type Props = { logs: AiLog[] };
 
 export default function AiLogsPage({ logs }: Props) {
-  const [search, setSearch] = useState('');
-  const [safety, setSafety] = useState('');
-  const [model, setModel] = useState('');
-  const [minTokens, setMinTokens] = useState('');
+  const [search, setSearch] = useState("");
+  const [safety, setSafety] = useState("");
+  const [model, setModel] = useState("");
+  const [minTokens, setMinTokens] = useState("");
 
-  const models = [...new Set(logs.map(row => row.model))];
+  const models = [...new Set(logs.map((row) => row.model))];
 
   const rows = useMemo(
     () =>
       logs
         .filter(
-          row =>
+          (row) =>
             (!search ||
               `${row.className} ${row.feature} ${row.promptPreview}`
                 .toLowerCase()
@@ -40,25 +40,27 @@ export default function AiLogsPage({ logs }: Props) {
   );
 
   return (
-    <main style={{ maxWidth: 1150, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 1150, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>AI Activity Logs</h1>
       <p>Filter interactions to investigate high token usage, slow responses, and safety events.</p>
 
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <label>
-          Search class, feature, prompt{' '}
-          <input value={search} onChange={event => setSearch(event.target.value)} />
+          Search class, feature, prompt{" "}
+          <input value={search} onChange={(event) => setSearch(event.target.value)} />
         </label>
         <label>
-          Model{' '}
-          <select value={model} onChange={event => setModel(event.target.value)}>
+          Model{" "}
+          <select value={model} onChange={(event) => setModel(event.target.value)}>
             <option value="">All models</option>
-            {models.map(value => <option key={value}>{value}</option>)}
+            {models.map((value) => (
+              <option key={value}>{value}</option>
+            ))}
           </select>
         </label>
         <label>
-          Safety{' '}
-          <select value={safety} onChange={event => setSafety(event.target.value)}>
+          Safety{" "}
+          <select value={safety} onChange={(event) => setSafety(event.target.value)}>
             <option value="">All statuses</option>
             <option value="passed">Passed</option>
             <option value="flagged">Flagged</option>
@@ -66,17 +68,17 @@ export default function AiLogsPage({ logs }: Props) {
           </select>
         </label>
         <label>
-          Minimum tokens{' '}
+          Minimum tokens{" "}
           <input
             type="number"
             min="0"
             value={minTokens}
-            onChange={event => setMinTokens(event.target.value)}
+            onChange={(event) => setMinTokens(event.target.value)}
           />
         </label>
       </div>
 
-      <table style={{ width: '100%', marginTop: 20, borderCollapse: 'collapse' }}>
+      <table style={{ width: "100%", marginTop: 20, borderCollapse: "collapse" }}>
         <thead>
           <tr>
             <th>Time</th>
@@ -89,7 +91,7 @@ export default function AiLogsPage({ logs }: Props) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(row => (
+          {rows.map((row) => (
             <tr key={row.id}>
               <td>{new Date(row.createdAt).toLocaleString()}</td>
               <td>
@@ -102,7 +104,7 @@ export default function AiLogsPage({ logs }: Props) {
               <td align="right">{row.tokens.toLocaleString()}</td>
               <td align="right">{row.latencyMs.toLocaleString()} ms</td>
               <td>
-                <span style={{ color: row.safetyStatus === 'passed' ? '#287a42' : '#b22' }}>
+                <span style={{ color: row.safetyStatus === "passed" ? "#287a42" : "#b22" }}>
                   {row.safetyStatus}
                 </span>
               </td>

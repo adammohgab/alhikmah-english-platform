@@ -1,23 +1,23 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export type AdminUser = {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'super_admin' | 'none';
+  role: "admin" | "super_admin" | "none";
 };
 
 type Props = {
   isSuperAdmin: boolean;
   users: AdminUser[];
-  changeRole: (userId: string, role: AdminUser['role']) => Promise<void>;
+  changeRole: (userId: string, role: AdminUser["role"]) => Promise<void>;
 };
 
 export default function AdminsManagementPage({ isSuperAdmin, users, changeRole }: Props) {
   const [pending, setPending] = useState<AdminUser | null>(null);
-  const [role, setRole] = useState<AdminUser['role']>('admin');
+  const [role, setRole] = useState<AdminUser["role"]>("admin");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   if (!isSuperAdmin) {
     return (
@@ -32,24 +32,24 @@ export default function AdminsManagementPage({ isSuperAdmin, users, changeRole }
     if (!pending) return;
 
     setBusy(true);
-    setError('');
+    setError("");
 
     try {
       await changeRole(pending.id, role);
       setPending(null);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Role update failed.');
+      setError(error instanceof Error ? error.message : "Role update failed.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <main style={{ maxWidth: 900, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 900, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>Admins &amp; Roles</h1>
       <p>Role changes should be recorded as immutable audit log entries by the server.</p>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
             <th align="left">Name</th>
@@ -59,20 +59,20 @@ export default function AdminsManagementPage({ isSuperAdmin, users, changeRole }
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {users.map((user) => (
             <tr key={user.id}>
               <td>{user.name}</td>
               <td>{user.email}</td>
-              <td>{user.role.replace('_', ' ')}</td>
+              <td>{user.role.replace("_", " ")}</td>
               <td>
                 <button
                   onClick={() => {
                     setPending(user);
-                    setRole(user.role === 'admin' ? 'super_admin' : 'admin');
-                    setError('');
+                    setRole(user.role === "admin" ? "super_admin" : "admin");
+                    setError("");
                   }}
                 >
-                  {user.role === 'none' ? 'Assign role' : 'Change / revoke role'}
+                  {user.role === "none" ? "Assign role" : "Change / revoke role"}
                 </button>
               </td>
             </tr>
@@ -86,34 +86,31 @@ export default function AdminsManagementPage({ isSuperAdmin, users, changeRole }
           aria-modal="true"
           aria-labelledby="role-title"
           style={{
-            position: 'fixed',
+            position: "fixed",
             inset: 0,
-            background: '#0008',
-            display: 'grid',
-            placeItems: 'center',
+            background: "#0008",
+            display: "grid",
+            placeItems: "center",
           }}
         >
-          <section style={{ background: 'white', padding: 24, borderRadius: 12 }}>
+          <section style={{ background: "white", padding: 24, borderRadius: 12 }}>
             <h2 id="role-title">Change role for {pending.name}</h2>
-
             <label>
-              New role{' '}
+              New role{" "}
               <select
                 value={role}
-                onChange={event => setRole(event.target.value as AdminUser['role'])}
+                onChange={(event) => setRole(event.target.value as AdminUser["role"])}
               >
                 <option value="admin">Admin</option>
                 <option value="super_admin">Super Admin</option>
                 <option value="none">Revoke access</option>
               </select>
             </label>
-
             <p>This change will be saved and audited.</p>
             {error && <p role="alert">{error}</p>}
-
             <button disabled={busy} onClick={confirm}>
-              {busy ? 'Saving…' : 'Confirm change'}
-            </button>{' '}
+              {busy ? "Saving…" : "Confirm change"}
+            </button>{" "}
             <button disabled={busy} onClick={() => setPending(null)}>
               Cancel
             </button>

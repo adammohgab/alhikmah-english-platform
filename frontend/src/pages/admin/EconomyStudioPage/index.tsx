@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 
 type Config = {
   dailyCap: number;
@@ -13,13 +13,9 @@ type Props = {
   averageLessonsPerWeek?: number;
 };
 
-export default function EconomyStudioPage({
-  initial,
-  save,
-  averageLessonsPerWeek = 5,
-}: Props) {
+export default function EconomyStudioPage({ initial, save, averageLessonsPerWeek = 5 }: Props) {
   const [config, setConfig] = useState(initial);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
   const curve = useMemo(
@@ -41,53 +37,51 @@ export default function EconomyStudioPage({
 
     try {
       await save(config);
-      setMessage('Economy settings saved atomically.');
+      setMessage("Economy settings saved atomically.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Save failed.');
+      setMessage(error instanceof Error ? error.message : "Save failed.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <main style={{ maxWidth: 900, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 900, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>Economy Studio</h1>
 
       <form onSubmit={submit}>
-        {([
-          ['dailyCap', 'Daily XP Cap', 1000],
-          ['lessonXp', 'Base Lesson XP', 20],
-          ['activityXp', 'Base Activity XP', 10],
-          ['perfectBonus', 'Quiz Perfect Score Bonus', 50],
-        ] as const).map(([key, label, defaultValue]) => (
+        {(
+          [
+            ["dailyCap", "Daily XP Cap", 1000],
+            ["lessonXp", "Base Lesson XP", 20],
+            ["activityXp", "Base Activity XP", 10],
+            ["perfectBonus", "Quiz Perfect Score Bonus", 50],
+          ] as const
+        ).map(([key, label, defaultValue]) => (
           <p key={key}>
             <label>
-              {label}{' '}
+              {label}{" "}
               <input
                 type="number"
                 min="0"
                 value={config[key]}
                 placeholder={String(defaultValue)}
-                onChange={event =>
-                  setConfig({ ...config, [key]: Number(event.target.value) })
-                }
+                onChange={(event) => setConfig({ ...config, [key]: Number(event.target.value) })}
               />
             </label>
           </p>
         ))}
-
-        <button disabled={busy}>{busy ? 'Saving…' : 'Save economy configuration'}</button>{' '}
-        {message}
+        <button disabled={busy}>{busy ? "Saving…" : "Save economy configuration"}</button> {message}
       </form>
 
       <h2>Level progression (XP required)</h2>
       <div
         style={{
-          display: 'flex',
-          alignItems: 'end',
+          display: "flex",
+          alignItems: "end",
           gap: 3,
           height: 180,
-          borderBottom: '1px solid',
+          borderBottom: "1px solid",
         }}
       >
         {curve.map((value, index) => (
@@ -96,7 +90,7 @@ export default function EconomyStudioPage({
             title={`Level ${index + 1}: ${value} XP`}
             style={{
               height: `${Math.max(4, (value / curvePeak) * 100)}%`,
-              background: '#5681d8',
+              background: "#5681d8",
               flex: 1,
             }}
           />

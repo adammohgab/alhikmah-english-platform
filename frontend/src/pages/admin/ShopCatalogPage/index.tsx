@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export type ShopItem = {
   id: string;
   sku: string;
   title: string;
-  category: 'Theme' | 'Accessory' | 'Power-up';
+  category: "Theme" | "Accessory" | "Power-up";
   coinPrice: number;
   requiredLevel: number;
   assetUrl: string;
@@ -15,36 +15,29 @@ export type ShopItem = {
 
 type Props = {
   items: ShopItem[];
-  save: (item: Omit<ShopItem, 'purchases'>) => Promise<void>;
+  save: (item: Omit<ShopItem, "purchases">) => Promise<void>;
   setAvailability: (id: string, available: boolean) => Promise<void>;
   reorder: (orderedIds: string[]) => Promise<void>;
 };
 
-const blank: Omit<ShopItem, 'purchases'> = {
-  id: '',
-  sku: '',
-  title: '',
-  category: 'Theme',
+const blank: Omit<ShopItem, "purchases"> = {
+  id: "",
+  sku: "",
+  title: "",
+  category: "Theme",
   coinPrice: 0,
   requiredLevel: 1,
-  assetUrl: '',
+  assetUrl: "",
   available: true,
   shelfOrder: 0,
 };
 
-export default function ShopCatalogPage({
-  items,
-  save,
-  setAvailability,
-  reorder,
-}: Props) {
-  const [edit, setEdit] = useState<Omit<ShopItem, 'purchases'> | null>(null);
+export default function ShopCatalogPage({ items, save, setAvailability, reorder }: Props) {
+  const [edit, setEdit] = useState<Omit<ShopItem, "purchases"> | null>(null);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
-  const popularItems = [...items]
-    .sort((a, b) => b.purchases - a.purchases)
-    .slice(0, 5);
+  const popularItems = [...items].sort((a, b) => b.purchases - a.purchases).slice(0, 5);
 
   async function commit(event: React.FormEvent) {
     event.preventDefault();
@@ -54,9 +47,9 @@ export default function ShopCatalogPage({
     try {
       await save(edit);
       setEdit(null);
-      setMessage('Catalog item saved.');
+      setMessage("Catalog item saved.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Save failed.');
+      setMessage(error instanceof Error ? error.message : "Save failed.");
     } finally {
       setBusy(false);
     }
@@ -64,33 +57,33 @@ export default function ShopCatalogPage({
 
   async function moveItem(id: string, delta: number) {
     const sorted = [...items].sort((a, b) => a.shelfOrder - b.shelfOrder);
-    const index = sorted.findIndex(item => item.id === id);
+    const index = sorted.findIndex((item) => item.id === id);
     const nextIndex = index + delta;
     if (nextIndex < 0 || nextIndex >= sorted.length) return;
 
     [sorted[index], sorted[nextIndex]] = [sorted[nextIndex], sorted[index]];
     try {
-      await reorder(sorted.map(item => item.id));
+      await reorder(sorted.map((item) => item.id));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Reorder failed.');
+      setMessage(error instanceof Error ? error.message : "Reorder failed.");
     }
   }
 
   return (
-    <main style={{ maxWidth: 1100, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 1100, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>Shop Catalog</h1>
       <button onClick={() => setEdit({ ...blank })}>Add item</button>
 
       <h2>Popular items</h2>
       <ol>
-        {popularItems.map(item => (
+        {popularItems.map((item) => (
           <li key={item.id}>
             {item.title} — {item.purchases.toLocaleString()} purchases
           </li>
         ))}
       </ol>
 
-      <table style={{ width: '100%' }}>
+      <table style={{ width: "100%" }}>
         <thead>
           <tr>
             <th align="left">Item</th>
@@ -106,9 +99,13 @@ export default function ShopCatalogPage({
         <tbody>
           {[...items]
             .sort((a, b) => a.shelfOrder - b.shelfOrder)
-            .map(item => (
+            .map((item) => (
               <tr key={item.id}>
-                <td>{item.title}<br /><small>{item.sku}</small></td>
+                <td>
+                  {item.title}
+                  <br />
+                  <small>{item.sku}</small>
+                </td>
                 <td>{item.category}</td>
                 <td align="right">{item.coinPrice} coins</td>
                 <td align="center">{item.requiredLevel}</td>
@@ -116,22 +113,24 @@ export default function ShopCatalogPage({
                   <input
                     type="checkbox"
                     checked={item.available}
-                    onChange={async event => {
+                    onChange={async (event) => {
                       try {
                         await setAvailability(item.id, event.target.checked);
                       } catch (error) {
                         setMessage(
-                          error instanceof Error
-                            ? error.message
-                            : 'Availability update failed.',
+                          error instanceof Error ? error.message : "Availability update failed.",
                         );
                       }
                     }}
                   />
                 </td>
                 <td>
-                  <button aria-label="Move up" onClick={() => void moveItem(item.id, -1)}>↑</button>{' '}
-                  <button aria-label="Move down" onClick={() => void moveItem(item.id, 1)}>↓</button>
+                  <button aria-label="Move up" onClick={() => void moveItem(item.id, -1)}>
+                    ↑
+                  </button>{" "}
+                  <button aria-label="Move down" onClick={() => void moveItem(item.id, 1)}>
+                    ↓
+                  </button>
                 </td>
                 <td align="right">{item.purchases}</td>
                 <td>
@@ -147,32 +146,32 @@ export default function ShopCatalogPage({
           role="dialog"
           aria-modal="true"
           style={{
-            position: 'fixed',
+            position: "fixed",
             inset: 0,
-            background: '#0008',
-            display: 'grid',
-            placeItems: 'center',
+            background: "#0008",
+            display: "grid",
+            placeItems: "center",
           }}
         >
           <form
             onSubmit={commit}
             style={{
-              background: 'white',
+              background: "white",
               padding: 24,
               borderRadius: 12,
-              width: 'min(540px, 90vw)',
+              width: "min(540px, 90vw)",
             }}
           >
-            <h2>{edit.id ? 'Edit' : 'Add'} shop item</h2>
+            <h2>{edit.id ? "Edit" : "Add"} shop item</h2>
 
-            {(['sku', 'title', 'assetUrl'] as const).map(key => (
+            {(["sku", "title", "assetUrl"] as const).map((key) => (
               <p key={key}>
                 <label>
-                  {key === 'assetUrl' ? 'Asset URL' : key.toUpperCase()}{' '}
+                  {key === "assetUrl" ? "Asset URL" : key.toUpperCase()}{" "}
                   <input
                     required
                     value={edit[key]}
-                    onChange={event => setEdit({ ...edit, [key]: event.target.value })}
+                    onChange={(event) => setEdit({ ...edit, [key]: event.target.value })}
                   />
                 </label>
               </p>
@@ -180,11 +179,11 @@ export default function ShopCatalogPage({
 
             <p>
               <label>
-                Category{' '}
+                Category{" "}
                 <select
                   value={edit.category}
-                  onChange={event =>
-                    setEdit({ ...edit, category: event.target.value as ShopItem['category'] })
+                  onChange={(event) =>
+                    setEdit({ ...edit, category: event.target.value as ShopItem["category"] })
                   }
                 >
                   <option>Theme</option>
@@ -196,24 +195,24 @@ export default function ShopCatalogPage({
 
             <p>
               <label>
-                Coin price{' '}
+                Coin price{" "}
                 <input
                   type="number"
                   min="0"
                   value={edit.coinPrice}
-                  onChange={event => setEdit({ ...edit, coinPrice: Number(event.target.value) })}
+                  onChange={(event) => setEdit({ ...edit, coinPrice: Number(event.target.value) })}
                 />
               </label>
             </p>
 
             <p>
               <label>
-                Required student level{' '}
+                Required student level{" "}
                 <input
                   type="number"
                   min="1"
                   value={edit.requiredLevel}
-                  onChange={event =>
+                  onChange={(event) =>
                     setEdit({ ...edit, requiredLevel: Number(event.target.value) })
                   }
                 />
@@ -224,14 +223,16 @@ export default function ShopCatalogPage({
               <input
                 type="checkbox"
                 checked={edit.available}
-                onChange={event => setEdit({ ...edit, available: event.target.checked })}
-              />{' '}
+                onChange={(event) => setEdit({ ...edit, available: event.target.checked })}
+              />{" "}
               Available to students
             </label>
 
             <p>
-              <button disabled={busy}>Save item</button>{' '}
-              <button type="button" onClick={() => setEdit(null)}>Cancel</button>
+              <button disabled={busy}>Save item</button>{" "}
+              <button type="button" onClick={() => setEdit(null)}>
+                Cancel
+              </button>
             </p>
           </form>
         </div>

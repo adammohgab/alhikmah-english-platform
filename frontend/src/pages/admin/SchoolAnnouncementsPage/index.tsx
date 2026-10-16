@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export type Announcement = {
   title: string;
   body: string;
-  audience: 'all' | 'students' | 'teachers';
-  priority: 'normal' | 'urgent';
+  audience: "all" | "students" | "teachers";
+  priority: "normal" | "urgent";
   releaseAt: string;
   expiresAt: string;
 };
@@ -15,14 +15,14 @@ type Props = {
 
 export default function SchoolAnnouncementsPage({ publish }: Props) {
   const [announcement, setAnnouncement] = useState<Announcement>({
-    title: '',
-    body: '',
-    audience: 'all',
-    priority: 'normal',
-    releaseAt: '',
-    expiresAt: '',
+    title: "",
+    body: "",
+    audience: "all",
+    priority: "normal",
+    releaseAt: "",
+    expiresAt: "",
   });
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function submit(event: React.FormEvent) {
@@ -31,57 +31,53 @@ export default function SchoolAnnouncementsPage({ publish }: Props) {
 
     try {
       await publish(announcement);
-      setMessage('Announcement published. Urgent announcements should be fanned out through the realtime service.');
-      setAnnouncement(current => ({ ...current, title: '', body: '' }));
+      setMessage(
+        "Announcement published. Urgent announcements should be fanned out through the realtime service.",
+      );
+      setAnnouncement((current) => ({ ...current, title: "", body: "" }));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Publish failed.');
+      setMessage(error instanceof Error ? error.message : "Publish failed.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', fontFamily: 'system-ui' }}>
+    <main style={{ maxWidth: 760, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>School Announcements</h1>
 
       <form onSubmit={submit}>
         <p>
           <label>
-            Title{' '}
+            Title{" "}
             <input
               required
               maxLength={160}
               value={announcement.title}
-              onChange={event =>
-                setAnnouncement({ ...announcement, title: event.target.value })
-              }
+              onChange={(event) => setAnnouncement({ ...announcement, title: event.target.value })}
             />
           </label>
         </p>
-
         <p>
           <label>
-            Message{' '}
+            Message{" "}
             <textarea
               required
               rows={6}
               value={announcement.body}
-              onChange={event =>
-                setAnnouncement({ ...announcement, body: event.target.value })
-              }
+              onChange={(event) => setAnnouncement({ ...announcement, body: event.target.value })}
             />
           </label>
         </p>
-
         <p>
           <label>
-            Target audience{' '}
+            Target audience{" "}
             <select
               value={announcement.audience}
-              onChange={event =>
+              onChange={(event) =>
                 setAnnouncement({
                   ...announcement,
-                  audience: event.target.value as Announcement['audience'],
+                  audience: event.target.value as Announcement["audience"],
                 })
               }
             >
@@ -91,16 +87,15 @@ export default function SchoolAnnouncementsPage({ publish }: Props) {
             </select>
           </label>
         </p>
-
         <p>
           <label>
-            Priority{' '}
+            Priority{" "}
             <select
               value={announcement.priority}
-              onChange={event =>
+              onChange={(event) =>
                 setAnnouncement({
                   ...announcement,
-                  priority: event.target.value as Announcement['priority'],
+                  priority: event.target.value as Announcement["priority"],
                 })
               }
             >
@@ -109,32 +104,29 @@ export default function SchoolAnnouncementsPage({ publish }: Props) {
             </select>
           </label>
         </p>
-
         <p>
           <label>
-            Scheduled release{' '}
+            Scheduled release{" "}
             <input
               type="datetime-local"
               value={announcement.releaseAt}
-              onChange={event =>
+              onChange={(event) =>
                 setAnnouncement({ ...announcement, releaseAt: event.target.value })
               }
             />
-          </label>{' '}
+          </label>{" "}
           <label>
-            Expiration{' '}
+            Expiration{" "}
             <input
               type="datetime-local"
               value={announcement.expiresAt}
-              onChange={event =>
+              onChange={(event) =>
                 setAnnouncement({ ...announcement, expiresAt: event.target.value })
               }
             />
           </label>
         </p>
-
-        <button disabled={busy}>{busy ? 'Publishing…' : 'Publish announcement'}</button>{' '}
-        {message}
+        <button disabled={busy}>{busy ? "Publishing…" : "Publish announcement"}</button> {message}
       </form>
     </main>
   );
