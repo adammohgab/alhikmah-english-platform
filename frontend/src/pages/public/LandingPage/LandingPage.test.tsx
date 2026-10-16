@@ -179,10 +179,10 @@ describe("PUB-03: LandingPage assembly (SH-01)", () => {
   });
 
   it("uses native scrolling under reduced motion", () => {
-    window.matchMedia = ((query: string) => ({
+    window.matchMedia = (query: string) => ({
       ...originalMatchMedia(query),
       matches: query.includes("prefers-reduced-motion"),
-    })) as typeof window.matchMedia;
+    });
 
     renderPage();
     expect(lenisInstances()).toHaveLength(0);
