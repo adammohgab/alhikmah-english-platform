@@ -1,0 +1,46 @@
+name: CI diagnose (temporary)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/ci-diagnose-temp.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    name: Diagnose
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run every check and report each result as an annotation
+        run: |
+          report() {
+            name="$1"; shift
+            "$@" > "$RUNNER_TEMP/out.txt" 2>&1
+            code=$?
+            body=$(tail -c 12000 "$RUNNER_TEMP/out.txt" | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+            echo "::warning title=$name exit=$code::$body"
+          }
+          report prettier pnpm exec prettier --check .
+          report typecheck pnpm run typecheck
+          report lint pnpm run lint
+          report vitest pnpm test
+          exit 0
