@@ -17,7 +17,7 @@ export default function YearRolloverPage({
   rollbackUntil,
   progress = 0,
 }: Props) {
-  const [source, setSource] = useState(sourceYears[0] || "");
+  const [source, setSource] = useState(sourceYears[0] ?? "");
   const [destination, setDestination] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [check, setCheck] = useState<{
@@ -75,7 +75,9 @@ export default function YearRolloverPage({
     <main style={{ maxWidth: 800, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>Academic Year Rollover</h1>
       <p>Run pre-flight checks before preparing a rollover.</p>
-      <button disabled={busy} onClick={inspect}>
+      <button disabled={busy} onClick={() => {
+              void inspect();
+            }}>
         Run pre-flight checklist
       </button>
       {check && (
@@ -84,7 +86,9 @@ export default function YearRolloverPage({
           <li>{check.activeSessions === 0 ? "✓" : `⚠ ${check.activeSessions} active sessions`}</li>
         </ul>
       )}
-      <form onSubmit={run}>
+      <form onSubmit={(event) => {
+          void run(event);
+        }}>
         <p>
           <label>
             Source year{" "}
@@ -135,7 +139,9 @@ export default function YearRolloverPage({
       {rollbackUntil && (
         <p>
           Rollback available until {new Date(rollbackUntil).toLocaleString()}{" "}
-          <button disabled={busy || Date.now() > Date.parse(rollbackUntil)} onClick={undo}>
+          <button disabled={busy || Date.now() > Date.parse(rollbackUntil)} onClick={() => {
+              void undo();
+            }}>
             Rollback
           </button>
         </p>

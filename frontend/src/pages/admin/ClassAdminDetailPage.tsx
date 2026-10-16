@@ -56,8 +56,8 @@ export default function ClassAdminDetailPage(props: Props) {
         </p>
         <button
           disabled={busy}
-          onClick={() =>
-            runAction(
+          onClick={() => {
+            void runAction(
               () =>
                 props.onSave({
                   teacher,
@@ -67,12 +67,14 @@ export default function ClassAdminDetailPage(props: Props) {
                     .filter(Boolean),
                 }),
               "Teacher assignments saved.",
-            )
-          }
+            );
+          }}
         >
           Save assignments
         </button>{" "}
-        <button disabled={busy} onClick={() => runAction(props.onResetCode, "Join code reset.")}>
+        <button disabled={busy} onClick={() => {
+            void runAction(props.onResetCode, "Join code reset.");
+          }}>
           Force reset join code
         </button>{" "}
         <button

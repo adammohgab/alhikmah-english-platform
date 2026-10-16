@@ -117,7 +117,9 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
         <button>Add keyword</button>
       </form>
 
-      <button disabled={busy} onClick={persist}>
+      <button disabled={busy} onClick={() => {
+              void persist();
+            }}>
         Save instructions
       </button>
 
@@ -131,7 +133,9 @@ export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props)
           style={{ display: "block", width: "100%" }}
         />
       </label>
-      <button disabled={busy || !query.trim()} onClick={test}>
+      <button disabled={busy || !query.trim()} onClick={() => {
+              void test();
+            }}>
         {busy ? "Working…" : "Run test"}
       </button>
 

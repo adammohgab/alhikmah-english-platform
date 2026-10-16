@@ -53,7 +53,9 @@ export default function AiGovernancePage({ initial, save }: Props) {
     <main style={{ maxWidth: 900, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>AI Features &amp; Limits</h1>
 
-      <form onSubmit={submit}>
+      <form onSubmit={(event) => {
+          void submit(event);
+        }}>
         <table style={{ width: "100%" }}>
           <thead>
             <tr>

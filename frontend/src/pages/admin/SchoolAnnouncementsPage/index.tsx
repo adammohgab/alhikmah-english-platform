@@ -46,7 +46,9 @@ export default function SchoolAnnouncementsPage({ publish }: Props) {
     <main style={{ maxWidth: 760, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>School Announcements</h1>
 
-      <form onSubmit={submit}>
+      <form onSubmit={(event) => {
+          void submit(event);
+        }}>
         <p>
           <label>
             Title{" "}

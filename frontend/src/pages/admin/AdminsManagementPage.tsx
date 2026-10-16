@@ -108,7 +108,9 @@ export default function AdminsManagementPage({ isSuperAdmin, users, changeRole }
             </label>
             <p>This change will be saved and audited.</p>
             {error && <p role="alert">{error}</p>}
-            <button disabled={busy} onClick={confirm}>
+            <button disabled={busy} onClick={() => {
+              void confirm();
+            }}>
               {busy ? "Saving…" : "Confirm change"}
             </button>{" "}
             <button disabled={busy} onClick={() => setPending(null)}>

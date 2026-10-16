@@ -117,14 +117,17 @@ export default function ShopCatalogPage({ items, save, setAvailability, reorder 
                   <input
                     type="checkbox"
                     checked={item.available}
-                    onChange={async (event) => {
-                      try {
-                        await setAvailability(item.id, event.target.checked);
-                      } catch (error) {
-                        setMessage(
-                          error instanceof Error ? error.message : "Availability update failed.",
-                        );
-                      }
+                    onChange={(event) => {
+                      const available = event.target.checked;
+                      void (async () => {
+                        try {
+                          await setAvailability(item.id, available);
+                        } catch (error) {
+                          setMessage(
+                            error instanceof Error ? error.message : "Availability update failed.",
+                          );
+                        }
+                      })();
                     }}
                   />
                 </td>
@@ -158,7 +161,9 @@ export default function ShopCatalogPage({ items, save, setAvailability, reorder 
           }}
         >
           <form
-            onSubmit={commit}
+            onSubmit={(event) => {
+          void commit(event);
+        }}
             style={{
               background: "white",
               padding: 24,

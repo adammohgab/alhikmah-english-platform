@@ -172,7 +172,9 @@ export default function QuestsBadgesStudioPage({
 
       {quest && (
         <div role="dialog" aria-modal="true" style={dialogStyle}>
-          <form onSubmit={submitQuest} style={formStyle}>
+          <form onSubmit={(event) => {
+          void submitQuest(event);
+        }} style={formStyle}>
             <h2>Quest template</h2>
             <label>
               Type{" "}
@@ -251,7 +253,9 @@ export default function QuestsBadgesStudioPage({
 
       {badge && (
         <div role="dialog" aria-modal="true" style={dialogStyle}>
-          <form onSubmit={submitBadge} style={formStyle}>
+          <form onSubmit={(event) => {
+          void submitBadge(event);
+        }} style={formStyle}>
             <h2>Badge definition</h2>
             <p>
               <label>

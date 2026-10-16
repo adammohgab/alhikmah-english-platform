@@ -108,7 +108,11 @@ export default function AvatarStudioAdminPage({ assets, saveAsset, deleteAsset }
     if (target < 0 || target >= visibleAssets.length) return;
 
     const reordered = [...visibleAssets];
-    [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+    const moving = reordered[index];
+    const displaced = reordered[target];
+    if (moving === undefined || displaced === undefined) return;
+    reordered[index] = displaced;
+    reordered[target] = moving;
 
     setBusy(true);
     try {
@@ -142,7 +146,9 @@ export default function AvatarStudioAdminPage({ assets, saveAsset, deleteAsset }
         </select>
       </label>
 
-      <form onSubmit={upload} style={{ border: "1px solid #ddd", padding: 16, marginTop: 16 }}>
+      <form onSubmit={(event) => {
+          void upload(event);
+        }} style={{ border: "1px solid #ddd", padding: 16, marginTop: 16 }}>
         <h2>Add {category}</h2>
 
         <p>
@@ -231,15 +237,17 @@ export default function AvatarStudioAdminPage({ assets, saveAsset, deleteAsset }
           </button>
           <button
             disabled={busy}
-            onClick={async () => {
-              setBusy(true);
-              try {
-                await deleteAsset(asset.id);
-              } catch (error) {
-                setMessage(error instanceof Error ? error.message : "Delete failed.");
-              } finally {
-                setBusy(false);
-              }
+            onClick={() => {
+              void (async () => {
+                setBusy(true);
+                try {
+                  await deleteAsset(asset.id);
+                } catch (error) {
+                  setMessage(error instanceof Error ? error.message : "Delete failed.");
+                } finally {
+                  setBusy(false);
+                }
+              })();
             }}
           >
             Delete
