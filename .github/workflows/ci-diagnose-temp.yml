@@ -32,6 +32,7 @@ jobs:
 
       - name: Run every check and report each result as an annotation
         run: |
+          set +e
           report() {
             name="$1"; shift
             "$@" > "$RUNNER_TEMP/out.txt" 2>&1
