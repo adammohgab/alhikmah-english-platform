@@ -30,22 +30,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Run every check and report each result as an annotation
+      - name: Run vitest three times and report each failure
         run: |
           set +e
-          report() {
-            name="$1"; shift
-            "$@" > "$RUNNER_TEMP/out.txt" 2>&1
+          for i in 1 2 3; do
+            pnpm test > "$RUNNER_TEMP/vitest-$i.txt" 2>&1
             code=$?
-            body=$(tail -c 12000 "$RUNNER_TEMP/out.txt" | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
-            echo "::warning title=$name exit=$code::$body"
-          }
-          pnpm test > "$RUNNER_TEMP/vitest.txt" 2>&1
-          code=$?
-          sed -i 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/vitest.txt"
-          body=$(grep -a -E "FAIL|AssertionError|TestingLibraryElementError|Unable to find|Error:|Test Files|Tests  |expected" "$RUNNER_TEMP/vitest.txt" | grep -v "stderr" | head -c 12000 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
-          echo "::warning title=vitest-failures exit=$code::$body"
-          pnpm exec prettier --write src/pages/public/LoginPage/login-logic.ts > /dev/null 2>&1
-          diffbody=$(git diff -- src/pages/public/LoginPage/login-logic.ts | head -c 8000 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
-          echo "::warning title=prettier-diff::$diffbody"
+            sed -i 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/vitest-$i.txt"
+            summary=$(grep -a -E "Test Files|Tests  " "$RUNNER_TEMP/vitest-$i.txt" | tr '\n' ' ')
+            if [ "$code" -ne 0 ]; then
+              body=$(grep -a -B2 -A30 -E "FAIL|AssertionError|Unable to find" "$RUNNER_TEMP/vitest-$i.txt" | grep -a -v "Future Flag" | head -c 9000 | sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g')
+              echo "::warning title=vitest-run-$i exit=$code::$summary%0A$body"
+            else
+              echo "::warning title=vitest-run-$i exit=0::$summary"
+            fi
+          done
           exit 0

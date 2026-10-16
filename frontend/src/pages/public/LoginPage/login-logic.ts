@@ -82,8 +82,7 @@ export function normalizeUsername(value: string): string {
 }
 
 export type LoginValidation =
-  | { success: true; data: LoginValues }
-  | { success: false; errors: LoginErrors };
+  { success: true; data: LoginValues } | { success: false; errors: LoginErrors };
 
 /** Validates the whole form. The password is never trimmed, since spaces may be part of it. */
 export function validateLogin(values: LoginValues): LoginValidation {
