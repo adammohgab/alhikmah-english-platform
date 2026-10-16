@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer,
   Tooltip, XAxis, YAxis,
@@ -45,7 +45,7 @@ export default function AiUsagePage({ report, currency = 'USD' }: Props) {
     ];
 
     const csv = lines
-      .map(line => line.map(value => `"${value.replaceAll('"', '""')}"`).join(','))
+      .map(line => line.map(value => `"${value.replace(/"/g, '""')}"`).join(','))
       .join('\r\n');
 
     const url = URL.createObjectURL(

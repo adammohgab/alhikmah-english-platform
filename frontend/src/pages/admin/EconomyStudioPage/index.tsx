@@ -26,6 +26,7 @@ export default function EconomyStudioPage({
     () => Array.from({ length: 50 }, (_, index) => Math.round(100 * Math.pow(index + 1, 1.65))),
     [],
   );
+  const curvePeak = Math.max(...curve, 1);
 
   const weekly = Math.min(
     config.dailyCap * 5,
@@ -94,7 +95,7 @@ export default function EconomyStudioPage({
             key={index}
             title={`Level ${index + 1}: ${value} XP`}
             style={{
-              height: `${Math.max(4, (value / curve[49]) * 100)}%`,
+              height: `${Math.max(4, (value / curvePeak) * 100)}%`,
               background: '#5681d8',
               flex: 1,
             }}

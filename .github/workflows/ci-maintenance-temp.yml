@@ -1,0 +1,77 @@
+name: CI maintenance (temporary)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/ci-maintenance-temp.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  maintain:
+    name: Add dependencies, format, check, push
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Add dependencies, apply Prettier, report checks, push
+        run: |
+          set +e
+          enc() { sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g'; }
+          strip() { sed 's/\x1b\[[0-9;]*m//g'; }
+
+          apply() {
+            pnpm add react-hook-form@^7 @hookform/resolvers@^5 recharts@^2 > "$RUNNER_TEMP/add.txt" 2>&1 || return 1
+            pnpm run format:write > /dev/null 2>&1
+            git add -A
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "chore: add react-hook-form, @hookform/resolvers and recharts; apply Prettier"
+          }
+
+          apply
+          echo "::warning title=pnpm-add exit=$?::$(strip < "$RUNNER_TEMP/add.txt" | tail -c 3000 | enc)"
+
+          pnpm exec tsc --noEmit -p tsconfig.app.json > "$RUNNER_TEMP/tsc.txt" 2>&1
+          code=$?
+          echo "::warning title=typecheck-app exit=$code::$(strip < "$RUNNER_TEMP/tsc.txt" | grep -a 'error TS' | head -c 10000 | enc)"
+
+          pnpm exec eslint . > "$RUNNER_TEMP/eslint.txt" 2>&1
+          code=$?
+          echo "::warning title=eslint exit=$code::$(strip < "$RUNNER_TEMP/eslint.txt" | head -c 10000 | enc)"
+
+          pnpm exec prettier --check . > "$RUNNER_TEMP/prettier.txt" 2>&1
+          code=$?
+          echo "::warning title=prettier exit=$code::$(strip < "$RUNNER_TEMP/prettier.txt" | head -c 3000 | enc)"
+
+          pnpm test > "$RUNNER_TEMP/vitest.txt" 2>&1
+          code=$?
+          strip < "$RUNNER_TEMP/vitest.txt" > "$RUNNER_TEMP/vitest-clean.txt"
+          summary=$(grep -a -E "Test Files|Tests  " "$RUNNER_TEMP/vitest-clean.txt" | tr '\n' ' ')
+          body=$(grep -a -B2 -A25 -E "FAIL|AssertionError|Unable to find" "$RUNNER_TEMP/vitest-clean.txt" | grep -a -v "Future Flag" | head -c 8000 | enc)
+          echo "::warning title=vitest exit=$code::$summary%0A$body"
+
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && { echo "::warning title=push::pushed on attempt $i"; break; }
+            git rebase --abort 2>/dev/null
+            git fetch origin main && git reset --hard origin/main
+            apply
+          done
+          exit 0
