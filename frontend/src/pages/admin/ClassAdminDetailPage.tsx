@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-export type RosterStudent = {
+export interface RosterStudent {
   id: string;
   name: string;
   average: number | null;
-};
+}
 
-type Props = {
+interface Props {
   classId: string;
   className: string;
   teacher: string;
@@ -15,7 +15,7 @@ type Props = {
   onSave: (value: { teacher: string; coTeachers: string[] }) => Promise<void>;
   onArchive: () => Promise<void>;
   onResetCode: () => Promise<void>;
-};
+}
 
 export default function ClassAdminDetailPage(props: Props) {
   const [teacher, setTeacher] = useState(props.teacher);

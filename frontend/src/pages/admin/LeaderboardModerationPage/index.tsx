@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from "react";
 
-export type LeaderboardStudent = {
+export interface LeaderboardStudent {
   id: string;
   name: string;
   className: string;
   xpLast10Minutes: number;
   consecutivePerfect: number;
   hidden: boolean;
-};
+}
 
-type Props = {
+interface Props {
   students: LeaderboardStudent[];
   schoolVisible: boolean;
   classVisible: (className: string) => boolean;
@@ -17,7 +17,7 @@ type Props = {
   adjustXp: (studentId: string, amount: number, justification: string) => Promise<void>;
   setHidden: (studentId: string, hidden: boolean) => Promise<void>;
   setVisibility: (scope: "school" | "class", visible: boolean, className?: string) => Promise<void>;
-};
+}
 
 export default function LeaderboardModerationPage({
   students,

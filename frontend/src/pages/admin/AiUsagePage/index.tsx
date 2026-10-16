@@ -12,19 +12,30 @@ import {
   YAxis,
 } from "recharts";
 
-export type DailyUsage = { date: string; tokens: number; cost: number };
-export type FeatureUsage = {
+export interface DailyUsage {
+  date: string;
+  tokens: number;
+  cost: number;
+}
+export interface FeatureUsage {
   feature: "Tutor" | "Writing" | "Copilot";
   cost: number;
   tokens: number;
-};
-export type ClassUsage = { className: string; tokens: number; cost: number };
-export type AiUsageReport = {
+}
+export interface ClassUsage {
+  className: string;
+  tokens: number;
+  cost: number;
+}
+export interface AiUsageReport {
   daily: DailyUsage[];
   features: FeatureUsage[];
   classes: ClassUsage[];
-};
-type Props = { report: AiUsageReport; currency?: string };
+}
+interface Props {
+  report: AiUsageReport;
+  currency?: string;
+}
 
 export default function AiUsagePage({ report, currency = "USD" }: Props) {
   const [query, setQuery] = useState("");

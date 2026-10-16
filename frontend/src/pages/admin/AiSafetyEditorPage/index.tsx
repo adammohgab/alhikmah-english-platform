@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 
-export type SafetyConfig = {
+export interface SafetyConfig {
   schoolInstructions: string;
   prohibitedKeywords: string[];
-};
+}
 
-export type SandboxResult = {
+export interface SandboxResult {
   reply: string;
   promptPreview: string;
   tokens: number;
   safetyVerdict: string;
-};
+}
 
-type Props = {
+interface Props {
   initial: SafetyConfig;
   save: (config: SafetyConfig) => Promise<void>;
   runSandbox: (query: string, config: SafetyConfig) => Promise<SandboxResult>;
-};
+}
 
 export default function AiSafetyEditorPage({ initial, save, runSandbox }: Props) {
   const [config, setConfig] = useState(initial);

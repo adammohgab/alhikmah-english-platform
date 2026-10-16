@@ -2,17 +2,17 @@ import React, { useState } from "react";
 
 export type GradeBand = "1-3" | "4-6" | "7-9" | "10-12";
 
-export type AiConfig = {
+export interface AiConfig {
   features: Record<GradeBand, { tutor: boolean; writing: boolean; translation: boolean }>;
   dailyMessages: number;
   tokensPerClass: number;
   monthlyAlert: number;
-};
+}
 
-type Props = {
+interface Props {
   initial: AiConfig;
   save: (config: AiConfig) => Promise<void>;
-};
+}
 
 const bands: GradeBand[] = ["1-3", "4-6", "7-9", "10-12"];
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export type ShopItem = {
+export interface ShopItem {
   id: string;
   sku: string;
   title: string;
@@ -11,14 +11,14 @@ export type ShopItem = {
   available: boolean;
   shelfOrder: number;
   purchases: number;
-};
+}
 
-type Props = {
+interface Props {
   items: ShopItem[];
   save: (item: Omit<ShopItem, "purchases">) => Promise<void>;
   setAvailability: (id: string, available: boolean) => Promise<void>;
   reorder: (orderedIds: string[]) => Promise<void>;
-};
+}
 
 const blank: Omit<ShopItem, "purchases"> = {
   id: "",

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-type Props = {
+interface Props {
   sourceYears: string[];
   preflight: () => Promise<{ gradesSubmitted: boolean; activeSessions: number }>;
   start: (source: string, destination: string) => Promise<void>;
   rollback: () => Promise<void>;
   rollbackUntil?: string;
   progress?: number;
-};
+}
 
 export default function YearRolloverPage({
   sourceYears,

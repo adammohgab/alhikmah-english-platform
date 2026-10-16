@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 
-export type Announcement = {
+export interface Announcement {
   title: string;
   body: string;
   audience: "all" | "students" | "teachers";
   priority: "normal" | "urgent";
   releaseAt: string;
   expiresAt: string;
-};
+}
 
-type Props = {
+interface Props {
   publish: (announcement: Announcement) => Promise<void>;
-};
+}
 
 export default function SchoolAnnouncementsPage({ publish }: Props) {
   const [announcement, setAnnouncement] = useState<Announcement>({

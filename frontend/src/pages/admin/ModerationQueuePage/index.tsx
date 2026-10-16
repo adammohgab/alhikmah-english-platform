@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type ModerationItem = {
+export interface ModerationItem {
   id: string;
   entityType: string;
   triggerReason: string;
@@ -8,14 +8,14 @@ export type ModerationItem = {
   urgency: "low" | "medium" | "high";
   excerpt?: string;
   status: "open" | "resolved";
-};
+}
 
 type Action = "approve" | "redact" | "warn" | "notify";
 
-type Props = {
+interface Props {
   items: ModerationItem[];
   resolve: (id: string, action: Action, note: string) => Promise<void>;
-};
+}
 
 const actions: { id: Action; label: string }[] = [
   { id: "approve", label: "Approve Content (False Positive)" },

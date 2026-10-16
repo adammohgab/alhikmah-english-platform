@@ -1,20 +1,20 @@
 import React, { useMemo, useState } from "react";
 
 export type AvatarPartCategory = "hairstyles" | "hats" | "glasses" | "shirts";
-export type AvatarPart = {
+export interface AvatarPart {
   id: string;
   name: string;
   category: AvatarPartCategory;
   svg: string;
   layerOrder: number;
   available: boolean;
-};
+}
 
-type Props = {
+interface Props {
   assets: AvatarPart[];
   saveAsset: (asset: Omit<AvatarPart, "id"> & { id?: string }) => Promise<void>;
   deleteAsset: (id: string) => Promise<void>;
-};
+}
 
 const categories: AvatarPartCategory[] = ["hairstyles", "hats", "glasses", "shirts"];
 

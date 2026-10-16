@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 
-export type PlatformSettings = {
+export interface PlatformSettings {
   emergencyMaintenance: boolean;
   publicRegistration: boolean;
   defaultWorldTheme: string;
-};
+}
 
-type Props = {
+interface Props {
   isSuperAdmin: boolean;
   initial: PlatformSettings;
   verifyPassword: (password: string) => Promise<boolean>;
   save: (settings: PlatformSettings) => Promise<void>;
-};
+}
 
 export default function PlatformSettingsPage({
   isSuperAdmin,

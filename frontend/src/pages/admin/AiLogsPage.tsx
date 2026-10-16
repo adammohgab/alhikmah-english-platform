@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-export type AiLog = {
+export interface AiLog {
   id: string;
   createdAt: string;
   model: string;
@@ -10,9 +10,11 @@ export type AiLog = {
   tokens: number;
   latencyMs: number;
   safetyStatus: "passed" | "flagged" | "blocked";
-};
+}
 
-type Props = { logs: AiLog[] };
+interface Props {
+  logs: AiLog[];
+}
 
 export default function AiLogsPage({ logs }: Props) {
   const [search, setSearch] = useState("");

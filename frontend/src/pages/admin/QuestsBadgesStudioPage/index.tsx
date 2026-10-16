@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export type Quest = {
+export interface Quest {
   id: string;
   type: string;
   title: string;
@@ -8,24 +8,24 @@ export type Quest = {
   rewardXp: number;
   rewardCoins: number;
   active: boolean;
-};
+}
 
-export type Badge = {
+export interface Badge {
   id: string;
   code: string;
   name: string;
   category: string;
   iconUrl: string;
   criteria: string;
-};
+}
 
-type Props = {
+interface Props {
   quests: Quest[];
   badges: Badge[];
   saveQuest: (quest: Quest) => Promise<void>;
   saveBadge: (badge: Badge) => Promise<void>;
   uploadIcon: (file: File) => Promise<string>;
-};
+}
 
 const emptyQuest: Quest = {
   id: "",

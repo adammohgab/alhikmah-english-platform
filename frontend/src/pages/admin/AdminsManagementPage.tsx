@@ -1,17 +1,17 @@
 import { useState } from "react";
 
-export type AdminUser = {
+export interface AdminUser {
   id: string;
   name: string;
   email: string;
   role: "admin" | "super_admin" | "none";
-};
+}
 
-type Props = {
+interface Props {
   isSuperAdmin: boolean;
   users: AdminUser[];
   changeRole: (userId: string, role: AdminUser["role"]) => Promise<void>;
-};
+}
 
 export default function AdminsManagementPage({ isSuperAdmin, users, changeRole }: Props) {
   const [pending, setPending] = useState<AdminUser | null>(null);

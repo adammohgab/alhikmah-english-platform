@@ -1,17 +1,17 @@
 import React, { useMemo, useState } from "react";
 
-type Config = {
+interface Config {
   dailyCap: number;
   lessonXp: number;
   activityXp: number;
   perfectBonus: number;
-};
+}
 
-type Props = {
+interface Props {
   initial: Config;
   save: (config: Config) => Promise<void>;
   averageLessonsPerWeek?: number;
-};
+}
 
 export default function EconomyStudioPage({ initial, save, averageLessonsPerWeek = 5 }: Props) {
   const [config, setConfig] = useState(initial);
