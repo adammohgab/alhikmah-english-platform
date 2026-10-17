@@ -2,7 +2,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 export type UserRole = "student" | "teacher" | "admin";
 export type AdminLevel = "school_admin" | "super_admin";
-export type AccountStatus = "active" | "archived" | "disabled";
+export type AccountStatus = "active" | "locked" | "archived" | "disabled";
 
 export interface Database {
   public: {

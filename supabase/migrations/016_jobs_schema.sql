@@ -50,8 +50,8 @@ create index if not exists idx_job_steps_job_id on job_steps(job_id);
 create index if not exists idx_job_steps_status on job_steps(status);
 
 -- RLS: enable row level security on all tables
-enable row level security on jobs;
-enable row level security on job_steps;
+alter table jobs enable row level security;
+alter table job_steps enable row level security;
 
 -- RLS policies: jobs
 -- Users can read their own jobs; admins can read all.

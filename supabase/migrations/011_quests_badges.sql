@@ -68,25 +68,25 @@ create index if not exists idx_user_badges_student on user_badges(student_id);
 create index if not exists idx_leaderboard_snapshots_class_period on leaderboard_snapshots(class_id, period);
 
 -- RLS Policies
-enable row level security on quest_templates;
+alter table quest_templates enable row level security;
 create policy "Quest templates are readable by all authenticated users"
   on quest_templates for select using (true);
 
-enable row level security on quest_instances;
+alter table quest_instances enable row level security;
 create policy "Students manage own quest instances"
   on quest_instances for all using (auth.uid() = student_id)
   with check (auth.uid() = student_id);
 
-enable row level security on badge_definitions;
+alter table badge_definitions enable row level security;
 create policy "Badge definitions are readable by all authenticated users"
   on badge_definitions for select using (true);
 
-enable row level security on user_badges;
+alter table user_badges enable row level security;
 create policy "Students manage own badges"
   on user_badges for all using (auth.uid() = student_id)
   with check (auth.uid() = student_id);
 
-enable row level security on leaderboard_snapshots;
+alter table leaderboard_snapshots enable row level security;
 create policy "Leaderboard snapshots are readable by all authenticated users"
   on leaderboard_snapshots for select using (true);
 

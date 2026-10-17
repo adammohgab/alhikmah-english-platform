@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getRoleHomePath } from "@/app/guards/guard-utils";
+import { REMEMBER_STORAGE_KEY } from "@/shared/api/remember";
 import { supabase } from "@/shared/api/supabase";
 import type { UserRole } from "@/shared/types/database.types";
 
@@ -45,7 +46,7 @@ export const LOGIN_MESSAGES = {
 
 export const ACCOUNT_NOT_ACTIVE_PATH = "/account-not-active";
 export const SET_NEW_PASSWORD_PATH = "/set-new-password";
-export const REMEMBER_STORAGE_KEY = "alhikmah.auth.remember";
+export { REMEMBER_STORAGE_KEY };
 
 const USERNAME_PATTERN = /^[a-z0-9._-]{3,32}$/;
 const INTERNAL_EMAIL_DOMAIN = "accounts.invalid";
@@ -205,6 +206,9 @@ export async function signInWithUsername(
   values: LoginValues,
   redirectTo: string | null,
 ): Promise<SignInOutcome> {
+  // Saved first, so the session is stored where the person asked for it.
+  writeRememberPreference(values.remember);
+
   let signIn: Awaited<ReturnType<typeof requestSignIn>>;
   try {
     signIn = await requestSignIn(usernameToEmail(values.username), values.password);
@@ -234,8 +238,6 @@ export async function signInWithUsername(
     await dropSession();
     return { kind: "not-active" };
   }
-
-  writeRememberPreference(values.remember);
 
   if (mustChangePassword) return { kind: "must-change-password" };
 

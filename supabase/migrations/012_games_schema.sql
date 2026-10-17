@@ -41,15 +41,15 @@ create index if not exists idx_game_sessions_student on game_sessions(student_id
 create index if not exists idx_game_daily_featured_game_id on game_daily_featured(game_id);
 
 -- RLS Policies
-enable row level security on games;
+alter table games enable row level security;
 create policy "Games are readable by all authenticated users"
   on games for select using (true);
 
-enable row level security on game_sessions;
+alter table game_sessions enable row level security;
 create policy "Students manage own game sessions"
   on game_sessions for all using (auth.uid() = student_id)
   with check (auth.uid() = student_id);
 
-enable row level security on game_daily_featured;
+alter table game_daily_featured enable row level security;
 create policy "Daily featured games are readable by all authenticated users"
   on game_daily_featured for select using (true);

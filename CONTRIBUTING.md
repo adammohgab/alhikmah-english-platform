@@ -78,3 +78,12 @@ Before opening a PR or submitting a task:
 - [ ] **Accessibility (a11y)**: Proper ARIA roles, keyboard navigable, visible focus rings (`focus-visible:ring-2`), adequate color contrast.
 - [ ] **Reduced Motion**: Tested with `prefers-reduced-motion` enabled.
 - [ ] **Acceptance Criteria**: Every bullet in the task's `acceptance_criteria` is confirmed satisfied.
+
+## Migration numbering
+
+Each file in `supabase/migrations` starts with a version number that no other file uses, for example `040_name.sql`.
+The next free number goes to the next migration.
+Task file patterns such as `*_ops_01_public_state.sql` match any number, so a rename never breaks task ownership.
+The RLS migration (`039_rls_policies_indexes.sql`) holds the policies for every table that exists when it runs.
+A migration that adds a table also adds that table's policies, using the helpers from the RLS migration.
+Run `supabase/tests/apply-migrations.sh` against a local Postgres before you push. CI runs it on every push.

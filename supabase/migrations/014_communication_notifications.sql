@@ -69,9 +69,9 @@ create index if not exists idx_notifications_kind_priority on notifications(kind
 create index if not exists idx_notifications_user_id on notifications(user_id);
 
 -- RLS: enable row level security on all three tables
-enable row level security on announcements;
-enable row level security on announcement_recipients;
-enable row level security on notifications;
+alter table announcements enable row level security;
+alter table announcement_recipients enable row level security;
+alter table notifications enable row level security;
 
 -- RLS policies: announcements
 -- Read published announcements addressed to the user (through announcement_recipients) or public ones.

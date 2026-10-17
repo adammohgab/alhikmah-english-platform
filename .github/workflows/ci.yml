@@ -16,7 +16,7 @@ concurrency:
 jobs:
   validate:
     name: Typecheck, Lint, Test & Budget
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: frontend
@@ -68,3 +68,33 @@ jobs:
           name: preview-dist
           path: frontend/dist
           retention-days: 7
+
+  migrations:
+    name: Database migrations and access checks
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Apply every migration to an empty database
+        run: supabase/tests/apply-migrations.sh
+
+      - name: Run the access checks
+        run: psql -X -v ON_ERROR_STOP=1 -d alhikmah_migration_check -f supabase/tests/rls-smoke.sql

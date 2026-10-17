@@ -1,13 +1,23 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import type { ComponentType } from "react";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { ProtectedRoute, PublicOnlyRoute } from "@/app/guards/ProtectedRoute";
 import { PlaceholderView } from "@/app/PlaceholderView";
+
+interface PageModule {
+  default: ComponentType;
+}
+
+/** Loads a page when its route is first visited, so each page ships as its own chunk. */
+const page = (load: () => Promise<PageModule>) => ({
+  lazy: async () => ({ Component: (await load()).default }),
+});
 
 export const router = createBrowserRouter(
   [
     // Public Marketing / Landing Page
     {
       path: "/",
-      element: <PlaceholderView title="Al Hikmah English Platform" />,
+      ...page(() => import("@/pages/public/LandingPage")),
     },
 
     // Public Auth Pages (Redirect logged-in users)
@@ -15,9 +25,10 @@ export const router = createBrowserRouter(
       path: "/login",
       element: (
         <PublicOnlyRoute>
-          <PlaceholderView title="Sign In" />
+          <Outlet />
         </PublicOnlyRoute>
       ),
+      children: [{ index: true, ...page(() => import("@/pages/public/LoginPage")) }],
     },
     {
       path: "/forgot-password",
@@ -39,29 +50,33 @@ export const router = createBrowserRouter(
     },
     {
       path: "/maintenance",
-      element: <PlaceholderView title="We are doing maintenance" />,
+      ...page(() => import("@/pages/public/SystemPages/MaintenancePage")),
     },
     {
       path: "/no-access",
-      element: <PlaceholderView title="This page is not available for your account" />,
+      ...page(() => import("@/pages/public/SystemPages/NoAccessPage")),
+    },
+    {
+      path: "/offline",
+      ...page(() => import("@/pages/public/SystemPages/OfflinePage")),
     },
 
     // Public Information Pages
     {
       path: "/help",
-      element: <PlaceholderView title="Help and Contact" />,
+      ...page(() => import("@/pages/public/HelpContactPage")),
     },
     {
       path: "/faq",
-      element: <PlaceholderView title="Frequently Asked Questions" />,
+      ...page(() => import("@/pages/public/FaqPage")),
     },
     {
       path: "/terms",
-      element: <PlaceholderView title="Terms and Privacy" />,
+      ...page(() => import("@/pages/public/LegalPage")),
     },
     {
       path: "/about",
-      element: <PlaceholderView title="About the Platform" />,
+      ...page(() => import("@/pages/public/AboutPage")),
     },
 
     // Student Portal (Protected)
@@ -115,7 +130,7 @@ export const router = createBrowserRouter(
     // Catch-All / 404
     {
       path: "/404",
-      element: <PlaceholderView title="We could not find that page" />,
+      ...page(() => import("@/pages/public/NotFoundPage")),
     },
     {
       path: "*",

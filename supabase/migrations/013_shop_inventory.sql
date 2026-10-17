@@ -44,15 +44,15 @@ create index if not exists idx_user_inventory_user on user_inventory(user_id);
 create index if not exists idx_avatar_assets_type on avatar_assets(asset_type);
 
 -- RLS Policies
-enable row level security on shop_items;
+alter table shop_items enable row level security;
 create policy "Shop items are readable by all authenticated users"
   on shop_items for select using (true);
 
-enable row level security on user_inventory;
+alter table user_inventory enable row level security;
 create policy "Students manage own inventory"
   on user_inventory for all using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
-enable row level security on avatar_assets;
+alter table avatar_assets enable row level security;
 create policy "Avatar assets are readable by all authenticated users"
   on avatar_assets for select using (true);

@@ -75,17 +75,20 @@ begin
     raise exception 'Authentication required' using errcode = '42501';
   end if;
 
-  select si.*, ui.id
-    into v_item, v_inventory_id
+  select ui.id
+    into v_inventory_id
   from public.user_inventory ui
-  join public.shop_items si on si.id = ui.item_id
   where ui.user_id = v_student_id
     and ui.item_id = equip_inventory_item.item_id
-  for update of ui;
+  for update;
 
   if not found then
     raise exception 'Item is not in your inventory' using errcode = 'P0002';
   end if;
+
+  select si.* into v_item
+  from public.shop_items si
+  where si.id = equip_inventory_item.item_id;
 
   if v_item.category = 'theme' then
     update public.profiles
