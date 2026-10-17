@@ -79,8 +79,13 @@ export default function QuizBuilderPage({
     const nextIndex = index + delta;
     if (nextIndex < 0 || nextIndex >= questions.length) return;
 
+    const current = questions[index];
+    const target = questions[nextIndex];
+    if (current === undefined || target === undefined) return;
+
     const reordered = [...questions];
-    [reordered[index], reordered[nextIndex]] = [reordered[nextIndex], reordered[index]];
+    reordered[index] = target;
+    reordered[nextIndex] = current;
     setQuestions(reordered);
   }
 
