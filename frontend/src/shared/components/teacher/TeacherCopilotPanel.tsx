@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type CopilotContext = {
   type: 'course' | 'quiz' | 'rubric';
