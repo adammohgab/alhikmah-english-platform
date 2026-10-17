@@ -1,16 +1,26 @@
 import { useState } from 'react';
 
-export type RubricCriterion = { id: string; label: string; maxPoints: number };
-export type AiCriterionSuggestion = {
+export interface RubricCriterion {
+  id: string;
+  label: string;
+  maxPoints: number;
+}
+
+export interface AiCriterionSuggestion {
   criterionId: string;
   score: number;
   rationale: string;
-};
-export type AiPreGradeResult = {
+}
+
+export interface AiPreGradeResult {
   suggestions: AiCriterionSuggestion[];
   feedback: string;
-};
-export type DraftScores = Record<string, number | null>;
+}
+
+export interface DraftScores {
+  [criterionId: string]: number | null;
+}
+
 export type WorldName =
   | 'world-coral'
   | 'world-amber'
@@ -19,7 +29,7 @@ export type WorldName =
   | 'world-violet'
   | 'world-rose';
 
-type Props = {
+interface Props {
   submissionId: string;
   rubric: RubricCriterion[];
   draftScores: DraftScores;
@@ -31,11 +41,11 @@ type Props = {
     rubric: RubricCriterion[];
   }) => Promise<AiPreGradeResult>;
   world?: WorldName;
-};
+}
 
-type SuggestionState = AiCriterionSuggestion & {
+interface SuggestionState extends AiCriterionSuggestion {
   status: 'pending' | 'accepted' | 'rejected';
-};
+}
 
 export default function AiGradingAssistant({
   submissionId,
@@ -72,6 +82,7 @@ export default function AiGradingAssistant({
         const criterion = rubric.find(
           item => item.id === suggestion.criterionId,
         );
+
         if (!criterion || !Number.isFinite(suggestion.score)) continue;
 
         next[criterion.id] = {
@@ -128,6 +139,11 @@ export default function AiGradingAssistant({
         [criterionId]: { ...existing, status: 'rejected' },
       };
     });
+  }
+
+  function acceptFeedback() {
+    onDraftCommentsChange(suggestedFeedback);
+    setFeedbackStatus('accepted');
   }
 
   return (
@@ -418,13 +434,7 @@ export default function AiGradingAssistant({
 
           {feedbackStatus === 'pending' ? (
             <>
-              <button
-                type="button"
-                onClick={() => {
-                  onDraftCommentsChange(suggestedFeedback);
-                  setFeedbackStatus('accepted');
-                }}
-              >
+              <button type="button" onClick={acceptFeedback}>
                 Insert into draft comments
               </button>{' '}
               <button
