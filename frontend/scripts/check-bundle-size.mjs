@@ -4,11 +4,25 @@ import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distAssetsDir = path.resolve(__dirname, "../dist/assets");
+const distDir = path.resolve(__dirname, "../dist");
+const distAssetsDir = path.join(distDir, "assets");
+
+/** Names of the JS files that index.html loads up front. */
+function initialScripts() {
+  const indexPath = path.join(distDir, "index.html");
+  if (!fs.existsSync(indexPath)) return null;
+  const html = fs.readFileSync(indexPath, "utf8");
+  const names = new Set();
+  for (const match of html.matchAll(/(?:src|href)="[^"]*\/assets\/([^"/]+\.js)"/g)) {
+    names.add(match[1]);
+  }
+  return names;
+}
 
 // Budgets in kilobytes (gzipped)
 const BUDGETS = {
-  // Initial total JavaScript gzipped budget (before heavy 3D / audio)
+  // JavaScript loaded on first visit (the entry and its preloads), gzipped. Lazy route chunks
+  // count only against the single file budget, because they load when their route opens.
   MAX_TOTAL_JS_GZIP_KB: 300,
   // Individual JS file budget
   MAX_SINGLE_JS_GZIP_KB: 250,
@@ -27,7 +41,9 @@ function checkBundleBudgets() {
   }
 
   const files = fs.readdirSync(distAssetsDir);
+  const initial = initialScripts();
   let totalJsGzip = 0;
+  let allJsGzip = 0;
   let totalCssGzip = 0;
   let hasViolation = false;
 
@@ -43,7 +59,8 @@ function checkBundleBudgets() {
     const sizeGzipKb = gzipped.length / 1024;
 
     if (file.endsWith(".js")) {
-      totalJsGzip += gzipped.length;
+      allJsGzip += gzipped.length;
+      if (initial === null || initial.has(file)) totalJsGzip += gzipped.length;
       console.log(
         `JS:  ${file} -> Raw: ${formatSize(stat.size)} | Gzip: ${formatSize(gzipped.length)}`,
       );
@@ -64,8 +81,9 @@ function checkBundleBudgets() {
 
   console.log("-----------------------------------------");
   console.log(
-    `Total JS (gzip):  ${totalJsGzipKb.toFixed(2)} KB / Budget: ${BUDGETS.MAX_TOTAL_JS_GZIP_KB} KB`,
+    `Initial JS (gzip): ${totalJsGzipKb.toFixed(2)} KB / Budget: ${BUDGETS.MAX_TOTAL_JS_GZIP_KB} KB`,
   );
+  console.log(`All JS chunks (gzip): ${(allJsGzip / 1024).toFixed(2)} KB`);
   console.log(
     `Total CSS (gzip): ${totalCssGzipKb.toFixed(2)} KB / Budget: ${BUDGETS.MAX_TOTAL_CSS_GZIP_KB} KB`,
   );
