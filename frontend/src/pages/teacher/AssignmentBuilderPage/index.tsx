@@ -2,24 +2,27 @@ import { useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
-export type RubricOption = { id: string; title: string };
+export interface RubricOption {
+  id: string;
+  title: string;
+}
 
-export type AssignmentDraft = {
+export interface AssignmentDraft {
   title: string;
   classId: string;
   dueAt: string;
   latePolicy: "accept" | "penalty" | "reject";
   promptHtml: string;
   rubricId: string;
-};
+}
 
-type Props = {
+interface Props {
   classes: { id: string; name: string }[];
   rubrics: RubricOption[];
   initial?: Partial<AssignmentDraft>;
   save: (draft: AssignmentDraft, publish: boolean) => Promise<void>;
   buildRubric: () => void;
-};
+}
 
 export default function AssignmentBuilderPage({
   classes,

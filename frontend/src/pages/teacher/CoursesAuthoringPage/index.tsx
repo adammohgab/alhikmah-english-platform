@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type TeacherCourse = {
+export interface TeacherCourse {
   id: string;
   title: string;
   source: "teacher" | "official";
@@ -8,15 +8,15 @@ export type TeacherCourse = {
   unitCount: number;
   enrolledClasses: number;
   updatedAt: string;
-};
+}
 
-type Props = {
+interface Props {
   courses: TeacherCourse[];
   createCourse: () => void;
   adoptOfficial: () => void;
   duplicate: (id: string, title: string) => Promise<void>;
   archive: (id: string) => Promise<void>;
-};
+}
 
 export default function CoursesAuthoringPage({
   courses,
@@ -100,13 +100,13 @@ export default function CoursesAuthoringPage({
             <small>Last edited {new Date(course.updatedAt).toLocaleString()}</small>
             <hr />
             <button
-              onClick={() =>
-                run(
+              onClick={() => {
+                void run(
                   course.id,
                   () => duplicate(course.id, `${course.title} (Copy)`),
                   "Course duplicated.",
-                )
-              }
+                );
+              }}
             >
               Duplicate
             </button>{" "}

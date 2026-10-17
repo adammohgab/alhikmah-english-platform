@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 
-export type CopilotContext = {
+export interface CopilotContext {
   type: "course" | "quiz" | "rubric";
   id: string;
   title: string;
   content?: string;
-};
+}
 
-export type CopilotMessage = {
+export interface CopilotMessage {
   role: "user" | "assistant";
   content: string;
-};
+}
 
-type Props = {
+interface Props {
   open: boolean;
   onClose: () => void;
   context: CopilotContext | null;
@@ -21,7 +21,7 @@ type Props = {
     context: CopilotContext | null;
     signal: AbortSignal;
   }) => AsyncIterable<string>;
-};
+}
 
 const shortcuts = [
   "Suggest 3 discussion questions",
