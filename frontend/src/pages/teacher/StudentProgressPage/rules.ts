@@ -63,7 +63,10 @@ const time = (iso: string) => {
  * Completed assessments only (a result with a date and a score), newest first.
  * Quizzes and assignments share one chronological list.
  */
-export function buildTimeline(quizzes: QuizResult[], assignments: AssignmentResult[]): TimelineEntry[] {
+export function buildTimeline(
+  quizzes: QuizResult[],
+  assignments: AssignmentResult[],
+): TimelineEntry[] {
   const fromQuizzes: TimelineEntry[] = quizzes
     .filter((q) => q.scorePct !== null)
     .map((q) => ({

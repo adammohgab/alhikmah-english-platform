@@ -71,7 +71,10 @@ function StudentCard({
         <h3 className="min-w-0 truncate font-bold">{row.student.full_name}</h3>
         {taking && (
           <span className="flex shrink-0 items-center gap-1.5 text-xs font-bold">
-            <span aria-hidden="true" className={cn("h-3 w-3 rounded-full border-2 border-stroke", dot.className)} />
+            <span
+              aria-hidden="true"
+              className={cn("h-3 w-3 rounded-full border-2 border-stroke", dot.className)}
+            />
             {dot.label}
           </span>
         )}
@@ -95,7 +98,9 @@ function StudentCard({
             </div>
             <div>
               <dt className="text-muted">Elapsed</dt>
-              <dd className="font-extrabold">{formatClock(elapsedSeconds(row.started_at, null, nowMs))}</dd>
+              <dd className="font-extrabold">
+                {formatClock(elapsedSeconds(row.started_at, null, nowMs))}
+              </dd>
             </div>
             <div>
               <dt className="text-muted">Left</dt>
@@ -143,7 +148,12 @@ export default function QuizMonitorPage() {
       .channel(`quiz-monitor:${quizId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "assessment_attempts", filter: `assessment_id=eq.${quizId}` },
+        {
+          event: "*",
+          schema: "public",
+          table: "assessment_attempts",
+          filter: `assessment_id=eq.${quizId}`,
+        },
         refresh,
       )
       .subscribe((status) => {
@@ -174,9 +184,7 @@ export default function QuizMonitorPage() {
 
   const rows = useMemo(
     () =>
-      sortForGrid(
-        (query.data?.students ?? []).map((s) => ({ ...s, name: s.student.full_name })),
-      ),
+      sortForGrid((query.data?.students ?? []).map((s) => ({ ...s, name: s.student.full_name }))),
     [query.data?.students],
   );
   const counts = countStatuses(
@@ -246,7 +254,9 @@ export default function QuizMonitorPage() {
         >
           <ArrowLeft size={16} aria-hidden="true" /> Quizzes
         </Link>
-        <h1 className="min-w-0 flex-1 truncate font-display text-2xl font-extrabold">{quiz.title}</h1>
+        <h1 className="font-display min-w-0 flex-1 truncate text-2xl font-extrabold">
+          {quiz.title}
+        </h1>
         <Chip size="sm" world={realtime === "live" ? "mint" : "amber"} icon={<Radio size={13} />}>
           <span role="status">
             {realtime === "live" ? "Live" : realtime === "lost" ? "Reconnecting…" : "Connecting…"}
@@ -258,18 +268,29 @@ export default function QuizMonitorPage() {
       </header>
 
       <ul className="flex flex-wrap gap-2" aria-label="Status counts">
-        <li><Chip>{counts.inProgress} in progress</Chip></li>
-        <li><Chip>{counts.submitted} submitted</Chip></li>
-        <li><Chip>{counts.notStarted} not started</Chip></li>
+        <li>
+          <Chip>{counts.inProgress} in progress</Chip>
+        </li>
+        <li>
+          <Chip>{counts.submitted} submitted</Chip>
+        </li>
+        <li>
+          <Chip>{counts.notStarted} not started</Chip>
+        </li>
         {counts.idleOrOffline > 0 && (
-          <li><Chip world="amber">{counts.idleOrOffline} idle or offline</Chip></li>
+          <li>
+            <Chip world="amber">{counts.idleOrOffline} idle or offline</Chip>
+          </li>
         )}
       </ul>
 
       {rows.length === 0 ? (
         <EmptyState title="No students are assigned this quiz" />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-label="Students">
+        <ul
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          aria-label="Students"
+        >
           {rows.map((row) => (
             <StudentCard
               key={row.student.id}

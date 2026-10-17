@@ -71,7 +71,8 @@ function ItemRow({ item }: { item: ItemResult }) {
       <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
         {item.common_wrong ? (
           <span>
-            Most common wrong answer: <strong className="text-stroke">{item.common_wrong.answer}</strong> (
+            Most common wrong answer:{" "}
+            <strong className="text-stroke">{item.common_wrong.answer}</strong> (
             {item.common_wrong.count})
           </span>
         ) : (
@@ -165,7 +166,7 @@ export default function QuizResultsPage() {
         >
           <ArrowLeft size={16} aria-hidden="true" /> Quizzes
         </Link>
-        <h1 className="min-w-0 flex-1 truncate font-display text-2xl font-extrabold">
+        <h1 className="font-display min-w-0 flex-1 truncate text-2xl font-extrabold">
           {summary.title}
         </h1>
         {summary.status && <Chip>{summary.status}</Chip>}
@@ -181,11 +182,15 @@ export default function QuizResultsPage() {
       </dl>
 
       <section className={PANEL} aria-labelledby="distribution-title">
-        <h2 id="distribution-title" className="mb-2 font-display text-lg font-extrabold">
+        <h2 id="distribution-title" className="font-display mb-2 text-lg font-extrabold">
           Score distribution
         </h2>
         {students.every((s) => s.score_pct === null) ? (
-          <EmptyState size="sm" title="No scores yet" description="The chart fills in once students submit." />
+          <EmptyState
+            size="sm"
+            title="No scores yet"
+            description="The chart fills in once students submit."
+          />
         ) : (
           <ScoreHistogram bins={bins} passMark={summary.pass_mark} />
         )}
@@ -214,7 +219,7 @@ export default function QuizResultsPage() {
       </section>
 
       <section className={PANEL} aria-labelledby="students-title">
-        <h2 id="students-title" className="mb-3 font-display text-lg font-extrabold">
+        <h2 id="students-title" className="font-display mb-3 text-lg font-extrabold">
           Students
         </h2>
         {students.length === 0 ? (
@@ -224,18 +229,32 @@ export default function QuizResultsPage() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b-2 border-stroke">
-                  <th scope="col" className="py-2 pr-3">Student</th>
-                  <th scope="col" className="py-2 pr-3">Attempts</th>
-                  <th scope="col" className="py-2 pr-3">Score</th>
-                  <th scope="col" className="py-2 pr-3">Time</th>
-                  <th scope="col" className="py-2 pr-3">Status</th>
-                  <th scope="col" className="py-2"><span className="sr-only">Actions</span></th>
+                  <th scope="col" className="py-2 pr-3">
+                    Student
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Attempts
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Score
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Time
+                  </th>
+                  <th scope="col" className="py-2 pr-3">
+                    Status
+                  </th>
+                  <th scope="col" className="py-2">
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {students.map((row) => (
                   <tr key={row.student.id} className="border-b border-stroke/20">
-                    <th scope="row" className="py-2 pr-3 font-bold">{row.student.full_name}</th>
+                    <th scope="row" className="py-2 pr-3 font-bold">
+                      {row.student.full_name}
+                    </th>
                     <td className="py-2 pr-3">
                       {row.attempts_used}
                       {row.attempts_allowed != null ? ` / ${row.attempts_allowed}` : ""}

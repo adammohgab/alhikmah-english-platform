@@ -15,7 +15,8 @@ export function ScoreTrendChart({ points }: { points: TrendPoint[] }) {
   const innerH = H - PAD.top - PAD.bottom;
   const x = (i: number) =>
     PAD.left + (points.length === 1 ? innerW / 2 : (i / (points.length - 1)) * innerW);
-  const y = (score: number) => PAD.top + innerH - (Math.min(100, Math.max(0, score)) / 100) * innerH;
+  const y = (score: number) =>
+    PAD.top + innerH - (Math.min(100, Math.max(0, score)) / 100) * innerH;
   const path = points.map((p, i) => `${i === 0 ? "M" : "L"}${x(i)},${y(p.scorePct)}`).join(" ");
   const summary = points.map((p) => `${p.label} ${Math.round(p.scorePct)} percent`).join(", ");
 

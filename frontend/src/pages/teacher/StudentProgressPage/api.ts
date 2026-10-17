@@ -56,7 +56,9 @@ const assignmentPage = z.object({
 });
 
 const skills = z.object({
-  skills: z.array(z.object({ skill: z.string(), accuracy: z.number(), trend: z.number().nullish() })),
+  skills: z.array(
+    z.object({ skill: z.string(), accuracy: z.number(), trend: z.number().nullish() }),
+  ),
   mistakes: z.object({
     words: z.array(z.object({ word: z.string(), count: z.number().int() })).default([]),
     grammar_topics: z.array(z.object({ topic: z.string(), count: z.number().int() })).default([]),
@@ -93,7 +95,9 @@ export const fetchSkills = (studentId: string) =>
 
 /** Walks every page so the timeline holds the student's complete history. */
 async function allPages<T>(
-  fetchPage: (cursor: string | undefined) => Promise<{ items: T[]; next_cursor?: string | null | undefined }>,
+  fetchPage: (
+    cursor: string | undefined,
+  ) => Promise<{ items: T[]; next_cursor?: string | null | undefined }>,
 ): Promise<T[]> {
   const items: T[] = [];
   let cursor: string | undefined;
@@ -108,7 +112,11 @@ async function allPages<T>(
 
 export async function fetchQuizResults(studentId: string): Promise<QuizResult[]> {
   const rows = await allPages((cursor) =>
-    callRpc("student_quiz_results", { student_id: studentId, ...(cursor ? { cursor } : {}) }, quizPage),
+    callRpc(
+      "student_quiz_results",
+      { student_id: studentId, ...(cursor ? { cursor } : {}) },
+      quizPage,
+    ),
   );
   return rows.map((r) => ({
     id: r.id,
@@ -146,8 +154,14 @@ interface DbError {
 
 interface NotesTable {
   select(columns: string): {
-    eq(column: string, value: string): {
-      eq(column: string, value: string): {
+    eq(
+      column: string,
+      value: string,
+    ): {
+      eq(
+        column: string,
+        value: string,
+      ): {
         order(
           column: string,
           options: { ascending: boolean },
@@ -161,7 +175,8 @@ interface NotesTable {
   };
 }
 
-const notes = () => (supabase as unknown as { from(table: string): NotesTable }).from("admin_notes");
+const notes = () =>
+  (supabase as unknown as { from(table: string): NotesTable }).from("admin_notes");
 
 const noteRow = z.array(z.object({ id: z.string(), note: z.string() }));
 

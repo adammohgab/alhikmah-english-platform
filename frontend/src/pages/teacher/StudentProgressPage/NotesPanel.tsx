@@ -68,7 +68,12 @@ export function NotesPanel({ studentId }: { studentId: string }) {
 
   // Debounced autosave. Re-runs after a save so text typed during the save is not lost.
   useEffect(() => {
-    if (edited === null || edited === savedText.current || state === "saving" || state === "error") {
+    if (
+      edited === null ||
+      edited === savedText.current ||
+      state === "saving" ||
+      state === "error"
+    ) {
       return undefined;
     }
     const timer = window.setTimeout(() => void persist(edited), AUTOSAVE_MS);
@@ -110,13 +115,19 @@ export function NotesPanel({ studentId }: { studentId: string }) {
       aria-labelledby="teacher-notes-title"
       className="rounded-[20px] border-2 border-stroke bg-surface-0 p-5 shadow-retro-sm"
     >
-      <h2 id="teacher-notes-title" className="flex items-center gap-2 font-display text-lg font-extrabold">
+      <h2
+        id="teacher-notes-title"
+        className="font-display flex items-center gap-2 text-lg font-extrabold"
+      >
         <Lock size={18} aria-hidden="true" /> Teacher notes
       </h2>
-      <p className="mb-3 text-sm text-muted">Private to you. Use it for IEP and parent conference prep.</p>
+      <p className="mb-3 text-sm text-muted">
+        Private to you. Use it for IEP and parent conference prep.
+      </p>
       {query.isError ? (
         <p role="alert" className="text-sm font-bold">
-          Notes could not be loaded: {query.error instanceof Error ? query.error.message : "try again."}
+          Notes could not be loaded:{" "}
+          {query.error instanceof Error ? query.error.message : "try again."}
         </p>
       ) : (
         <Textarea

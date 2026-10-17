@@ -41,13 +41,40 @@ const results = {
     pass_mark: 60,
   },
   students: [
-    { student: { id: "u1", full_name: "Amal Student" }, attempts_used: 1, attempts_allowed: 1, score_pct: 95, status: "passed" },
-    { student: { id: "u2", full_name: "Bilal Student" }, attempts_used: 1, attempts_allowed: 1, score_pct: 20, status: "not_passed" },
-    { student: { id: "u3", full_name: "Chadia Student" }, attempts_used: 0, attempts_allowed: 1, score_pct: null, status: "not_attempted" },
+    {
+      student: { id: "u1", full_name: "Amal Student" },
+      attempts_used: 1,
+      attempts_allowed: 1,
+      score_pct: 95,
+      status: "passed",
+    },
+    {
+      student: { id: "u2", full_name: "Bilal Student" },
+      attempts_used: 1,
+      attempts_allowed: 1,
+      score_pct: 20,
+      status: "not_passed",
+    },
+    {
+      student: { id: "u3", full_name: "Chadia Student" },
+      attempts_used: 0,
+      attempts_allowed: 1,
+      score_pct: null,
+      status: "not_attempted",
+    },
   ],
   items: [
-    { question: { id: "q1", position: 1, prompt: "Easy question" }, percent_correct: 90, common_wrong: null },
-    { question: { id: "q2", position: 2, prompt: "Tricky tense" }, percent_correct: 25, common_wrong: { answer: "goed", count: 7 }, avg_time_s: 40 },
+    {
+      question: { id: "q1", position: 1, prompt: "Easy question" },
+      percent_correct: 90,
+      common_wrong: null,
+    },
+    {
+      question: { id: "q2", position: 2, prompt: "Tricky tense" },
+      percent_correct: 25,
+      common_wrong: { answer: "goed", count: 7 },
+      avg_time_s: 40,
+    },
   ],
 };
 
@@ -102,7 +129,9 @@ describe("QuizResultsPage", () => {
   it("grants an extra attempt for the chosen student and refreshes the table", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(await screen.findByRole("button", { name: "Grant extra attempt to Bilal Student" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Grant extra attempt to Bilal Student" }),
+    );
     await waitFor(() =>
       expect(rpc).toHaveBeenCalledWith("grant_extra_attempt", { quiz_id: "z1", student_id: "u2" }),
     );
@@ -111,7 +140,9 @@ describe("QuizResultsPage", () => {
         expect.objectContaining({ title: "Extra attempt granted to Bilal Student" }),
       ),
     );
-    await waitFor(() => expect(rpc.mock.calls.filter(([fn]) => fn === "quiz_results")).toHaveLength(2));
+    await waitFor(() =>
+      expect(rpc.mock.calls.filter(([fn]) => fn === "quiz_results")).toHaveLength(2),
+    );
   });
 
   it("shows an error when granting fails", async () => {
@@ -122,7 +153,9 @@ describe("QuizResultsPage", () => {
         ? Promise.resolve({ data: null, error: { message: "Not authorized" } })
         : Promise.resolve({ data: results, error: null }),
     );
-    await user.click(await screen.findByRole("button", { name: "Grant extra attempt to Amal Student" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Grant extra attempt to Amal Student" }),
+    );
     await waitFor(() =>
       expect(toast.show).toHaveBeenCalledWith(expect.objectContaining({ type: "error" })),
     );

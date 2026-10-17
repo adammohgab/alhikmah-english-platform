@@ -53,7 +53,10 @@ describe("rubric scoring", () => {
   });
 
   it("maps AI points to the nearest level", () => {
-    expect(selectionFromPoints(rubric, { grammar: 4.2, vocab: 2 })).toEqual({ grammar: 2, vocab: 0 });
+    expect(selectionFromPoints(rubric, { grammar: 4.2, vocab: 2 })).toEqual({
+      grammar: 2,
+      vocab: 0,
+    });
     expect(selectionFromPoints(rubric, { missing: 3 })).toEqual({});
   });
 });
@@ -72,7 +75,10 @@ describe("totals and save payload", () => {
 
   it("refuses to save until every writing answer has a score", () => {
     const result = buildSavePayload("att-1", questions, "Nice", null);
-    expect(result).toEqual({ ok: false, reason: "Score the remaining writing answer before saving." });
+    expect(result).toEqual({
+      ok: false,
+      reason: "Score the remaining writing answer before saving.",
+    });
   });
 
   it("builds the save_grade arguments, clamping scores to the question maximum", () => {

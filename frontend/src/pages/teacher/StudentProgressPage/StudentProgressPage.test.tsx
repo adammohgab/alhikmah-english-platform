@@ -9,8 +9,12 @@ import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context
 import StudentProgressPage from "./index";
 
 const rpc = vi.fn<(fn: string, args: Record<string, unknown>) => Promise<unknown>>();
-const insert = vi.fn<(row: Record<string, unknown>) => Promise<{ error: null | { message: string } }>>();
-const update = vi.fn<(row: Record<string, unknown>) => { eq: (c: string, v: string) => Promise<{ error: null }> }>();
+const insert =
+  vi.fn<(row: Record<string, unknown>) => Promise<{ error: null | { message: string } }>>();
+const update =
+  vi.fn<
+    (row: Record<string, unknown>) => { eq: (c: string, v: string) => Promise<{ error: null }> }
+  >();
 let existingNote: { id: string; note: string }[] = [];
 
 vi.mock("@/shared/api/supabase", () => ({
@@ -72,11 +76,28 @@ const data: Record<string, unknown> = {
     attention: [],
   },
   student_quiz_results: {
-    items: [{ id: "q1", title: "Verbs quiz", date: "2026-10-01T10:00:00Z", score_pct: 70, attempts: 1, passed: true }],
+    items: [
+      {
+        id: "q1",
+        title: "Verbs quiz",
+        date: "2026-10-01T10:00:00Z",
+        score_pct: 70,
+        attempts: 1,
+        passed: true,
+      },
+    ],
     next_cursor: null,
   },
   student_assignment_results: {
-    items: [{ id: "a1", title: "Weekend essay", date: "2026-10-05T10:00:00Z", grade_pct: 92, status: "Graded" }],
+    items: [
+      {
+        id: "a1",
+        title: "Weekend essay",
+        date: "2026-10-05T10:00:00Z",
+        grade_pct: 92,
+        status: "Graded",
+      },
+    ],
     next_cursor: null,
   },
   student_skills: {
@@ -154,7 +175,9 @@ describe("StudentProgressPage", () => {
     renderPage();
     const field = await screen.findByDisplayValue("Earlier note");
     await user.type(field, "!");
-    await waitFor(() => expect(update).toHaveBeenCalledWith({ note: "Earlier note!" }), { timeout: 3000 });
+    await waitFor(() => expect(update).toHaveBeenCalledWith({ note: "Earlier note!" }), {
+      timeout: 3000,
+    });
     expect(insert).not.toHaveBeenCalled();
   });
 
@@ -166,7 +189,10 @@ describe("StudentProgressPage", () => {
     await waitFor(() => expect(field).toBeEnabled());
     await user.type(field, "x");
     await waitFor(
-      () => expect(toast.show).toHaveBeenCalledWith(expect.objectContaining({ title: "Note was not saved" })),
+      () =>
+        expect(toast.show).toHaveBeenCalledWith(
+          expect.objectContaining({ title: "Note was not saved" }),
+        ),
       { timeout: 3000 },
     );
     expect(await screen.findByText(/Not saved:/)).toBeInTheDocument();

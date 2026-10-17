@@ -197,7 +197,8 @@ function QuestionReader({
             <dt className="sr-only">Auto score</dt>
             <dd>
               <Chip size="sm" world="mint">
-                Auto score {formatPoints(question.auto_score ?? 0)} / {formatPoints(question.max_points)}
+                Auto score {formatPoints(question.auto_score ?? 0)} /{" "}
+                {formatPoints(question.max_points)}
               </Chip>
             </dd>
           </div>
@@ -269,7 +270,7 @@ function RubricEvaluator({
   return (
     <section className={PANEL} aria-label={`Score: ${question.prompt}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="min-w-0 truncate font-display font-extrabold">{question.prompt}</h3>
+        <h3 className="font-display min-w-0 truncate font-extrabold">{question.prompt}</h3>
         <output
           aria-live="polite"
           data-testid={`score-${question.question_id}`}
@@ -422,14 +423,15 @@ function VoiceNote({
 
   return (
     <section className={PANEL} aria-label="Voice feedback">
-      <h3 className="mb-2 font-display font-extrabold">Voice note</h3>
+      <h3 className="font-display mb-2 font-extrabold">Voice note</h3>
       {state === "recording" ? (
         <Button variant="danger" onClick={() => recorder.current?.stop()}>
           <Square size={16} aria-hidden="true" /> Stop recording
         </Button>
       ) : (
         <Button variant="outline" onClick={() => void start()} loading={state === "uploading"}>
-          <Mic size={16} aria-hidden="true" /> {state === "ready" ? "Record again" : "Record voice note"}
+          <Mic size={16} aria-hidden="true" />{" "}
+          {state === "ready" ? "Record again" : "Record voice note"}
         </Button>
       )}
       {url && state !== "recording" && (
@@ -630,7 +632,7 @@ function GradingWorkspace({
           <ArrowLeft size={16} aria-hidden="true" /> Queue
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-display text-xl font-extrabold">
+          <h1 className="font-display truncate text-xl font-extrabold">
             {data.submission.student.full_name}
           </h1>
           <p className="truncate text-sm text-muted">
@@ -656,7 +658,10 @@ function GradingWorkspace({
       </header>
 
       {lockedBy && (
-        <p role="alert" className="rounded-[12px] border-2 border-stroke bg-[var(--world-soft,#ffd93d)] p-3 text-sm font-bold">
+        <p
+          role="alert"
+          className="rounded-[12px] border-2 border-stroke bg-[var(--world-soft,#ffd93d)] p-3 text-sm font-bold"
+        >
           {lockedBy}
         </p>
       )}
@@ -722,7 +727,9 @@ function GradingWorkspace({
               setVoiceAssetId(assetId);
               touch();
             }}
-            onError={(message) => toast.show({ type: "error", title: "Voice note", description: message })}
+            onError={(message) =>
+              toast.show({ type: "error", title: "Voice note", description: message })
+            }
           />
         </aside>
       </div>

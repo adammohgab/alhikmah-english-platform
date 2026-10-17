@@ -66,7 +66,11 @@ export function rubricComplete(rubric: Rubric, selection: RubricSelection): bool
  * Question score from the rubric. The rubric total is scaled onto the question's own maximum so
  * a 20-point rubric on a 10-point question still lands in range. Never exceeds `maxPoints`.
  */
-export function scoreFromRubric(rubric: Rubric, selection: RubricSelection, maxPoints: number): number {
+export function scoreFromRubric(
+  rubric: Rubric,
+  selection: RubricSelection,
+  maxPoints: number,
+): number {
   const reachable = rubricMax(rubric);
   if (reachable <= 0 || maxPoints <= 0) return 0;
   const scaled = (rubricRawTotal(rubric, selection) / reachable) * maxPoints;

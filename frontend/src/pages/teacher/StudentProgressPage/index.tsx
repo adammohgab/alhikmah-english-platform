@@ -8,12 +8,7 @@ import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { ProgressBar } from "@/shared/components/ui/ProgressBar";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
-import {
-  fetchAssignmentResults,
-  fetchOverview,
-  fetchQuizResults,
-  fetchSkills,
-} from "./api";
+import { fetchAssignmentResults, fetchOverview, fetchQuizResults, fetchSkills } from "./api";
 import { NotesPanel } from "./NotesPanel";
 import { ScoreTrendChart } from "./ScoreTrendChart";
 import { buildTimeline, formatPct, gradeLetter, pillTone, trendDelta, trendPoints } from "./rules";
@@ -129,7 +124,7 @@ export default function StudentProgressPage() {
           <ArrowLeft size={16} aria-hidden="true" /> Students
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-display text-2xl font-extrabold">{student.full_name}</h1>
+          <h1 className="font-display truncate text-2xl font-extrabold">{student.full_name}</h1>
           <p className="text-sm text-muted">
             {student.class.name}
             {student.class.grade_level ? ` · Grade ${student.class.grade_level}` : ""}
@@ -182,14 +177,18 @@ export default function StudentProgressPage() {
         {quizzes.isPending || assignments.isPending ? (
           <Skeleton className="h-48 w-full" label="Loading scores…" />
         ) : points.length === 0 ? (
-          <EmptyState size="sm" title="No scored work yet" description="Scores will chart here once the student completes an assessment." />
+          <EmptyState
+            size="sm"
+            title="No scored work yet"
+            description="Scores will chart here once the student completes an assessment."
+          />
         ) : (
           <ScoreTrendChart points={points} />
         )}
       </section>
 
       <section className={PANEL} aria-labelledby="timeline-title">
-        <h2 id="timeline-title" className="mb-3 font-display text-lg font-extrabold">
+        <h2 id="timeline-title" className="font-display mb-3 text-lg font-extrabold">
           Assessment history
         </h2>
         {quizzes.isError || assignments.isError ? (
@@ -230,13 +229,17 @@ export default function StudentProgressPage() {
       </section>
 
       <section className={PANEL} aria-labelledby="mastery-title">
-        <h2 id="mastery-title" className="mb-3 font-display text-lg font-extrabold">
+        <h2 id="mastery-title" className="font-display mb-3 text-lg font-extrabold">
           Vocabulary and skill mastery
         </h2>
         {skills.isPending ? (
           <Skeleton className="h-24 w-full" label="Loading mastery…" />
         ) : skills.isError ? (
-          <ErrorState size="sm" title="Mastery could not be loaded" onRetry={() => void skills.refetch()} />
+          <ErrorState
+            size="sm"
+            title="Mastery could not be loaded"
+            onRetry={() => void skills.refetch()}
+          />
         ) : (
           <div className="grid gap-5 md:grid-cols-2">
             <ul className="space-y-3" aria-label="Skills">

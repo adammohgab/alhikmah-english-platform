@@ -12,8 +12,22 @@ describe("grade bands", () => {
 describe("timeline", () => {
   const timeline = buildTimeline(
     [
-      { id: "q1", title: "Verbs quiz", date: "2026-10-01T10:00:00Z", scorePct: 70, attempts: 2, passed: true },
-      { id: "q2", title: "Unstarted", date: "2026-10-09T10:00:00Z", scorePct: null, attempts: 0, passed: null },
+      {
+        id: "q1",
+        title: "Verbs quiz",
+        date: "2026-10-01T10:00:00Z",
+        scorePct: 70,
+        attempts: 2,
+        passed: true,
+      },
+      {
+        id: "q2",
+        title: "Unstarted",
+        date: "2026-10-09T10:00:00Z",
+        scorePct: null,
+        attempts: 0,
+        passed: null,
+      },
     ],
     [{ id: "a1", title: "Essay", date: "2026-10-05T10:00:00Z", scorePct: 90, status: "Graded" }],
   );

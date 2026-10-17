@@ -60,7 +60,12 @@ const submission = {
       max_points: 10,
       is_writing: true,
       student_answer: "I went to the market with my family.",
-      ai: { score: 8, confidence: 0.9, comment: "Clear and correct.", criteria: { grammar: 5, vocab: 1 } },
+      ai: {
+        score: 8,
+        confidence: 0.9,
+        comment: "Clear and correct.",
+        criteria: { grammar: 5, vocab: 1 },
+      },
     },
   ],
   rubric: {
@@ -91,7 +96,8 @@ const submission = {
 
 function renderPage() {
   rpc.mockImplementation((fn: string) => {
-    if (fn === "get_submission_for_grading") return Promise.resolve({ data: submission, error: null });
+    if (fn === "get_submission_for_grading")
+      return Promise.resolve({ data: submission, error: null });
     if (fn === "lock_submission_for_grading")
       return Promise.resolve({ data: { attempt_id: "s1" }, error: null });
     if (fn === "save_grade")

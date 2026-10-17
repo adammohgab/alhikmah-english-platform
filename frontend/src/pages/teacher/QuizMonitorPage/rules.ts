@@ -92,5 +92,7 @@ const ORDER: Record<AttemptStatus, number> = { in_progress: 0, not_started: 1, s
 
 /** Students who are taking the test first, then waiting, then done; names A-Z inside each group. */
 export function sortForGrid<T extends { status: AttemptStatus; name: string }>(rows: T[]): T[] {
-  return [...rows].sort((a, b) => ORDER[a.status] - ORDER[b.status] || a.name.localeCompare(b.name));
+  return [...rows].sort(
+    (a, b) => ORDER[a.status] - ORDER[b.status] || a.name.localeCompare(b.name),
+  );
 }
