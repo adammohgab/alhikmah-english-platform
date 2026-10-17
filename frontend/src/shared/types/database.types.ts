@@ -1,6 +1,9 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
+/** Portal roles used by the app. A database `super_admin` maps to `admin` plus an admin level. */
 export type UserRole = "student" | "teacher" | "admin";
+/** Values of the `user_role` enum in the database. */
+export type DbUserRole = UserRole | "super_admin";
 export type AdminLevel = "school_admin" | "super_admin";
 export type AccountStatus = "active" | "locked" | "archived" | "disabled";
 
@@ -35,36 +38,38 @@ export interface Database {
         Row: {
           id: string;
           username: string;
+          display_name: string;
+          /** Read-only alias of display_name. */
           full_name: string;
-          role: UserRole;
-          admin_level: AdminLevel | null;
+          role: DbUserRole;
           status: AccountStatus;
+          avatar_url: string | null;
+          equipped_theme: string | null;
           must_change_password: boolean;
-          grade_id: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id: string;
           username: string;
-          full_name: string;
-          role: UserRole;
-          admin_level?: AdminLevel | null;
+          display_name: string;
+          role?: DbUserRole;
           status?: AccountStatus;
+          avatar_url?: string | null;
+          equipped_theme?: string | null;
           must_change_password?: boolean;
-          grade_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
           username?: string;
-          full_name?: string;
-          role?: UserRole;
-          admin_level?: AdminLevel | null;
+          display_name?: string;
+          role?: DbUserRole;
           status?: AccountStatus;
+          avatar_url?: string | null;
+          equipped_theme?: string | null;
           must_change_password?: boolean;
-          grade_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -94,9 +99,8 @@ export interface Database {
       };
     };
     Enums: {
-      user_role: UserRole;
-      admin_level: AdminLevel;
-      account_status: AccountStatus;
+      user_role: DbUserRole;
+      user_status: AccountStatus;
     };
   };
 }

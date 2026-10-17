@@ -8,7 +8,7 @@ create table if not exists jobs (
   id uuid primary key default gen_random_uuid(),
   kind text not null check (kind in ('ai_course', 'ai_curriculum', 'ai_questions', 'ai_lesson', 'ai_grade_batch', 'ai_report_comments', 'ai_planner', 'import_users', 'rollover', 'report', 'tts_batch', 'notification_fanout', 'content_quality_check')),
   status text not null default 'queued' check (status in ('queued', 'running', 'completed', 'failed', 'cancelled')),
-  initiator_id uuid not null references profiles(id) on delete set null,
+  initiator_id uuid references profiles(id) on delete set null,
   input_params jsonb not null default '{}'::jsonb,
   result_payload jsonb,
   error_message text,

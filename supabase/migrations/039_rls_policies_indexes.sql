@@ -454,8 +454,21 @@ as $$
   )
 $$;
 
+create or replace function public.owns_conversation(p_conversation_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.ai_conversations c
+    where c.id = p_conversation_id and c.user_id = (select auth.uid())
+  )
+$$;
+
 revoke all on function
-  public.uid(), public.app_role(), public.is_admin(), public.is_super_admin(),
+  public.owns_conversation(uuid), public.uid(), public.app_role(), public.is_admin(), public.is_super_admin(),
   public.is_school_admin(), public.is_active(), public.not_view_as(), public.must_change(),
   public.teaches_class(uuid), public.in_class(uuid), public.teaches_student(uuid),
   public.can_see_student(uuid), public.can_manage_student(uuid), public.my_class_ids(),
@@ -469,7 +482,7 @@ revoke all on function
   from public, anon;
 
 grant execute on function
-  public.uid(), public.app_role(), public.is_admin(), public.is_super_admin(),
+  public.owns_conversation(uuid), public.uid(), public.app_role(), public.is_admin(), public.is_super_admin(),
   public.is_school_admin(), public.is_active(), public.not_view_as(), public.must_change(),
   public.teaches_class(uuid), public.in_class(uuid), public.teaches_student(uuid),
   public.can_see_student(uuid), public.can_manage_student(uuid), public.my_class_ids(),
@@ -1022,6 +1035,43 @@ create policy audit_log_select_school on public.audit_log
   for select to authenticated using (
     public.is_school_admin() and actor_role in ('student', 'teacher')
   );
+
+-- 7.8 AI -----------------------------------------------------
+-- Students read and write their own conversations. Staff reach other conversations only
+-- through Edge Functions with the service role.
+
+create policy ai_conversations_select_own on public.ai_conversations
+  for select to authenticated using (user_id = public.uid());
+create policy ai_conversations_insert_own on public.ai_conversations
+  for insert to authenticated with check (user_id = public.uid());
+create policy ai_conversations_update_own on public.ai_conversations
+  for update to authenticated using (user_id = public.uid()) with check (user_id = public.uid());
+
+create policy ai_messages_select_own on public.ai_messages
+  for select to authenticated using (public.owns_conversation(conversation_id));
+create policy ai_messages_insert_own on public.ai_messages
+  for insert to authenticated with check (
+    public.owns_conversation(conversation_id) and role = 'user'
+  );
+
+create policy ai_action_cards_select_staff on public.ai_action_cards
+  for select to authenticated using (
+    public.app_role() in ('teacher', 'admin', 'super_admin')
+    and (user_id = public.uid() or public.owns_conversation(conversation_id))
+  );
+create policy ai_action_cards_update_staff on public.ai_action_cards
+  for update to authenticated
+  using (
+    public.app_role() in ('teacher', 'admin', 'super_admin')
+    and (user_id = public.uid() or public.owns_conversation(conversation_id))
+  )
+  with check (
+    public.app_role() in ('teacher', 'admin', 'super_admin')
+    and (user_id = public.uid() or public.owns_conversation(conversation_id))
+  );
+
+create policy ai_usage_logs_select_admin on public.ai_usage_logs
+  for select to authenticated using (public.is_admin());
 
 -- ============================================================
 -- Step 5: Foreign key indexes missing from earlier migrations

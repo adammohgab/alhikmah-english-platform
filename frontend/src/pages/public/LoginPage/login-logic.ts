@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getRoleHomePath } from "@/app/guards/guard-utils";
+import { isDbRole, splitRole } from "@/shared/api/profile";
 import { REMEMBER_STORAGE_KEY } from "@/shared/api/remember";
 import { supabase } from "@/shared/api/supabase";
 import type { UserRole } from "@/shared/types/database.types";
@@ -51,7 +52,6 @@ export { REMEMBER_STORAGE_KEY };
 const USERNAME_PATTERN = /^[a-z0-9._-]{3,32}$/;
 const INTERNAL_EMAIL_DOMAIN = "accounts.invalid";
 const PASSWORD_MIN_LENGTH = 6;
-const ROLES: readonly UserRole[] = ["student", "teacher", "admin"];
 const BLOCKED_STATUSES: readonly string[] = ["locked", "archived", "disabled"];
 
 /* ---------- Validation ---------- */
@@ -177,10 +177,6 @@ export function usernameToEmail(username: string): string {
   return `${normalizeUsername(username)}@${INTERNAL_EMAIL_DOMAIN}`;
 }
 
-function isRole(value: unknown): value is UserRole {
-  return typeof value === "string" && (ROLES as readonly string[]).includes(value);
-}
-
 /** Ends a session that must not be used. Local scope removes it even when offline. */
 async function dropSession(): Promise<void> {
   await supabase.auth.signOut({ scope: "local" });
@@ -226,12 +222,13 @@ export async function signInWithUsername(
     return { kind: "network" };
   }
 
-  if (profile.error || profile.data === null || !isRole(profile.data.role)) {
+  if (profile.error || profile.data === null || !isDbRole(profile.data.role)) {
     await dropSession();
     return { kind: "profile-error" };
   }
 
-  const { role, status, must_change_password: mustChangePassword } = profile.data;
+  const { status, must_change_password: mustChangePassword } = profile.data;
+  const { role } = splitRole(profile.data.role);
   const accountStatus: string = status;
 
   if (BLOCKED_STATUSES.includes(accountStatus)) {

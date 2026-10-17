@@ -44,8 +44,8 @@ export function ProtectedRoute({
     return <Navigate to="/maintenance" replace />;
   }
 
-  // 3. Account status checks (archived / disabled accounts go to account-not-active)
-  if (user.status === "archived" || user.status === "disabled") {
+  // 3. Account status checks (locked / archived / disabled accounts go to account-not-active)
+  if (user.status === "locked" || user.status === "archived" || user.status === "disabled") {
     return <Navigate to="/account-not-active" replace />;
   }
 

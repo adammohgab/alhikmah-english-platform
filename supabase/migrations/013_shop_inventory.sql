@@ -5,7 +5,7 @@
 -- Table: shop_items
 create table if not exists shop_items (
   id uuid primary key default gen_random_uuid(),
-  sku text unique not null,
+  sku text unique not null check (sku ~ '^[a-z0-9]+(_[a-z0-9]+)*$'),
   name text not null,
   description text,
   category text not null,

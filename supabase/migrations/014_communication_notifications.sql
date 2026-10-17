@@ -8,7 +8,7 @@
 -- target_type + target_class_id satisfy the "target whole school or specific class" acceptance criterion.
 create table if not exists announcements (
   id uuid primary key default gen_random_uuid(),
-  author_id uuid not null references profiles(id) on delete set null,
+  author_id uuid references profiles(id) on delete set null,
   title text not null,
   body text not null,
   priority text not null default 'normal',
@@ -17,6 +17,8 @@ create table if not exists announcements (
   target_class_id uuid references classes(id) on delete set null,
   status text not null default 'published',
   publish_at timestamptz not null default app_now(),
+  -- Read-only name from the BE-CORE-14 task text.
+  published_at timestamptz generated always as (publish_at) stored,
   expires_at timestamptz,
   link jsonb,
   created_at timestamptz not null default app_now()
@@ -53,6 +55,9 @@ create table if not exists notifications (
   title text not null,
   body text not null,
   payload jsonb not null default '{}'::jsonb,
+  -- Read-only names from the BE-CORE-14 task text.
+  notification_type text generated always as (kind) stored,
+  data jsonb generated always as (payload) stored,
   link text,
   priority text not null default 'normal',
   is_read boolean not null default false,

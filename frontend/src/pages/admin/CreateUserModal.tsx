@@ -231,7 +231,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
         {
           id: userId,
           username: trimmedUsername,
-          full_name: trimmedFullName,
+          display_name: trimmedFullName,
           role,
           status: "active",
           must_change_password: mustChangePassword,

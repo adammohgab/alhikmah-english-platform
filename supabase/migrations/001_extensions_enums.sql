@@ -8,7 +8,7 @@ create type user_status as enum ('active', 'locked', 'archived');
 
 create type content_status as enum ('archived', 'draft', 'published');
 
-create type question_type as enum ('audio_spelling', 'drag_drop', 'fill_blank', 'multiple_choice', 'reorder', 'short_answer', 'matching');
+create type question_type as enum ('audio_spelling', 'drag_drop', 'fill_blank', 'matching', 'multiple_choice', 'reorder', 'short_answer');
 
 create type assessment_kind as enum ('assignment', 'quiz');
 

@@ -116,7 +116,7 @@ export async function saveTeacherSettings(userId: string, next: TeacherSettings)
 }
 
 export async function saveDisplayName(userId: string, name: string): Promise<void> {
-  const { error } = await supabase.from("profiles").update({ full_name: name }).eq("id", userId);
+  const { error } = await supabase.from("profiles").update({ display_name: name }).eq("id", userId);
   if (error) throw new Error(normalizeApiError(error).message);
 }
 

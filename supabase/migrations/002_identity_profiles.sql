@@ -3,6 +3,8 @@ create table profiles (
   id uuid primary key references auth.users on delete cascade,
   username citext unique,
   display_name text not null,
+  -- Read-only alias for screens that call the display name "full_name".
+  full_name text generated always as (display_name) stored,
   role user_role not null default 'student',
   status user_status not null default 'active',
   avatar_url text,
