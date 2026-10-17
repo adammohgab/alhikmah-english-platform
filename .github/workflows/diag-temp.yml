@@ -1,0 +1,37 @@
+name: Diagnose (temporary)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/diag-temp.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Report
+        run: |
+          emit() { head -c 3400 "$2" | sed ':a;N;$!ba;s/%/%25/g;s/\n/%0A/g' | sed "s/^/::warning title=$1::/"; }
+          pnpm exec tsc --noEmit -p tsconfig.app.json --pretty false 2>&1 | cut -c1-260 > "$RUNNER_TEMP/t1.txt" || true
+          pnpm exec tsc --noEmit -p tsconfig.node.json --pretty false 2>&1 | cut -c1-260 > "$RUNNER_TEMP/t2.txt" || true
+          pnpm exec eslint . -f json -o "$RUNNER_TEMP/e.json" || true
+          node -e 'const r=JSON.parse(require("fs").readFileSync(process.env.RUNNER_TEMP+"/e.json","utf8"));const o=[];for(const f of r)for(const m of f.messages)if(m.severity===2)o.push(f.filePath.replace(/.*frontend\//,"")+":"+m.line+" "+m.ruleId+" "+m.message.slice(0,90));require("fs").writeFileSync(process.env.RUNNER_TEMP+"/e.txt",o.join("\n"))'
+          pnpm exec vitest run --reporter=dot 2>&1 | grep -E "FAIL|Error|failed|passed" | cut -c1-240 | head -30 > "$RUNNER_TEMP/v.txt" || true
+          pnpm exec prettier --check . 2>&1 | grep -v "^Checking" | head -30 > "$RUNNER_TEMP/p.txt" || true
+          emit tsc-app "$RUNNER_TEMP/t1.txt"; emit tsc-node "$RUNNER_TEMP/t2.txt"; emit eslint "$RUNNER_TEMP/e.txt"; emit vitest "$RUNNER_TEMP/v.txt"; emit prettier "$RUNNER_TEMP/p.txt"
