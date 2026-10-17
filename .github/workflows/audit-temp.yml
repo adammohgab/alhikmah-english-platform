@@ -6,7 +6,7 @@ on:
       - ".github/workflows/audit-temp.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   audit:
@@ -22,16 +22,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Report advisories
+      - name: Upgrade vulnerable dev tooling
+        run: pnpm add -D vite@^6.4.3 vitest@^3.2.6
+      - name: Commit lockfile
+        working-directory: .
         run: |
-          pnpm audit --json > "$RUNNER_TEMP/audit.json" || true
-          node -e '
-            const a=JSON.parse(require("fs").readFileSync(process.env.RUNNER_TEMP+"/audit.json","utf8"));
-            const out=[];
-            for(const adv of Object.values(a.advisories||{})){
-              const paths=[...new Set(adv.findings.flatMap(f=>f.paths))].slice(0,2).join(" | ");
-              out.push(`${adv.severity} ${adv.module_name}@${adv.findings.map(f=>f.version).join(",")} patched ${adv.patched_versions} via ${paths}`);
-            }
-            console.log(out.join("%0A"));
-            console.log("::warning title=audit::"+out.join("%0A"));
-          '
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "build: upgrade vite and vitest for security fixes"
+          git push
