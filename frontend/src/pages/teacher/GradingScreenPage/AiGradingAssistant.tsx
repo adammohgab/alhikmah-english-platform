@@ -1,8 +1,15 @@
 import { useState } from 'react';
 
 export type RubricCriterion = { id: string; label: string; maxPoints: number };
-export type AiCriterionSuggestion = { criterionId: string; score: number; rationale: string };
-export type AiPreGradeResult = { suggestions: AiCriterionSuggestion[]; feedback: string };
+export type AiCriterionSuggestion = {
+  criterionId: string;
+  score: number;
+  rationale: string;
+};
+export type AiPreGradeResult = {
+  suggestions: AiCriterionSuggestion[];
+  feedback: string;
+};
 export type DraftScores = Record<string, number | null>;
 export type WorldName =
   | 'world-coral'
@@ -40,7 +47,9 @@ export default function AiGradingAssistant({
   invokeAiGradeSubmission,
   world = 'world-violet',
 }: Props) {
-  const [suggestions, setSuggestions] = useState<Record<string, SuggestionState>>({});
+  const [suggestions, setSuggestions] = useState<
+    Record<string, SuggestionState>
+  >({});
   const [suggestedFeedback, setSuggestedFeedback] = useState('');
   const [feedbackStatus, setFeedbackStatus] = useState<
     'pending' | 'accepted' | 'rejected' | null
@@ -60,12 +69,17 @@ export default function AiGradingAssistant({
       const next: Record<string, SuggestionState> = {};
 
       for (const suggestion of result.suggestions) {
-        const criterion = rubric.find(item => item.id === suggestion.criterionId);
+        const criterion = rubric.find(
+          item => item.id === suggestion.criterionId,
+        );
         if (!criterion || !Number.isFinite(suggestion.score)) continue;
 
         next[criterion.id] = {
           ...suggestion,
-          score: Math.max(0, Math.min(criterion.maxPoints, suggestion.score)),
+          score: Math.max(
+            0,
+            Math.min(criterion.maxPoints, suggestion.score),
+          ),
           status: 'pending',
         };
       }
@@ -74,7 +88,11 @@ export default function AiGradingAssistant({
       setSuggestedFeedback(result.feedback ?? '');
       setFeedbackStatus(result.feedback?.trim() ? 'pending' : null);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not run AI pre-grade.');
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : 'Could not run AI pre-grade.',
+      );
     } finally {
       setBusy(false);
     }
@@ -84,18 +102,32 @@ export default function AiGradingAssistant({
     const suggestion = suggestions[criterionId];
     if (!suggestion) return;
 
-    onDraftScoresChange({ ...draftScores, [criterionId]: suggestion.score });
-    setSuggestions(current => ({
-      ...current,
-      [criterionId]: { ...current[criterionId], status: 'accepted' },
-    }));
+    onDraftScoresChange({
+      ...draftScores,
+      [criterionId]: suggestion.score,
+    });
+
+    setSuggestions(current => {
+      const existing = current[criterionId];
+      if (!existing) return current;
+
+      return {
+        ...current,
+        [criterionId]: { ...existing, status: 'accepted' },
+      };
+    });
   }
 
   function rejectScore(criterionId: string) {
-    setSuggestions(current => ({
-      ...current,
-      [criterionId]: { ...current[criterionId], status: 'rejected' },
-    }));
+    setSuggestions(current => {
+      const existing = current[criterionId];
+      if (!existing) return current;
+
+      return {
+        ...current,
+        [criterionId]: { ...existing, status: 'rejected' },
+      };
+    });
   }
 
   return (
@@ -120,40 +152,40 @@ export default function AiGradingAssistant({
           padding: 18px;
         }
         .ai-grade[data-world="world-coral"] {
-          --world-primary: #e76b5b;
-          --world-secondary: #9c382e;
-          --world-tint: #fff1ed;
-          --border-neutral-stroke: #e76b5b;
+          --world-primary:#e76b5b;
+          --world-secondary:#9c382e;
+          --world-tint:#fff1ed;
+          --border-neutral-stroke:#e76b5b;
         }
         .ai-grade[data-world="world-amber"] {
-          --world-primary: #d28b16;
-          --world-secondary: #80520a;
-          --world-tint: #fff7df;
-          --border-neutral-stroke: #d28b16;
+          --world-primary:#d28b16;
+          --world-secondary:#80520a;
+          --world-tint:#fff7df;
+          --border-neutral-stroke:#d28b16;
         }
         .ai-grade[data-world="world-mint"] {
-          --world-primary: #31866e;
-          --world-secondary: #205c4c;
-          --world-tint: #eaf8f1;
-          --border-neutral-stroke: #31866e;
+          --world-primary:#31866e;
+          --world-secondary:#205c4c;
+          --world-tint:#eaf8f1;
+          --border-neutral-stroke:#31866e;
         }
         .ai-grade[data-world="world-sky"] {
-          --world-primary: #357cac;
-          --world-secondary: #245775;
-          --world-tint: #edf7ff;
-          --border-neutral-stroke: #357cac;
+          --world-primary:#357cac;
+          --world-secondary:#245775;
+          --world-tint:#edf7ff;
+          --border-neutral-stroke:#357cac;
         }
         .ai-grade[data-world="world-violet"] {
-          --world-primary: #7656c9;
-          --world-secondary: #5536a5;
-          --world-tint: #f5f0ff;
-          --border-neutral-stroke: #7656c9;
+          --world-primary:#7656c9;
+          --world-secondary:#5536a5;
+          --world-tint:#f5f0ff;
+          --border-neutral-stroke:#7656c9;
         }
         .ai-grade[data-world="world-rose"] {
-          --world-primary: #c44e79;
-          --world-secondary: #84324f;
-          --world-tint: #fff0f5;
-          --border-neutral-stroke: #c44e79;
+          --world-primary:#c44e79;
+          --world-secondary:#84324f;
+          --world-tint:#fff0f5;
+          --border-neutral-stroke:#c44e79;
         }
         .ai-grade, .ai-grade * { box-sizing: border-box; }
         .ai-grade h2, .ai-grade h3 {
@@ -171,7 +203,8 @@ export default function AiGradingAssistant({
           padding: 7px 11px;
           box-shadow: 2px 2px 0 #000;
           cursor: pointer;
-          transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+          transition: transform 100ms ease, box-shadow 100ms ease,
+            background-color 100ms ease;
         }
         .ai-grade button:hover:not(:disabled) {
           background: var(--world-tint);
@@ -182,7 +215,8 @@ export default function AiGradingAssistant({
           transform: translate(2px, 2px);
           box-shadow: none;
         }
-        .ai-grade button:focus-visible, .ai-grade textarea:focus-visible {
+        .ai-grade button:focus-visible,
+        .ai-grade textarea:focus-visible {
           outline: 3px solid var(--world-primary);
           outline-offset: 3px;
         }
@@ -230,7 +264,8 @@ export default function AiGradingAssistant({
           gap: 14px;
           flex-wrap: wrap;
           padding: 12px 0;
-          border-bottom: 2px solid color-mix(in srgb, var(--border-neutral-stroke) 20%, transparent);
+          border-bottom: 2px solid
+            color-mix(in srgb, var(--border-neutral-stroke) 20%, transparent);
         }
         .ai-grade__suggestion {
           display: grid;
@@ -268,7 +303,9 @@ export default function AiGradingAssistant({
           vertical-align: -2px;
           animation: ai-grade-spin .7s linear infinite;
         }
-        @keyframes ai-grade-spin { to { transform: rotate(360deg); } }
+        @keyframes ai-grade-spin {
+          to { transform: rotate(360deg); }
+        }
         @media (prefers-reduced-motion: reduce) {
           .ai-grade *, .ai-grade *::before, .ai-grade *::after {
             animation-duration: .01ms !important;
@@ -288,13 +325,16 @@ export default function AiGradingAssistant({
             Suggestions stay in draft until you review and save the grade yourself.
           </p>
         </div>
+
         <button
           type="button"
           disabled={busy}
           aria-busy={busy}
           onClick={() => void runPreGrade()}
         >
-          {busy && <span className="ai-grade__spinner" aria-hidden="true" />}
+          {busy && (
+            <span className="ai-grade__spinner" aria-hidden="true" />
+          )}
           {busy ? 'Evaluating…' : 'Run AI Pre-Grade'}
         </button>
       </header>
@@ -303,7 +343,11 @@ export default function AiGradingAssistant({
         Teacher-controlled draft · AI cannot finalize or submit grades
       </p>
 
-      {error && <p role="alert" className="ai-grade__error">{error}</p>}
+      {error && (
+        <p role="alert" className="ai-grade__error">
+          {error}
+        </p>
+      )}
 
       <div style={{ display: 'grid', gap: 8 }}>
         {rubric.map(criterion => {
@@ -320,17 +364,26 @@ export default function AiGradingAssistant({
               </div>
 
               {suggestion?.status === 'pending' && (
-                <div className="ai-grade__suggestion" title={suggestion.rationale}>
+                <div
+                  className="ai-grade__suggestion"
+                  title={suggestion.rationale}
+                >
                   <span className="ai-grade__badge">AI suggestion</span>
                   <strong>
                     {suggestion.score} / {criterion.maxPoints}
                   </strong>
                   <span>{suggestion.rationale}</span>
                   <div>
-                    <button type="button" onClick={() => acceptScore(criterion.id)}>
+                    <button
+                      type="button"
+                      onClick={() => acceptScore(criterion.id)}
+                    >
                       Use in draft
                     </button>{' '}
-                    <button type="button" onClick={() => rejectScore(criterion.id)}>
+                    <button
+                      type="button"
+                      onClick={() => rejectScore(criterion.id)}
+                    >
                       Reject
                     </button>
                   </div>
@@ -338,10 +391,15 @@ export default function AiGradingAssistant({
               )}
 
               {suggestion?.status === 'accepted' && (
-                <span className="ai-grade__status">Accepted into teacher draft</span>
+                <span className="ai-grade__status">
+                  Accepted into teacher draft
+                </span>
               )}
+
               {suggestion?.status === 'rejected' && (
-                <span className="ai-grade__status">Suggestion rejected</span>
+                <span className="ai-grade__status">
+                  Suggestion rejected
+                </span>
               )}
             </article>
           );
@@ -350,8 +408,12 @@ export default function AiGradingAssistant({
 
       {suggestedFeedback.trim() && (
         <section className="ai-grade__feedback">
-          <h3 style={{ marginTop: 0 }}>Constructive feedback suggestion</h3>
-          <span className="ai-grade__badge">AI suggestion · review before use</span>
+          <h3 style={{ marginTop: 0 }}>
+            Constructive feedback suggestion
+          </h3>
+          <span className="ai-grade__badge">
+            AI suggestion · review before use
+          </span>
           <p style={{ whiteSpace: 'pre-wrap' }}>{suggestedFeedback}</p>
 
           {feedbackStatus === 'pending' ? (
@@ -365,7 +427,10 @@ export default function AiGradingAssistant({
               >
                 Insert into draft comments
               </button>{' '}
-              <button type="button" onClick={() => setFeedbackStatus('rejected')}>
+              <button
+                type="button"
+                onClick={() => setFeedbackStatus('rejected')}
+              >
                 Reject
               </button>
             </>
