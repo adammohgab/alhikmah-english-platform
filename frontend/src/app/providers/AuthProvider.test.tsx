@@ -26,7 +26,9 @@ vi.mock("@/shared/api/supabase", () => ({
 function Probe() {
   const { isLoading, isAuthenticated, user } = useAuth();
   if (isLoading) return <p>loading</p>;
-  return <p>{isAuthenticated && user ? `${user.role}:${user.adminLevel ?? "none"}` : "signed out"}</p>;
+  return (
+    <p>{isAuthenticated && user ? `${user.role}:${user.adminLevel ?? "none"}` : "signed out"}</p>
+  );
 }
 
 describe("AuthProvider (FND-12)", () => {

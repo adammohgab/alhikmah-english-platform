@@ -1,6 +1,11 @@
 import { supabase } from "@/shared/api/supabase";
 import type { AuthProfile } from "@/app/providers/auth-context";
-import type { AccountStatus, AdminLevel, DbUserRole, UserRole } from "@/shared/types/database.types";
+import type {
+  AccountStatus,
+  AdminLevel,
+  DbUserRole,
+  UserRole,
+} from "@/shared/types/database.types";
 
 /** The profile columns the app reads after sign-in. */
 export const PROFILE_COLUMNS = "id, username, display_name, role, status, must_change_password";
