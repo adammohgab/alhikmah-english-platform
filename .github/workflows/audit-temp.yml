@@ -1,0 +1,134 @@
+name: Project audit (temporary)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/audit-temp.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-audit:
+    name: Frontend audit
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint warnings, dependency audit and Playwright smoke test
+        run: |
+          set +e
+          emit() {
+            title="$1"; file="$2"
+            sed -i 's/\x1b\[[0-9;]*m//g' "$file"
+            if [ ! -s "$file" ]; then
+              echo "::notice title=$title::OK (no output)"
+              return
+            fi
+            split -b 3500 -d -a 2 "$file" "$RUNNER_TEMP/chunk-$title-"
+            n=0
+            for part in "$RUNNER_TEMP"/chunk-"$title"-*; do
+              n=$((n+1))
+              body=$(sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g' "$part")
+              echo "::warning title=$title part $n::$body"
+              [ "$n" -ge 6 ] && break
+            done
+          }
+
+          pnpm exec eslint . --format json -o "$RUNNER_TEMP/eslint.json" > /dev/null 2>&1
+          node -e '
+            const r = JSON.parse(require("fs").readFileSync(process.env.RUNNER_TEMP + "/eslint.json", "utf8"));
+            const byRule = {}; const lines = [];
+            let errors = 0, warnings = 0;
+            for (const f of r) {
+              for (const m of f.messages) {
+                if (m.severity === 2) errors++; else warnings++;
+                byRule[m.ruleId] = (byRule[m.ruleId] || 0) + 1;
+                lines.push(f.filePath.replace(/.*\/frontend\/src\//, "") + ":" + m.line + " " + (m.severity === 2 ? "E" : "W") + " " + m.ruleId + " " + m.message.slice(0, 90));
+              }
+            }
+            console.log("errors " + errors + " warnings " + warnings);
+            console.log(JSON.stringify(byRule));
+            console.log(lines.slice(0, 40).join("\n"));
+          ' > "$RUNNER_TEMP/eslint-summary.txt" 2>&1
+          emit "eslint-all" "$RUNNER_TEMP/eslint-summary.txt"
+
+          pnpm audit > "$RUNNER_TEMP/audit.txt" 2>&1
+          echo "audit exit $?"
+          tail -n 60 "$RUNNER_TEMP/audit.txt" > "$RUNNER_TEMP/audit-tail.txt"
+          emit "pnpm-audit" "$RUNNER_TEMP/audit-tail.txt"
+
+          pnpm exec playwright install --with-deps chromium > "$RUNNER_TEMP/pw-install.txt" 2>&1
+          echo "playwright install exit $?"
+          CI=1 pnpm exec playwright test --project=chromium --reporter=list > "$RUNNER_TEMP/pw.txt" 2>&1
+          echo "playwright exit $?"
+          tail -n 40 "$RUNNER_TEMP/pw.txt" > "$RUNNER_TEMP/pw-tail.txt"
+          emit "playwright" "$RUNNER_TEMP/pw-tail.txt"
+          exit 0
+
+  db-audit:
+    name: Database migrations audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply every migration to a Supabase Postgres and list all errors
+        run: |
+          set +e
+          emit() {
+            title="$1"; file="$2"
+            if [ ! -s "$file" ]; then
+              echo "::notice title=$title::OK (no output)"
+              return
+            fi
+            split -b 3500 -d -a 2 "$file" "$RUNNER_TEMP/chunk-$title-"
+            n=0
+            for part in "$RUNNER_TEMP"/chunk-"$title"-*; do
+              n=$((n+1))
+              body=$(sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g' "$part")
+              echo "::warning title=$title part $n::$body"
+              [ "$n" -ge 8 ] && break
+            done
+          }
+
+          ls supabase/migrations > "$RUNNER_TEMP/files.txt"
+          sed 's/_.*//' "$RUNNER_TEMP/files.txt" | sort | uniq -d | sed 's/^/duplicate version: /' > "$RUNNER_TEMP/dups.txt"
+          grep -v -E '^[0-9]+_' "$RUNNER_TEMP/files.txt" | sed 's/^/no numeric version: /' >> "$RUNNER_TEMP/dups.txt"
+          emit "migration-names" "$RUNNER_TEMP/dups.txt"
+
+          docker run -d --name pg -e POSTGRES_PASSWORD=postgres supabase/postgres:15.1.0.147 > "$RUNNER_TEMP/docker.txt" 2>&1
+          for i in $(seq 1 60); do
+            docker exec pg pg_isready -U postgres > /dev/null 2>&1 && break
+            sleep 2
+          done
+          docker exec pg psql -U postgres -d postgres -c "select current_user, version();" > "$RUNNER_TEMP/pgver.txt" 2>&1
+          docker exec pg psql -U postgres -d postgres -c "select to_regclass('auth.users') as auth_users, (select count(*) from pg_roles where rolname in ('anon','authenticated','service_role')) as roles;" >> "$RUNNER_TEMP/pgver.txt" 2>&1
+          emit "pg-environment" "$RUNNER_TEMP/pgver.txt"
+
+          docker cp supabase/migrations pg:/m
+          : > "$RUNNER_TEMP/migration-errors.txt"
+          for f in $(ls supabase/migrations | sort); do
+            out=$(docker exec pg psql -U postgres -d postgres -v ON_ERROR_STOP=0 -f "/m/$f" 2>&1)
+            errs=$(echo "$out" | grep -a -E "ERROR:|FATAL:" | head -4)
+            if [ -n "$errs" ]; then
+              echo "== $f" >> "$RUNNER_TEMP/migration-errors.txt"
+              echo "$errs" | cut -c1-220 >> "$RUNNER_TEMP/migration-errors.txt"
+            fi
+          done
+          emit "migration-errors" "$RUNNER_TEMP/migration-errors.txt"
+          exit 0
