@@ -17,9 +17,7 @@ export interface AiPreGradeResult {
   feedback: string;
 }
 
-export interface DraftScores {
-  [criterionId: string]: number | null;
-}
+export type DraftScores = Record<string, number | null>;
 
 export type WorldName =
   | 'world-coral'
@@ -424,9 +422,7 @@ export default function AiGradingAssistant({
 
       {suggestedFeedback.trim() && (
         <section className="ai-grade__feedback">
-          <h3 style={{ marginTop: 0 }}>
-            Constructive feedback suggestion
-          </h3>
+          <h3 style={{ marginTop: 0 }}>Constructive feedback suggestion</h3>
           <span className="ai-grade__badge">
             AI suggestion · review before use
           </span>
