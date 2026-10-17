@@ -56,8 +56,10 @@ export default function QuizBuilderPage({
     action: () => Promise<QuizQuestion[] | QuizQuestion | null>,
   ) {
     setBusy(true);
+
     try {
       const result = await action();
+
       if (Array.isArray(result)) {
         setQuestions(current => [...current, ...result]);
       } else if (result) {
@@ -75,6 +77,7 @@ export default function QuizBuilderPage({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
+
     try {
       await save(settings, questions);
       setMessage('Quiz saved.');
@@ -172,7 +175,7 @@ export default function QuizBuilderPage({
 
         <p>
           <label>
-            Passing grade (%){' '}
+            Passing grade (%) {' '}
             <input
               type="number"
               min="0"
@@ -234,6 +237,7 @@ export default function QuizBuilderPage({
         >
           Add from Question Bank
         </button>{' '}
+
         <button
           type="button"
           disabled={busy}
@@ -243,6 +247,7 @@ export default function QuizBuilderPage({
         >
           Create New Question
         </button>{' '}
+
         <button
           type="button"
           disabled={busy}
@@ -257,6 +262,7 @@ export default function QuizBuilderPage({
           {questions.map((question, index) => (
             <li key={question.id} style={{ padding: 8 }}>
               {question.title}{' '}
+
               <label>
                 Points{' '}
                 <input
@@ -267,25 +273,31 @@ export default function QuizBuilderPage({
                     setQuestions(current =>
                       current.map(item =>
                         item.id === question.id
-                          ? { ...item, points: Number(event.target.value) }
+                          ? {
+                              ...item,
+                              points: Number(event.target.value),
+                            }
                           : item,
                       ),
                     )
                   }
                 />
               </label>{' '}
+
               <button
                 type="button"
                 onClick={() => moveQuestion(index, -1)}
               >
                 ↑
               </button>{' '}
+
               <button
                 type="button"
                 onClick={() => moveQuestion(index, 1)}
               >
                 ↓
               </button>{' '}
+
               <button
                 type="button"
                 onClick={() =>
