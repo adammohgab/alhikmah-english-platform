@@ -35,3 +35,4 @@ jobs:
           pnpm exec vitest run --reporter=dot 2>&1 | grep -E "FAIL|Error|failed|passed" | cut -c1-240 | head -30 > "$RUNNER_TEMP/v.txt" || true
           pnpm exec prettier --check . 2>&1 | grep -v "^Checking" | head -30 > "$RUNNER_TEMP/p.txt" || true
           emit tsc-app "$RUNNER_TEMP/t1.txt"; emit tsc-node "$RUNNER_TEMP/t2.txt"; emit eslint "$RUNNER_TEMP/e.txt"; emit vitest "$RUNNER_TEMP/v.txt"; emit prettier "$RUNNER_TEMP/p.txt"
+# run 1792310334
