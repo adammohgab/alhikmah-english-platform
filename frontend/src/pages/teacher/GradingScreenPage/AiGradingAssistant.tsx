@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export interface RubricCriterion {
   id: string;
@@ -20,12 +20,7 @@ export interface AiPreGradeResult {
 export type DraftScores = Record<string, number | null>;
 
 export type WorldName =
-  | 'world-coral'
-  | 'world-amber'
-  | 'world-mint'
-  | 'world-sky'
-  | 'world-violet'
-  | 'world-rose';
+  "world-coral" | "world-amber" | "world-mint" | "world-sky" | "world-violet" | "world-rose";
 
 interface Props {
   submissionId: string;
@@ -42,7 +37,7 @@ interface Props {
 }
 
 interface SuggestionState extends AiCriterionSuggestion {
-  status: 'pending' | 'accepted' | 'rejected';
+  status: "pending" | "accepted" | "rejected";
 }
 
 export default function AiGradingAssistant({
@@ -53,23 +48,21 @@ export default function AiGradingAssistant({
   draftComments,
   onDraftCommentsChange,
   invokeAiGradeSubmission,
-  world = 'world-violet',
+  world = "world-violet",
 }: Props) {
-  const [suggestions, setSuggestions] = useState<
-    Record<string, SuggestionState>
-  >({});
-  const [suggestedFeedback, setSuggestedFeedback] = useState('');
-  const [feedbackStatus, setFeedbackStatus] = useState<
-    'pending' | 'accepted' | 'rejected' | null
-  >(null);
+  const [suggestions, setSuggestions] = useState<Record<string, SuggestionState>>({});
+  const [suggestedFeedback, setSuggestedFeedback] = useState("");
+  const [feedbackStatus, setFeedbackStatus] = useState<"pending" | "accepted" | "rejected" | null>(
+    null,
+  );
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   async function runPreGrade() {
     setBusy(true);
-    setError('');
+    setError("");
     setSuggestions({});
-    setSuggestedFeedback('');
+    setSuggestedFeedback("");
     setFeedbackStatus(null);
 
     try {
@@ -77,31 +70,22 @@ export default function AiGradingAssistant({
       const next: Record<string, SuggestionState> = {};
 
       for (const suggestion of result.suggestions) {
-        const criterion = rubric.find(
-          item => item.id === suggestion.criterionId,
-        );
+        const criterion = rubric.find((item) => item.id === suggestion.criterionId);
 
         if (!criterion || !Number.isFinite(suggestion.score)) continue;
 
         next[criterion.id] = {
           ...suggestion,
-          score: Math.max(
-            0,
-            Math.min(criterion.maxPoints, suggestion.score),
-          ),
-          status: 'pending',
+          score: Math.max(0, Math.min(criterion.maxPoints, suggestion.score)),
+          status: "pending",
         };
       }
 
       setSuggestions(next);
-      setSuggestedFeedback(result.feedback ?? '');
-      setFeedbackStatus(result.feedback?.trim() ? 'pending' : null);
+      setSuggestedFeedback(result.feedback ?? "");
+      setFeedbackStatus(result.feedback?.trim() ? "pending" : null);
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : 'Could not run AI pre-grade.',
-      );
+      setError(cause instanceof Error ? cause.message : "Could not run AI pre-grade.");
     } finally {
       setBusy(false);
     }
@@ -116,32 +100,32 @@ export default function AiGradingAssistant({
       [criterionId]: suggestion.score,
     });
 
-    setSuggestions(current => {
+    setSuggestions((current) => {
       const existing = current[criterionId];
       if (!existing) return current;
 
       return {
         ...current,
-        [criterionId]: { ...existing, status: 'accepted' },
+        [criterionId]: { ...existing, status: "accepted" },
       };
     });
   }
 
   function rejectScore(criterionId: string) {
-    setSuggestions(current => {
+    setSuggestions((current) => {
       const existing = current[criterionId];
       if (!existing) return current;
 
       return {
         ...current,
-        [criterionId]: { ...existing, status: 'rejected' },
+        [criterionId]: { ...existing, status: "rejected" },
       };
     });
   }
 
   function acceptFeedback() {
     onDraftCommentsChange(suggestedFeedback);
-    setFeedbackStatus('accepted');
+    setFeedbackStatus("accepted");
   }
 
   return (
@@ -335,21 +319,14 @@ export default function AiGradingAssistant({
           <h2 id="ai-pre-grade-heading" style={{ margin: 0 }}>
             AI Pre-Grade Assistant
           </h2>
-          <p style={{ margin: '6px 0 0' }}>
+          <p style={{ margin: "6px 0 0" }}>
             Suggestions stay in draft until you review and save the grade yourself.
           </p>
         </div>
 
-        <button
-          type="button"
-          disabled={busy}
-          aria-busy={busy}
-          onClick={() => void runPreGrade()}
-        >
-          {busy && (
-            <span className="ai-grade__spinner" aria-hidden="true" />
-          )}
-          {busy ? 'Evaluating…' : 'Run AI Pre-Grade'}
+        <button type="button" disabled={busy} aria-busy={busy} onClick={() => void runPreGrade()}>
+          {busy && <span className="ai-grade__spinner" aria-hidden="true" />}
+          {busy ? "Evaluating…" : "Run AI Pre-Grade"}
         </button>
       </header>
 
@@ -363,8 +340,8 @@ export default function AiGradingAssistant({
         </p>
       )}
 
-      <div style={{ display: 'grid', gap: 8 }}>
-        {rubric.map(criterion => {
+      <div style={{ display: "grid", gap: 8 }}>
+        {rubric.map((criterion) => {
           const suggestion = suggestions[criterion.id];
 
           return (
@@ -372,48 +349,34 @@ export default function AiGradingAssistant({
               <div style={{ flex: 1 }}>
                 <strong>{criterion.label}</strong>
                 <div>
-                  Current draft: {draftScores[criterion.id] ?? 'Not scored'} /{' '}
-                  {criterion.maxPoints}
+                  Current draft: {draftScores[criterion.id] ?? "Not scored"} / {criterion.maxPoints}
                 </div>
               </div>
 
-              {suggestion?.status === 'pending' && (
-                <div
-                  className="ai-grade__suggestion"
-                  title={suggestion.rationale}
-                >
+              {suggestion?.status === "pending" && (
+                <div className="ai-grade__suggestion" title={suggestion.rationale}>
                   <span className="ai-grade__badge">AI suggestion</span>
                   <strong>
                     {suggestion.score} / {criterion.maxPoints}
                   </strong>
                   <span>{suggestion.rationale}</span>
                   <div>
-                    <button
-                      type="button"
-                      onClick={() => acceptScore(criterion.id)}
-                    >
+                    <button type="button" onClick={() => acceptScore(criterion.id)}>
                       Use in draft
-                    </button>{' '}
-                    <button
-                      type="button"
-                      onClick={() => rejectScore(criterion.id)}
-                    >
+                    </button>{" "}
+                    <button type="button" onClick={() => rejectScore(criterion.id)}>
                       Reject
                     </button>
                   </div>
                 </div>
               )}
 
-              {suggestion?.status === 'accepted' && (
-                <span className="ai-grade__status">
-                  Accepted into teacher draft
-                </span>
+              {suggestion?.status === "accepted" && (
+                <span className="ai-grade__status">Accepted into teacher draft</span>
               )}
 
-              {suggestion?.status === 'rejected' && (
-                <span className="ai-grade__status">
-                  Suggestion rejected
-                </span>
+              {suggestion?.status === "rejected" && (
+                <span className="ai-grade__status">Suggestion rejected</span>
               )}
             </article>
           );
@@ -423,40 +386,35 @@ export default function AiGradingAssistant({
       {suggestedFeedback.trim() && (
         <section className="ai-grade__feedback">
           <h3 style={{ marginTop: 0 }}>Constructive feedback suggestion</h3>
-          <span className="ai-grade__badge">
-            AI suggestion · review before use
-          </span>
-          <p style={{ whiteSpace: 'pre-wrap' }}>{suggestedFeedback}</p>
+          <span className="ai-grade__badge">AI suggestion · review before use</span>
+          <p style={{ whiteSpace: "pre-wrap" }}>{suggestedFeedback}</p>
 
-          {feedbackStatus === 'pending' ? (
+          {feedbackStatus === "pending" ? (
             <>
               <button type="button" onClick={acceptFeedback}>
                 Insert into draft comments
-              </button>{' '}
-              <button
-                type="button"
-                onClick={() => setFeedbackStatus('rejected')}
-              >
+              </button>{" "}
+              <button type="button" onClick={() => setFeedbackStatus("rejected")}>
                 Reject
               </button>
             </>
           ) : (
             <span className="ai-grade__status">
-              {feedbackStatus === 'accepted'
-                ? 'Inserted into editable teacher draft'
-                : 'Suggestion rejected'}
+              {feedbackStatus === "accepted"
+                ? "Inserted into editable teacher draft"
+                : "Suggestion rejected"}
             </span>
           )}
         </section>
       )}
 
-      <label style={{ display: 'block', marginTop: 18 }}>
+      <label style={{ display: "block", marginTop: 18 }}>
         Draft comments (editable)
         <textarea
           rows={5}
-          style={{ display: 'block', width: '100%', marginTop: 6 }}
+          style={{ display: "block", width: "100%", marginTop: 6 }}
           value={draftComments}
-          onChange={event => onDraftCommentsChange(event.target.value)}
+          onChange={(event) => onDraftCommentsChange(event.target.value)}
         />
       </label>
     </section>
