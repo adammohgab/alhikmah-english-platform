@@ -148,37 +148,3 @@ export const addInlineComment = (input: InlineCommentInput) =>
     },
     inlineResult,
   );
-
-const uploadTicket = z.object({
-  asset_id: z.string(),
-  upload_url: z.string(),
-  token: z.string().nullish(),
-});
-
-async function invokeEdge<T>(name: string, body: Record<string, unknown>, schema: z.ZodType<T>) {
-  const response = await supabase.functions.invoke<unknown>(name, { body });
-  if (response.error) throw new GradingApiError(normalizeApiError(response.error).message);
-  const parsed = schema.safeParse(response.data);
-  if (!parsed.success) throw new GradingApiError(`${name} returned data in an unexpected shape.`);
-  return parsed.data;
-}
-
-/** Uploads a recorded voice note through the signed-upload flow (API-CONTRACT §1.8) and returns its asset id. */
-export async function uploadVoiceNote(blob: Blob, filename: string): Promise<string> {
-  const ticket = await invokeEdge(
-    "create_upload",
-    { bucket: "lesson-media", kind: "audio", filename, mime: blob.type, size: blob.size },
-    uploadTicket,
-  );
-  const response = await fetch(ticket.upload_url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": blob.type,
-      ...(ticket.token ? { Authorization: `Bearer ${ticket.token}` } : {}),
-    },
-    body: blob,
-  });
-  if (!response.ok) throw new GradingApiError("The voice note could not be uploaded.");
-  await invokeEdge("complete_upload", { asset_id: ticket.asset_id }, z.object({}).passthrough());
-  return ticket.asset_id;
-}

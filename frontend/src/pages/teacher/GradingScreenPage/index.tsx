@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Bot, Mic, MessageSquarePlus, Square, Wand2 } from "lucide-react";
+import { ArrowLeft, Bot, MessageSquarePlus, Wand2 } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import { useToast } from "@/shared/hooks/useToast";
 import { Button } from "@/shared/components/ui/Button";
@@ -9,13 +9,13 @@ import { Chip } from "@/shared/components/ui/Chip";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { Textarea } from "@/shared/components/ui/Textarea";
+import { AudioFeedbackRecorder } from "@/shared/components/teacher/AudioFeedbackRecorder";
 import {
   addInlineComment,
   fetchSubmission,
   GradingApiError,
   lockSubmission,
   saveGrade,
-  uploadVoiceNote,
 } from "./api";
 import type { GradingQuestion, InlineComment, SubmissionForGrading } from "./api";
 import {
@@ -197,8 +197,7 @@ function QuestionReader({
             <dt className="sr-only">Auto score</dt>
             <dd>
               <Chip size="sm" world="mint">
-                Auto score {formatPoints(question.auto_score ?? 0)} /{" "}
-                {formatPoints(question.max_points)}
+                Auto score {formatPoints(question.auto_score ?? 0)} / {formatPoints(question.max_points)}
               </Chip>
             </dd>
           </div>
@@ -270,7 +269,7 @@ function RubricEvaluator({
   return (
     <section className={PANEL} aria-label={`Score: ${question.prompt}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="font-display min-w-0 truncate font-extrabold">{question.prompt}</h3>
+        <h3 className="min-w-0 truncate font-display font-extrabold">{question.prompt}</h3>
         <output
           aria-live="polite"
           data-testid={`score-${question.question_id}`}
@@ -353,97 +352,6 @@ function RubricEvaluator({
           className="w-24 rounded-[10px] border-2 border-stroke bg-surface-0 px-2 py-1 font-semibold"
         />
       </label>
-    </section>
-  );
-}
-
-type RecorderState = "idle" | "recording" | "uploading" | "ready";
-
-function VoiceNote({
-  onUploaded,
-  onError,
-}: {
-  onUploaded: (assetId: string | null) => void;
-  onError: (message: string) => void;
-}) {
-  const [state, setState] = useState<RecorderState>("idle");
-  const [url, setUrl] = useState<string | null>(null);
-  const recorder = useRef<MediaRecorder | null>(null);
-  const chunks = useRef<Blob[]>([]);
-
-  useEffect(
-    () => () => {
-      recorder.current?.stream.getTracks().forEach((t) => t.stop());
-      if (url) URL.revokeObjectURL(url);
-    },
-    [url],
-  );
-
-  const start = async () => {
-    if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      onError("Voice recording is not supported in this browser.");
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const media = new MediaRecorder(stream);
-      chunks.current = [];
-      media.ondataavailable = (event) => {
-        if (event.data.size > 0) chunks.current.push(event.data);
-      };
-      media.onstop = () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunks.current, { type: media.mimeType || "audio/webm" });
-        setUrl(URL.createObjectURL(blob));
-        setState("uploading");
-        const extension = blob.type.includes("mp4") ? "m4a" : "webm";
-        uploadVoiceNote(blob, `feedback-${Date.now()}.${extension}`)
-          .then((assetId) => {
-            onUploaded(assetId);
-            setState("ready");
-          })
-          .catch((error: unknown) => {
-            onError(error instanceof Error ? error.message : "The voice note could not be saved.");
-            setState("idle");
-          });
-      };
-      recorder.current = media;
-      media.start();
-      setState("recording");
-    } catch {
-      onError("Microphone access was blocked. Allow it in your browser to record a voice note.");
-    }
-  };
-
-  const discard = () => {
-    setUrl(null);
-    setState("idle");
-    onUploaded(null);
-  };
-
-  return (
-    <section className={PANEL} aria-label="Voice feedback">
-      <h3 className="font-display mb-2 font-extrabold">Voice note</h3>
-      {state === "recording" ? (
-        <Button variant="danger" onClick={() => recorder.current?.stop()}>
-          <Square size={16} aria-hidden="true" /> Stop recording
-        </Button>
-      ) : (
-        <Button variant="outline" onClick={() => void start()} loading={state === "uploading"}>
-          <Mic size={16} aria-hidden="true" />{" "}
-          {state === "ready" ? "Record again" : "Record voice note"}
-        </Button>
-      )}
-      {url && state !== "recording" && (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          {/* A teacher previewing their own recording: there is no transcript to caption. */}
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <audio controls src={url} className="max-w-full" aria-label="Recorded voice note" />
-          <Button size="sm" variant="ghost" onClick={discard}>
-            Remove
-          </Button>
-        </div>
-      )}
     </section>
   );
 }
@@ -632,7 +540,7 @@ function GradingWorkspace({
           <ArrowLeft size={16} aria-hidden="true" /> Queue
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="font-display truncate text-xl font-extrabold">
+          <h1 className="truncate font-display text-xl font-extrabold">
             {data.submission.student.full_name}
           </h1>
           <p className="truncate text-sm text-muted">
@@ -658,10 +566,7 @@ function GradingWorkspace({
       </header>
 
       {lockedBy && (
-        <p
-          role="alert"
-          className="rounded-[12px] border-2 border-stroke bg-[var(--world-soft,#ffd93d)] p-3 text-sm font-bold"
-        >
+        <p role="alert" className="rounded-[12px] border-2 border-stroke bg-[var(--world-soft,#ffd93d)] p-3 text-sm font-bold">
           {lockedBy}
         </p>
       )}
@@ -722,14 +627,17 @@ function GradingWorkspace({
             />
           </section>
 
-          <VoiceNote
-            onUploaded={(assetId) => {
+          <AudioFeedbackRecorder
+            onSaved={({ assetId }) => {
+              // The asset id is stored in the feedback; students get a fresh signed URL from it.
               setVoiceAssetId(assetId);
               touch();
             }}
-            onError={(message) =>
-              toast.show({ type: "error", title: "Voice note", description: message })
-            }
+            onRemoved={() => {
+              setVoiceAssetId(null);
+              touch();
+            }}
+            onError={(message) => toast.show({ type: "error", title: "Audio feedback", description: message })}
           />
         </aside>
       </div>
