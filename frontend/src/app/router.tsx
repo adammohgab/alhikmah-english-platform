@@ -101,6 +101,10 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/student/ShopPage")),
         },
         {
+          path: "notifications",
+          ...page(() => import("@/pages/student/NotificationsPage")),
+        },
+        {
           path: "*",
           element: <PlaceholderView title="Student Section" />,
         },
