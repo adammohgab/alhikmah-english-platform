@@ -1,0 +1,25 @@
+/* Animated "bonus" badge on the featured game (ST-21). Motion is transform only. */
+@keyframes games-hub-bonus-pop {
+  0%,
+  100% {
+    transform: rotate(-6deg) scale(1);
+  }
+  50% {
+    transform: rotate(-3deg) scale(1.12);
+  }
+}
+
+.games-hub-bonus {
+  transform: rotate(-6deg);
+  animation: games-hub-bonus-pop 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .games-hub-bonus {
+    animation: none;
+  }
+}
+
+:root[data-effects-tier="low"] .games-hub-bonus {
+  animation: none;
+}
