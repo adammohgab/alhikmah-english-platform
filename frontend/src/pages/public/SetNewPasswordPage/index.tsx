@@ -38,9 +38,9 @@ import {
        with a transform, and the motion stops under reduced motion.
      - Submit is blocked until every rule passes and the two passwords match. Messages show on
        blur and on submit, and focus goes to the first field with a problem.
-     - Success: a brief confirmation, then the person's dashboard. The page loads the dashboard
-       with a full navigation, because the app-wide session profile has no refresh call and
-       still holds the old "must change password" flag until it is read again.
+     - Success: a brief confirmation, then the person's dashboard. The session is refreshed so
+       the app reads the profile again and drops the old "must change password" flag. If that
+       does not happen within a few seconds, the dashboard is loaded afresh.
      - Failure: "We could not save your password. Try again." and the form stays as it is.
 
    Left out on purpose:
@@ -53,6 +53,7 @@ const PAGE_TITLE = "Set a new password | Al Hikmah English Platform";
 const MAIN_ID = "main-content";
 const LOGIN_PATH = "/login";
 const REDIRECT_DELAY_MS = 1500;
+const FALLBACK_DELAY_MS = 5000;
 
 const INITIAL_VALUES: NewPasswordValues = { password: "", confirm: "" };
 
@@ -164,12 +165,26 @@ export default function SetNewPasswordPage() {
   const ruleResults = checkRules(values.password, username);
   const strength = measureStrength(values.password, username);
 
-  // After saving, show the confirmation for a moment and then open the dashboard.
+  // After saving, show the confirmation for a moment and then open the dashboard. The app-wide
+  // profile is read again after the session refresh. Once it no longer holds the flag, the page
+  // moves on inside the app. If it still does after a few seconds, the dashboard is loaded
+  // afresh so the person is never left here.
+  const flagCleared = user !== null && !user.mustChangePassword;
+  useEffect(() => {
+    if (!saved || !flagCleared) return undefined;
+    const timer = window.setTimeout(() => {
+      void navigate(homePath, { replace: true });
+    }, REDIRECT_DELAY_MS);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [saved, flagCleared, homePath, navigate]);
+
   useEffect(() => {
     if (!saved) return undefined;
     const timer = window.setTimeout(() => {
       loadPage(homePath);
-    }, REDIRECT_DELAY_MS);
+    }, FALLBACK_DELAY_MS);
     return () => {
       window.clearTimeout(timer);
     };
@@ -214,7 +229,7 @@ export default function SetNewPasswordPage() {
     submittingRef.current = true;
     setSubmitting(true);
 
-    const outcome = await saveNewPassword(user.id, values.password);
+    const outcome = await saveNewPassword(values.password);
     switch (outcome.kind) {
       case "saved":
         setSaved(true);

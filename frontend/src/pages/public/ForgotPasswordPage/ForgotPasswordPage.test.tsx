@@ -9,6 +9,7 @@ import { SoundContext } from "@/shared/hooks/useSound";
 import type { SoundContextValue } from "@/shared/hooks/useSound";
 import ForgotPasswordPage from "./index";
 import {
+  DEVICE_KEY_STORAGE_KEY,
   RATE_LIMIT_STORAGE_KEY,
   RESET_MESSAGES,
   isDeviceRateLimited,
@@ -17,13 +18,11 @@ import {
 } from "./forgot-password-logic";
 
 const mocks = vi.hoisted(() => ({
-  invoke: vi.fn(),
   rpc: vi.fn(),
 }));
 
 vi.mock("@/shared/api/supabase", () => ({
   supabase: {
-    functions: { invoke: mocks.invoke },
     rpc: mocks.rpc,
   },
 }));
@@ -71,11 +70,26 @@ async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText(/^Full name/), "Sara Khaled");
 }
 
+type RpcResult = { data: unknown; error: { message: string } | null };
+
+/** One mock serves both calls the page makes: the school details and the reset request. */
+function stubRpc(options: { publicState?: unknown; reset?: RpcResult }) {
+  mocks.rpc.mockImplementation((fn: string) => {
+    if (fn === "get_public_state") {
+      return Promise.resolve({ data: options.publicState ?? SCHOOL_STATE, error: null });
+    }
+    return Promise.resolve(options.reset ?? { data: { ok: true }, error: null });
+  });
+}
+
+function resetCalls() {
+  return mocks.rpc.mock.calls.filter((call) => call[0] === "request_password_reset");
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   window.localStorage.clear();
-  mocks.rpc.mockResolvedValue({ data: SCHOOL_STATE, error: null });
-  mocks.invoke.mockResolvedValue({ data: { ok: true }, error: null });
+  stubRpc({ publicState: SCHOOL_STATE, reset: { data: { ok: true }, error: null } });
 });
 
 describe("validateReset", () => {
@@ -116,6 +130,16 @@ describe("device rate limit", () => {
   });
 });
 
+describe("device key", () => {
+  it("keeps one id for the device", async () => {
+    const { getDeviceKey } = await import("./forgot-password-logic");
+    const first = getDeviceKey();
+    expect(first).not.toBe("");
+    expect(window.localStorage.getItem(DEVICE_KEY_STORAGE_KEY)).toBe(first);
+    expect(getDeviceKey()).toBe(first);
+  });
+});
+
 describe("ForgotPasswordPage", () => {
   it("shows the form, the contact card and a link back to sign in", async () => {
     renderPage();
@@ -134,7 +158,7 @@ describe("ForgotPasswordPage", () => {
     await user.click(screen.getByRole("button", { name: "Send request" }));
     expect(await screen.findByText("Enter your username.")).toBeVisible();
     expect(screen.getByText("Enter your full name.")).toBeVisible();
-    expect(mocks.invoke).not.toHaveBeenCalled();
+    expect(resetCalls()).toHaveLength(0);
   });
 
   it("sends the request and replaces the form with the confirmation banner", async () => {
@@ -146,13 +170,12 @@ describe("ForgotPasswordPage", () => {
     await user.click(screen.getByRole("button", { name: "Send request" }));
 
     await waitFor(() => {
-      expect(mocks.invoke).toHaveBeenCalledWith("request_password_reset", {
-        body: {
-          username: "sara.k",
-          full_name: "Sara Khaled",
-          grade_class: "8B",
-          note: "Locked out",
-        },
+      expect(mocks.rpc).toHaveBeenCalledWith("request_password_reset", {
+        p_username: "sara.k",
+        p_full_name: "Sara Khaled",
+        p_grade_class: "8B",
+        p_note: "Locked out",
+        p_device_key: expect.any(String) as string,
       });
     });
     expect(
@@ -172,21 +195,19 @@ describe("ForgotPasswordPage", () => {
     await fillRequired(user);
     await user.click(screen.getByRole("button", { name: "Send request" }));
     await waitFor(() => {
-      expect(mocks.invoke).toHaveBeenCalledWith("request_password_reset", {
-        body: { username: "sara.k", full_name: "Sara Khaled", grade_class: null, note: null },
+      expect(mocks.rpc).toHaveBeenCalledWith("request_password_reset", {
+        p_username: "sara.k",
+        p_full_name: "Sara Khaled",
+        p_grade_class: null,
+        p_note: null,
+        p_device_key: expect.any(String) as string,
       });
     });
   });
 
   it("shows the rate limit message when the server answers rate_limited", async () => {
     const user = userEvent.setup();
-    mocks.invoke.mockResolvedValue({
-      data: null,
-      error: {
-        name: "FunctionsHttpError",
-        context: new Response(JSON.stringify({ code: "rate_limited" }), { status: 429 }),
-      },
-    });
+    stubRpc({ reset: { data: null, error: { message: "rate_limited" } } });
     renderPage();
     await fillRequired(user);
     await user.click(screen.getByRole("button", { name: "Send request" }));
@@ -203,15 +224,12 @@ describe("ForgotPasswordPage", () => {
     await fillRequired(user);
     await user.click(screen.getByRole("button", { name: "Send request" }));
     expect(await screen.findByText(RESET_MESSAGES.rateLimited)).toBeVisible();
-    expect(mocks.invoke).not.toHaveBeenCalled();
+    expect(resetCalls()).toHaveLength(0);
   });
 
   it("shows a network message and keeps the form when the server cannot be reached", async () => {
     const user = userEvent.setup();
-    mocks.invoke.mockResolvedValue({
-      data: null,
-      error: { name: "FunctionsFetchError", message: "Failed to send a request" },
-    });
+    stubRpc({ reset: { data: null, error: { message: "TypeError: Failed to fetch" } } });
     renderPage();
     await fillRequired(user);
     await user.click(screen.getByRole("button", { name: "Send request" }));
@@ -221,10 +239,7 @@ describe("ForgotPasswordPage", () => {
 
   it("shows a general failure message for other server errors", async () => {
     const user = userEvent.setup();
-    mocks.invoke.mockResolvedValue({
-      data: null,
-      error: { name: "FunctionsHttpError", context: new Response("{}", { status: 500 }) },
-    });
+    stubRpc({ reset: { data: null, error: { message: "validation_failed" } } });
     renderPage();
     await fillRequired(user);
     await user.click(screen.getByRole("button", { name: "Send request" }));
@@ -232,7 +247,7 @@ describe("ForgotPasswordPage", () => {
   });
 
   it("leaves out contact details that are not set", async () => {
-    mocks.rpc.mockResolvedValue({ data: { school: { name: "Al Hikmah School" } }, error: null });
+    stubRpc({ publicState: { school: { name: "Al Hikmah School" } } });
     renderPage();
     expect(await screen.findByText(/Contact details have not been added yet/)).toBeVisible();
     expect(screen.queryByText("Office hours")).not.toBeInTheDocument();

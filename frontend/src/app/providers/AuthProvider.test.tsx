@@ -71,6 +71,73 @@ describe("AuthProvider (FND-12)", () => {
     });
   });
 
+  function PasswordProbe() {
+    const { isLoading, user } = useAuth();
+    if (isLoading) return <p>loading</p>;
+    return <p>{user?.mustChangePassword ? "must change" : "free"}</p>;
+  }
+
+  function profileRow(mustChange: boolean) {
+    return {
+      data: {
+        id: "u1",
+        username: "sara.k",
+        display_name: "Sara",
+        role: "student",
+        status: "active",
+        must_change_password: mustChange,
+      },
+      error: null,
+    };
+  }
+
+  it("reads the profile again on a token refresh while the password must change", async () => {
+    let notify: (event: string, session: unknown) => void = () => undefined;
+    mocks.onAuthStateChange.mockImplementation(
+      (callback: (event: string, session: unknown) => void) => {
+        notify = callback;
+        return { data: { subscription: { unsubscribe: vi.fn() } } };
+      },
+    );
+    const session = { user: { id: "u1" } };
+    mocks.getSession.mockResolvedValue({ data: { session } });
+    mocks.maybeSingle.mockResolvedValueOnce(profileRow(true));
+    render(
+      <AuthProvider>
+        <PasswordProbe />
+      </AuthProvider>,
+    );
+    expect(await screen.findByText("must change")).toBeInTheDocument();
+
+    mocks.maybeSingle.mockResolvedValueOnce(profileRow(false));
+    notify("TOKEN_REFRESHED", session);
+    expect(await screen.findByText("free")).toBeInTheDocument();
+  });
+
+  it("ignores a token refresh once the profile is settled", async () => {
+    let notify: (event: string, session: unknown) => void = () => undefined;
+    mocks.onAuthStateChange.mockImplementation(
+      (callback: (event: string, session: unknown) => void) => {
+        notify = callback;
+        return { data: { subscription: { unsubscribe: vi.fn() } } };
+      },
+    );
+    const session = { user: { id: "u1" } };
+    mocks.getSession.mockResolvedValue({ data: { session } });
+    mocks.maybeSingle.mockResolvedValue(profileRow(false));
+    render(
+      <AuthProvider>
+        <PasswordProbe />
+      </AuthProvider>,
+    );
+    expect(await screen.findByText("free")).toBeInTheDocument();
+    const reads = mocks.maybeSingle.mock.calls.length;
+
+    notify("TOKEN_REFRESHED", session);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(mocks.maybeSingle.mock.calls.length).toBe(reads);
+  });
+
   it("signs out when the profile cannot be read", async () => {
     mocks.getSession.mockResolvedValue({ data: { session: { user: { id: "u1" } } } });
     mocks.maybeSingle.mockResolvedValue({ data: null, error: { message: "denied" } });

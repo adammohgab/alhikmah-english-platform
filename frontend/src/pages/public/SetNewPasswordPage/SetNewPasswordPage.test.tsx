@@ -1,5 +1,7 @@
+import { useState } from "react";
+import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AuthContext, defaultAuthContext } from "@/app/providers/auth-context";
@@ -18,20 +20,16 @@ import {
 
 const mocks = vi.hoisted(() => ({
   updateUser: vi.fn(),
-  select: vi.fn(),
-  update: vi.fn(),
+  refreshSession: vi.fn(),
+  rpc: vi.fn(),
   signOut: vi.fn(),
+  clearFlag: { current: (() => undefined) as () => void },
 }));
 
 vi.mock("@/shared/api/supabase", () => ({
   supabase: {
-    auth: { updateUser: mocks.updateUser },
-    from: () => ({
-      update: (values: unknown) => {
-        mocks.update(values);
-        return { eq: () => ({ select: mocks.select }) };
-      },
-    }),
+    auth: { updateUser: mocks.updateUser, refreshSession: mocks.refreshSession },
+    rpc: mocks.rpc,
   },
 }));
 
@@ -64,9 +62,22 @@ function authValue(user: AuthProfile | null, overrides: Partial<AuthContextValue
   } satisfies AuthContextValue;
 }
 
+/** Holds the signed-in profile like AuthProvider does, so a session refresh can clear the flag. */
+function Session({ initial, children }: { initial: AuthContextValue; children: ReactNode }) {
+  const [auth, setAuth] = useState(initial);
+  mocks.clearFlag.current = () => {
+    setAuth((current) =>
+      current.user === null
+        ? current
+        : { ...current, user: { ...current.user, mustChangePassword: false } },
+    );
+  };
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+}
+
 function renderPage(auth: AuthContextValue = authValue(STUDENT)) {
   return render(
-    <AuthContext.Provider value={auth}>
+    <Session initial={auth}>
       <SoundContext.Provider value={sound}>
         <MemoryRouter initialEntries={["/set-new-password"]}>
           <Routes>
@@ -77,7 +88,7 @@ function renderPage(auth: AuthContextValue = authValue(STUDENT)) {
           </Routes>
         </MemoryRouter>
       </SoundContext.Provider>
-    </AuthContext.Provider>,
+    </Session>,
   );
 }
 
@@ -91,7 +102,12 @@ beforeEach(() => {
     value: { ...originalLocation, replace: replaceSpy },
   });
   mocks.updateUser.mockResolvedValue({ data: {}, error: null });
-  mocks.select.mockResolvedValue({ data: [{ id: "user-1" }], error: null });
+  mocks.rpc.mockResolvedValue({ data: null, error: null });
+  mocks.refreshSession.mockImplementation(() => {
+    // The real AuthProvider reads the profile again after a refresh and drops the flag.
+    mocks.clearFlag.current();
+    return Promise.resolve({ data: {}, error: null });
+  });
   mocks.signOut.mockResolvedValue(undefined);
 });
 
@@ -128,36 +144,46 @@ describe("strength", () => {
 });
 
 describe("saveNewPassword", () => {
-  it("changes the password, clears the flag and reads the row back", async () => {
-    await expect(saveNewPassword("user-1", "abcdefg1!")).resolves.toEqual({ kind: "saved" });
+  it("changes the password, clears the flag and refreshes the session", async () => {
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({ kind: "saved" });
     expect(mocks.updateUser).toHaveBeenCalledWith({ password: "abcdefg1!" });
-    expect(mocks.update).toHaveBeenCalledWith({ must_change_password: false });
+    expect(mocks.rpc).toHaveBeenCalledWith("complete_password_change");
+    expect(mocks.refreshSession).toHaveBeenCalled();
   });
 
-  it("does not report success when a policy blocks the flag update", async () => {
-    mocks.select.mockResolvedValue({ data: [], error: null });
-    await expect(saveNewPassword("user-1", "abcdefg1!")).resolves.toEqual({ kind: "failed" });
+  it("does not report success when the flag cannot be cleared", async () => {
+    mocks.rpc.mockResolvedValue({
+      data: null,
+      error: { message: "password_not_changed", code: "P0001" },
+    });
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({ kind: "failed" });
+    expect(mocks.refreshSession).not.toHaveBeenCalled();
+  });
+
+  it("still reports success when the session refresh fails", async () => {
+    mocks.refreshSession.mockRejectedValue(new Error("offline"));
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({ kind: "saved" });
   });
 
   it("does not touch the flag when the password change fails", async () => {
     mocks.updateUser.mockResolvedValue({ data: {}, error: { status: 400, code: "other" } });
-    await expect(saveNewPassword("user-1", "abcdefg1!")).resolves.toEqual({ kind: "failed" });
-    expect(mocks.update).not.toHaveBeenCalled();
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({ kind: "failed" });
+    expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
   it("treats same_password on a retry as done and clears the flag", async () => {
     mocks.updateUser.mockResolvedValue({ data: {}, error: { status: 422, code: "same_password" } });
-    await expect(saveNewPassword("user-1", "abcdefg1!")).resolves.toEqual({ kind: "saved" });
-    expect(mocks.update).toHaveBeenCalled();
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({ kind: "saved" });
+    expect(mocks.rpc).toHaveBeenCalledWith("complete_password_change");
   });
 
   it("maps an ended session and a network failure", async () => {
     mocks.updateUser.mockResolvedValue({ data: {}, error: { status: 401, code: "bad_jwt" } });
-    await expect(saveNewPassword("user-1", "abcdefg1!")).resolves.toEqual({
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({
       kind: "session-expired",
     });
     mocks.updateUser.mockRejectedValue(new Error("offline"));
-    await expect(saveNewPassword("user-1", "abcdefg1!")).resolves.toEqual({ kind: "network" });
+    await expect(saveNewPassword("abcdefg1!")).resolves.toEqual({ kind: "network" });
   });
 });
 
@@ -227,14 +253,10 @@ describe("SetNewPasswordPage", () => {
 
     expect(await screen.findByText(/Password saved/)).toBeVisible();
     expect(mocks.updateUser).toHaveBeenCalledWith({ password: "abcdefg1!" });
-    expect(mocks.update).toHaveBeenCalledWith({ must_change_password: false });
-    await waitFor(
-      () => {
-        expect(replaceSpy).toHaveBeenCalledWith("/student");
-      },
-      { timeout: 4000 },
-    );
-  });
+    expect(mocks.rpc).toHaveBeenCalledWith("complete_password_change");
+    expect(await screen.findByText("Student home", undefined, { timeout: 4000 })).toBeVisible();
+    expect(replaceSpy).not.toHaveBeenCalled();
+  }, 10000);
 
   it("opens the admin area for an admin", async () => {
     const user = userEvent.setup();
@@ -242,12 +264,33 @@ describe("SetNewPasswordPage", () => {
     await user.type(screen.getByLabelText(/^New password/), "abcdefg1!");
     await user.type(screen.getByLabelText(/^Confirm new password/), "abcdefg1!");
     await user.click(screen.getByRole("button", { name: "Set password and continue" }));
-    await waitFor(
-      () => {
-        expect(replaceSpy).toHaveBeenCalledWith("/admin");
-      },
-      { timeout: 4000 },
-    );
+    expect(await screen.findByText("Admin home", undefined, { timeout: 4000 })).toBeVisible();
+  }, 10000);
+
+  it("loads the dashboard afresh when the profile is not read again", async () => {
+    vi.useFakeTimers();
+    try {
+      mocks.refreshSession.mockResolvedValue({ data: {}, error: null });
+      renderPage();
+      fireEvent.change(screen.getByLabelText(/^New password/), {
+        target: { value: "abcdefg1!" },
+      });
+      fireEvent.change(screen.getByLabelText(/^Confirm new password/), {
+        target: { value: "abcdefg1!" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Set password and continue" }));
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(100);
+      });
+      expect(screen.getByText(/Password saved/)).toBeVisible();
+      expect(replaceSpy).not.toHaveBeenCalled();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(5000);
+      });
+      expect(replaceSpy).toHaveBeenCalledWith("/student");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("shows the failure message and keeps the form when saving fails", async () => {

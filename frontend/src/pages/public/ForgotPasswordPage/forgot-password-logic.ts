@@ -1,9 +1,10 @@
 import { supabase } from "@/shared/api/supabase";
 
 /* Forgot password (SHARED-SPEC SH-03): field rules, the device rate limit and the submit call.
-   The request goes to the public `request_password_reset` Edge Function (05-API-CONTRACT):
-   `{username, full_name, grade_class?, note?}` returns `{ok: true}`, always the same response,
-   and `rate_limited` after the limits. The page shows one success text whether or not the
+   The request goes to the public `request_password_reset` function (migration 040, which follows
+   05-API-CONTRACT): it takes the username, full name, optional grade and class, optional note and
+   a device key, returns `{ok: true}` and always the same response, and fails with `rate_limited`
+   after the limits (3 per hour per device, 20 per hour per address). The page shows one success text whether or not the
    username exists, so nobody can learn which usernames are real. */
 
 export interface ResetValues {
@@ -121,20 +122,26 @@ export type ResetOutcome =
   | { kind: "network" }
   | { kind: "failed" };
 
-interface ErrorBody {
-  error?: unknown;
-  code?: unknown;
-}
+export const DEVICE_KEY_STORAGE_KEY = "alhikmah:device-key";
 
-async function readErrorCode(error: unknown): Promise<string | undefined> {
-  const context = (error as { context?: unknown } | null)?.context;
-  if (!(context instanceof Response)) return undefined;
+/**
+ * A random id this browser keeps, so the server can count requests per device. The server hashes
+ * it and never stores it as sent. Without storage a new id is made each time, and the address
+ * limit on the server still applies.
+ */
+export function getDeviceKey(): string {
+  const make = () =>
+    typeof window.crypto?.randomUUID === "function"
+      ? window.crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
   try {
-    const body = (await context.clone().json()) as ErrorBody;
-    const code = body.code ?? body.error;
-    return typeof code === "string" ? code : undefined;
+    const stored = window.localStorage.getItem(DEVICE_KEY_STORAGE_KEY);
+    if (stored !== null && stored !== "") return stored;
+    const created = make();
+    window.localStorage.setItem(DEVICE_KEY_STORAGE_KEY, created);
+    return created;
   } catch {
-    return undefined;
+    return make();
   }
 }
 
@@ -148,28 +155,26 @@ export async function submitResetRequest(values: ResetValues): Promise<ResetOutc
   const gradeClass = values.gradeClass.trim();
   const note = values.note.trim();
 
-  let result: Awaited<ReturnType<typeof supabase.functions.invoke>>;
+  let result: Awaited<ReturnType<typeof supabase.rpc<"request_password_reset">>>;
   try {
-    result = await supabase.functions.invoke("request_password_reset", {
-      body: {
-        username: values.username.trim().toLowerCase(),
-        full_name: values.fullName.trim(),
-        grade_class: gradeClass === "" ? null : gradeClass,
-        note: note === "" ? null : note,
-      },
+    result = await supabase.rpc("request_password_reset", {
+      p_username: values.username.trim().toLowerCase(),
+      p_full_name: values.fullName.trim(),
+      p_grade_class: gradeClass === "" ? null : gradeClass,
+      p_note: note === "" ? null : note,
+      p_device_key: getDeviceKey(),
     });
   } catch {
     return { kind: "network" };
   }
 
   if (result.error) {
-    const name = (result.error as { name?: unknown }).name;
-    if (name === "FunctionsFetchError") return { kind: "network" };
-    const code = await readErrorCode(result.error);
-    if (code === "rate_limited") {
+    const message = result.error.message;
+    if (message === "rate_limited") {
       recordDeviceRequest();
       return { kind: "rate-limited" };
     }
+    if (/fetch|network/i.test(message)) return { kind: "network" };
     return { kind: "failed" };
   }
 

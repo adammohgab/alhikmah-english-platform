@@ -10,13 +10,13 @@ import { supabase } from "@/shared/api/supabase";
    Strength meter: a password that breaks a rule is "Weak". A password that passes every rule is
    "Good", and "Strong" when it also has 12 or more characters and mixes upper and lower case.
 
-   Saving: `supabase.auth.updateUser({ password })`, then the person's own profile row gets
-   `must_change_password = false`. The backend plan routes this through an `auth-change-password`
-   Edge Function (04-AUTH-AND-ACCESS section 3) that needs the temporary password; that function
-   is not in the repo yet and this page does not hold the temporary password. Replace
-   `saveNewPassword` when the function ships and the page needs no change.
-   The profile update is read back (`select("id")`). A policy that blocks the write returns no
-   rows and no error, and that must never look like success. */
+   Saving: `supabase.auth.updateUser({ password })`, then the `complete_password_change` function
+   (migration 040) clears `must_change_password` for the signed-in person. The client cannot
+   write the profile row itself, because no update policy allows it by design, and the function
+   refuses to clear the flag when nothing changed since sign-in. Last, the session is refreshed so
+   the app reads the profile again. The backend plan also describes an `auth-change-password`
+   Edge Function (04-AUTH-AND-ACCESS section 3) that needs the temporary password; this page does
+   not hold it. Replace `saveNewPassword` if that function ships and the page needs no change. */
 
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 72;
@@ -161,7 +161,7 @@ function isNetworkError(error: AuthErrorLike): boolean {
  * The flag is cleared only after the password change worked. A retry after a failed flag update
  * sends the same password again, and Auth answers `same_password`, which counts as done.
  */
-export async function saveNewPassword(userId: string, password: string): Promise<SaveOutcome> {
+export async function saveNewPassword(password: string): Promise<SaveOutcome> {
   try {
     const update = await supabase.auth.updateUser({ password });
     if (update.error) {
@@ -179,18 +179,20 @@ export async function saveNewPassword(userId: string, password: string): Promise
       }
     }
 
-    const cleared = await supabase
-      .from("profiles")
-      .update({ must_change_password: false })
-      .eq("id", userId)
-      .select("id");
+    const cleared = await supabase.rpc("complete_password_change");
     if (cleared.error) {
       return isNetworkError(cleared.error as AuthErrorLike)
         ? { kind: "network" }
         : { kind: "failed" };
     }
-    // No row back means a policy blocked the write: the flag is still set.
-    if (cleared.data.length === 0) return { kind: "failed" };
+
+    // A new session makes the app read the profile again, so the old flag is dropped. If this
+    // fails the page falls back to loading the dashboard afresh, so the failure is not shown.
+    try {
+      await supabase.auth.refreshSession();
+    } catch {
+      // See above.
+    }
     return { kind: "saved" };
   } catch {
     return { kind: "network" };
