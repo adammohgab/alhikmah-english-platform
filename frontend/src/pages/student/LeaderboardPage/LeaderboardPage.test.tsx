@@ -159,4 +159,3 @@ describe("LeaderboardPage", () => {
     expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
   });
 });
-

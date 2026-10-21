@@ -95,10 +95,7 @@ export async function fetchAchievements(studentId: string): Promise<Achievements
       "Your badges",
     ),
     load(
-      client()
-        .from("student_stats")
-        .select("total_xp, current_streak")
-        .eq("student_id", studentId),
+      client().from("student_stats").select("total_xp, current_streak").eq("student_id", studentId),
       z.array(statsRow),
       "Your stats",
     ),

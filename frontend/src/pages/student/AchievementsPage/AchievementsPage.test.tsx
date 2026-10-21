@@ -224,4 +224,3 @@ describe("AchievementsPage", () => {
     expect(await screen.findByRole("button", { name: "Try again" })).toBeInTheDocument();
   });
 });
-

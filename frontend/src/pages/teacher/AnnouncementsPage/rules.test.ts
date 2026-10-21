@@ -45,10 +45,7 @@ describe("validateComposer", () => {
   });
 
   it("rejects bodies over the database limit, counting markup", () => {
-    const errors = validateComposer(
-      values({ bodyHtml: `<p>${"a".repeat(BODY_MAX)}</p>` }),
-      NOW,
-    );
+    const errors = validateComposer(values({ bodyHtml: `<p>${"a".repeat(BODY_MAX)}</p>` }), NOW);
     expect(errors.bodyHtml).toMatch(/Shorten/);
   });
 

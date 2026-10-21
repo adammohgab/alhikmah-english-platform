@@ -83,7 +83,10 @@ const fake = vi.hoisted(() => {
 });
 
 const ok = (data: unknown): RpcResult => ({ data, error: null });
-const fail = (message: string, code: string): RpcResult => ({ data: null, error: { message, code } });
+const fail = (message: string, code: string): RpcResult => ({
+  data: null,
+  error: { message, code },
+});
 
 const nextId = (prefix: string) => `${prefix}-${fake.nextId++}`;
 
@@ -217,7 +220,8 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       if (!teachesClass(classId) && !isAdmin()) {
         return fail("Not authorized to grade this class", "42501");
       }
-      if (attempt.status === "in_progress") return fail("Submission is not ready for grading", "55000");
+      if (attempt.status === "in_progress")
+        return fail("Submission is not ready for grading", "55000");
       if (attempt.lockedBy && attempt.lockedBy !== fake.userId) {
         return fail("Submission is already locked by another teacher", "55P03");
       }
@@ -266,7 +270,11 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       }
       let released = 0;
       for (const attempt of fake.attempts) {
-        if (attempt.assessmentId === assessmentId && attempt.status === "graded" && !attempt.releasedAt) {
+        if (
+          attempt.assessmentId === assessmentId &&
+          attempt.status === "graded" &&
+          !attempt.releasedAt
+        ) {
           attempt.releasedAt = "2026-10-21T10:00:00.000Z";
           released += 1;
         }
@@ -352,11 +360,7 @@ import { fetchRoster } from "@/pages/teacher/ClassDetailPage/api";
 import { formatJoinCode, joinLink } from "@/pages/teacher/ClassDetailPage/rules";
 import { fetchAssignmentsPage } from "@/pages/teacher/AssignmentsHubPage/api";
 import { fetchResults, releaseGrades } from "@/pages/teacher/AssignmentResultsPage/api";
-import {
-  GradingApiError,
-  lockSubmission,
-  saveGrade,
-} from "@/pages/teacher/GradingScreenPage/api";
+import { GradingApiError, lockSubmission, saveGrade } from "@/pages/teacher/GradingScreenPage/api";
 import {
   buildSavePayload,
   computeTotals,
@@ -538,25 +542,45 @@ describe("teacher core · class creation and join codes", () => {
       description: "Morning group",
     });
 
-    const page = await fetchClassesPage({ status: "active", grade: undefined, search: "" }, undefined);
+    const page = await fetchClassesPage(
+      { status: "active", grade: undefined, search: "" },
+      undefined,
+    );
     expect(page.items).toHaveLength(1);
     expect(page.items[0]?.class.id).toBe(created.class_id);
     expect(page.items[0]?.students).toBe(0);
-    expect(classLinks(created.class_id).roster).toBe(`/teacher/classes/${created.class_id}/students`);
+    expect(classLinks(created.class_id).roster).toBe(
+      `/teacher/classes/${created.class_id}/students`,
+    );
   });
 
   it("gives every class its own 6-character join code and formats it as a share link", async () => {
     asUser(TEACHER_A);
-    await createClass({ name: "Grade 8 A", grade: "8", termId: "term-1", schoolYearId: "year-1", description: "" });
+    await createClass({
+      name: "Grade 8 A",
+      grade: "8",
+      termId: "term-1",
+      schoolYearId: "year-1",
+      description: "",
+    });
     asUser(TEACHER_B);
-    await createClass({ name: "Grade 9 B", grade: "9", termId: "term-1", schoolYearId: "year-1", description: "" });
+    await createClass({
+      name: "Grade 9 B",
+      grade: "9",
+      termId: "term-1",
+      schoolYearId: "year-1",
+      description: "",
+    });
 
     const codes = fake.classes.map((c) => c.joinCode);
     expect(new Set(codes).size).toBe(2);
     for (const code of codes) expect(code).toMatch(/^[A-Z2-9]{6}$/);
 
     asUser(TEACHER_A);
-    const page = await fetchClassesPage({ status: "active", grade: undefined, search: "" }, undefined);
+    const page = await fetchClassesPage(
+      { status: "active", grade: undefined, search: "" },
+      undefined,
+    );
     const code = page.items[0]?.join_code ?? "";
     expect(code).toBe(codes[0]);
     expect(formatJoinCode(code)).toBe(`${code.slice(0, 3)} ${code.slice(3)}`);
@@ -568,7 +592,10 @@ describe("teacher core · class creation and join codes", () => {
   it("only lists classes the teacher teaches", async () => {
     await createClassWithAssignment();
     asUser(TEACHER_B);
-    const page = await fetchClassesPage({ status: "active", grade: undefined, search: "" }, undefined);
+    const page = await fetchClassesPage(
+      { status: "active", grade: undefined, search: "" },
+      undefined,
+    );
     expect(page.items).toEqual([]);
   });
 });
@@ -647,7 +674,10 @@ describe("teacher core · roster", () => {
 describe("teacher core · published assignment", () => {
   it("appears in the owning teacher's hub with its submission counts", async () => {
     await createClassWithAssignment();
-    const page = await fetchAssignmentsPage({ classId: undefined, status: "all", search: "" }, undefined);
+    const page = await fetchAssignmentsPage(
+      { classId: undefined, status: "all", search: "" },
+      undefined,
+    );
     expect(page.items).toHaveLength(1);
     expect(page.items[0]).toMatchObject({
       id: "assignment-1",
@@ -669,7 +699,10 @@ describe("teacher core · published assignment", () => {
       questions: { "q-auto": 5 },
     });
     asUser(TEACHER_B);
-    expect((await fetchAssignmentsPage({ classId: undefined, status: "all", search: "" }, undefined)).items).toEqual([]);
+    expect(
+      (await fetchAssignmentsPage({ classId: undefined, status: "all", search: "" }, undefined))
+        .items,
+    ).toEqual([]);
 
     asUser(TEACHER_A);
     const titles = (
@@ -704,16 +737,34 @@ describe("teacher core · rubric grading", () => {
   it("totals auto and writing points and blocks saving until writing is scored", () => {
     const partial: QuestionScoreInput[] = [
       { questionId: "q-auto", isWriting: false, maxPoints: 10, autoScore: 8, teacherScore: null },
-      { questionId: "q-essay", isWriting: true, maxPoints: 10, autoScore: null, teacherScore: null },
+      {
+        questionId: "q-essay",
+        isWriting: true,
+        maxPoints: 10,
+        autoScore: null,
+        teacherScore: null,
+      },
     ];
-    expect(computeTotals(partial)).toMatchObject({ auto: 8, writing: 0, final: 8, max: 20, undecided: ["q-essay"] });
+    expect(computeTotals(partial)).toMatchObject({
+      auto: 8,
+      writing: 0,
+      final: 8,
+      max: 20,
+      undecided: ["q-essay"],
+    });
     expect(buildSavePayload("attempt-1", partial, "", null)).toEqual({
       ok: false,
       reason: "Score the remaining writing answer before saving.",
     });
 
     const complete = questionsFor({ grammar: 1, vocab: 1 }, 8);
-    expect(computeTotals(complete)).toMatchObject({ auto: 8, writing: 8, final: 16, max: 20, undecided: [] });
+    expect(computeTotals(complete)).toMatchObject({
+      auto: 8,
+      writing: 8,
+      final: 16,
+      max: 20,
+      undecided: [],
+    });
   });
 
   it("locks, saves and persists a rubric grade through the teacher's data layer", async () => {
@@ -728,16 +779,29 @@ describe("teacher core · rubric grading", () => {
     expect(built.payload.rubric_scores).toEqual({ "q-auto": 8, "q-essay": 8 });
     expect(saved).toEqual({ attempt_id: "attempt-1", score: 16 });
     const attempt = fake.attempts.find((a) => a.id === "attempt-1");
-    expect(attempt).toMatchObject({ status: "graded", score: 16, feedback: "Well argued.", lockedBy: null });
+    expect(attempt).toMatchObject({
+      status: "graded",
+      score: 16,
+      feedback: "Well argued.",
+      lockedBy: null,
+    });
     expect(attempt?.questionScores).toEqual({ "q-auto": 8, "q-essay": 8 });
 
     const results = await fetchResults("assignment-1");
-    expect(results.submissions.find((s) => s.id === "attempt-1")).toMatchObject({ final: 16, released: false });
+    expect(results.submissions.find((s) => s.id === "attempt-1")).toMatchObject({
+      final: 16,
+      released: false,
+    });
   });
 
   it("requires the grading lock and honours another teacher's lock", async () => {
     await createClassWithAssignment();
-    const built = buildSavePayload("attempt-1", questionsFor({ grammar: 2, vocab: 1 }, 10), "", null);
+    const built = buildSavePayload(
+      "attempt-1",
+      questionsFor({ grammar: 2, vocab: 1 }, 10),
+      "",
+      null,
+    );
     if (!built.ok) throw new Error(built.reason);
 
     const unlocked = await rejectionOf(saveGrade(built.payload));
@@ -746,7 +810,11 @@ describe("teacher core · rubric grading", () => {
 
     await lockSubmission("attempt-1");
     // A co-teacher of the same class cannot take over a fresh lock.
-    fake.classTeachers.push({ classId: fake.classes[0]?.id ?? "", teacherId: TEACHER_B, primary: false });
+    fake.classTeachers.push({
+      classId: fake.classes[0]?.id ?? "",
+      teacherId: TEACHER_B,
+      primary: false,
+    });
     asUser(TEACHER_B);
     const taken = await rejectionOf(lockSubmission("attempt-1"));
     expect((taken as GradingApiError).code).toBe("55P03");
@@ -757,12 +825,22 @@ describe("teacher core · rubric grading", () => {
     await lockSubmission("attempt-1");
 
     const overQuestion = await rejectionOf(
-      saveGrade({ attempt_id: "attempt-1", rubric_scores: { "q-essay": 11 }, feedback: "", final_score: 11 }),
+      saveGrade({
+        attempt_id: "attempt-1",
+        rubric_scores: { "q-essay": 11 },
+        feedback: "",
+        final_score: 11,
+      }),
     );
     expect(overQuestion.message).toBe("Question score is outside its allowed range");
 
     const overTotal = await rejectionOf(
-      saveGrade({ attempt_id: "attempt-1", rubric_scores: { "q-essay": 10 }, feedback: "", final_score: 21 }),
+      saveGrade({
+        attempt_id: "attempt-1",
+        rubric_scores: { "q-essay": 10 },
+        feedback: "",
+        final_score: 21,
+      }),
     );
     expect(overTotal.message).toBe("Final score exceeds the assessment maximum");
     expect(fake.attempts.find((a) => a.id === "attempt-1")?.status).toBe("submitted");
@@ -831,7 +909,12 @@ describe("teacher core · cross-class security boundaries", () => {
     expect(lock.message).toBe("You do not have permission to perform this action.");
 
     const save = await rejectionOf(
-      saveGrade({ attempt_id: "attempt-1", rubric_scores: { "q-essay": 10 }, feedback: "", final_score: 10 }),
+      saveGrade({
+        attempt_id: "attempt-1",
+        rubric_scores: { "q-essay": 10 },
+        feedback: "",
+        final_score: 10,
+      }),
     );
     expect((save as GradingApiError).code).toBe("42501");
 
@@ -843,7 +926,12 @@ describe("teacher core · cross-class security boundaries", () => {
     await createClassWithAssignment();
     asUser(TEACHER_A);
     await lockSubmission("attempt-1");
-    await saveGrade({ attempt_id: "attempt-1", rubric_scores: { "q-essay": 10 }, feedback: "", final_score: 10 });
+    await saveGrade({
+      attempt_id: "attempt-1",
+      rubric_scores: { "q-essay": 10 },
+      feedback: "",
+      final_score: 10,
+    });
 
     asUser(TEACHER_B);
     expect((await rejectionOf(releaseGrades("assignment-1"))).message).toBe(
@@ -892,7 +980,9 @@ describe("teacher core · migration 038 authorization guards", () => {
     expect(body).toContain("public.class_teachers");
     expect(body).toContain(message);
     expect(body).toContain("errcode = '42501'");
-    expect(body.indexOf("class_teachers")).toBeLessThan(body.indexOf("update public.assessment_attempts"));
+    expect(body.indexOf("class_teachers")).toBeLessThan(
+      body.indexOf("update public.assessment_attempts"),
+    );
   });
 
   it("only grants grading RPCs to signed-in users", () => {

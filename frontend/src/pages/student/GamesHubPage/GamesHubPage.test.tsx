@@ -143,4 +143,3 @@ describe("GamesHubPage", () => {
     expect(await screen.findByText("The arcade is closed for now")).toBeInTheDocument();
   });
 });
-

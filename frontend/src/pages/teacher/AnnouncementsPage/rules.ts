@@ -129,8 +129,7 @@ function sanitizeChildren(parent: Element): void {
     }
 
     const href = node.tagName === "A" ? (node.getAttribute("href") ?? "").trim() : "";
-    const keep =
-      ALLOWED_TAGS.has(node.tagName) && (node.tagName !== "A" || SAFE_HREF.test(href));
+    const keep = ALLOWED_TAGS.has(node.tagName) && (node.tagName !== "A" || SAFE_HREF.test(href));
     if (!keep) {
       node.replaceWith(...Array.from(node.childNodes));
       continue;

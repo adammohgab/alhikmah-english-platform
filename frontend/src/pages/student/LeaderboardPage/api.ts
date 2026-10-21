@@ -119,4 +119,3 @@ export async function fetchLeaderboard(
     "The leaderboard",
   );
 }
-

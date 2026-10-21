@@ -95,4 +95,3 @@ export function ordinal(n: number): string {
 export function formatXp(xp: number): string {
   return `${Math.round(xp).toLocaleString("en-US")} XP`;
 }
-

@@ -306,7 +306,11 @@ export function alignWords(
   let j = m;
   const EPSILON = 1e-9;
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && Math.abs(get(i, j) - (get(i - 1, j - 1) + substitution(i, j))) < EPSILON) {
+    if (
+      i > 0 &&
+      j > 0 &&
+      Math.abs(get(i, j) - (get(i - 1, j - 1) + substitution(i, j))) < EPSILON
+    ) {
       matches[i - 1] = j - 1;
       i -= 1;
       j -= 1;
@@ -342,7 +346,8 @@ export function scoreAttempt(
     const { matches, extras } = alignWords(targetWords, spoken);
     const words: WordResult[] = targetWords.map((word, index) => {
       const spokenIndex = matches[index];
-      const heard = spokenIndex === null || spokenIndex === undefined ? null : (spoken[spokenIndex] ?? null);
+      const heard =
+        spokenIndex === null || spokenIndex === undefined ? null : (spoken[spokenIndex] ?? null);
       const similarity = heard === null ? 0 : wordSimilarity(word, heard);
       return { word, heard, similarity, status: statusFor(similarity) };
     });
@@ -384,7 +389,10 @@ export function collectAlternatives(
       .filter((part): part is { transcript: string; confidence: number } => part !== undefined);
     const known = parts.filter((part) => part.confidence > 0);
     alternatives.push({
-      transcript: parts.map((part) => part.transcript.trim()).join(" ").trim(),
+      transcript: parts
+        .map((part) => part.transcript.trim())
+        .join(" ")
+        .trim(),
       confidence:
         known.length === 0
           ? null
@@ -944,7 +952,7 @@ export function PronunciationTrainer({
             id={headingId}
             dir="ltr"
             lang={ACCENT_LANG[accent]}
-            className="break-words font-display text-3xl font-extrabold leading-tight text-stroke"
+            className="font-display break-words text-3xl font-extrabold leading-tight text-stroke"
           >
             {text}
           </p>
@@ -1097,7 +1105,10 @@ export function PronunciationTrainer({
           </p>
         )}
         {notice && (
-          <p role="status" className="rounded-[10px] border-2 border-stroke px-3 py-2 text-sm font-bold">
+          <p
+            role="status"
+            className="rounded-[10px] border-2 border-stroke px-3 py-2 text-sm font-bold"
+          >
             {notice}
           </p>
         )}

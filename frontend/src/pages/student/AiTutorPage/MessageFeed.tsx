@@ -34,4 +34,3 @@ export function MessageFeed({ messages, streamingLabel }: MessageFeedProps) {
     </ChatThread>
   );
 }
-

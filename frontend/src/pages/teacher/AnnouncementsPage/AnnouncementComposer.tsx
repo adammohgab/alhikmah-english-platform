@@ -272,12 +272,7 @@ function ComposerForm({ classes, onDone }: { classes: TeacherClass[]; onDone: ()
               <Link2 size={16} aria-hidden="true" />
             </button>
             {active.link && (
-              <button
-                type="button"
-                className={TOOL}
-                aria-label="Remove link"
-                onClick={removeLink}
-              >
+              <button type="button" className={TOOL} aria-label="Remove link" onClick={removeLink}>
                 <Unlink size={16} aria-hidden="true" />
               </button>
             )}
@@ -334,10 +329,7 @@ function ComposerForm({ classes, onDone }: { classes: TeacherClass[]; onDone: ()
         />
 
         {confirming && (
-          <section
-            aria-labelledby="announcement-confirm-title"
-            className={cn(PANEL, "space-y-2")}
-          >
+          <section aria-labelledby="announcement-confirm-title" className={cn(PANEL, "space-y-2")}>
             <h3 id="announcement-confirm-title" className="font-heading text-lg font-bold">
               Send to {recipients} {recipients === 1 ? "student" : "students"}?
             </h3>
@@ -381,9 +373,7 @@ function ComposerForm({ classes, onDone }: { classes: TeacherClass[]; onDone: ()
 
       <aside aria-label="Student preview" className="space-y-4">
         <div className={cn(PANEL, "space-y-3")}>
-          <p className="text-xs font-extrabold uppercase tracking-wide text-muted">
-            Student view
-          </p>
+          <p className="text-xs font-extrabold uppercase tracking-wide text-muted">Student view</p>
           <div className="space-y-2 rounded-[14px] border-2 border-stroke bg-surface-0 p-3">
             <div className="flex flex-wrap gap-1.5">
               <Chip size="sm" world={PRIORITY_WORLD[values.priority]}>
@@ -395,12 +385,12 @@ function ComposerForm({ classes, onDone }: { classes: TeacherClass[]; onDone: ()
                 </Chip>
               )}
             </div>
-            <h3 className="font-heading text-lg font-bold text-stroke break-words">
+            <h3 className="break-words font-heading text-lg font-bold text-stroke">
               {values.title.trim() || "Your title appears here"}
             </h3>
             {bodyHasText ? (
               <div
-                className="break-words text-sm text-stroke [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:underline"
+                className="break-words text-sm text-stroke [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
                 dangerouslySetInnerHTML={{ __html: preview }}
               />
             ) : (

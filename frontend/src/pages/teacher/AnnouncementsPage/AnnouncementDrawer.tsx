@@ -90,7 +90,7 @@ function DrawerDetails({
       </p>
 
       <div
-        className="break-words rounded-[16px] border-2 border-stroke bg-surface-0 p-4 text-stroke [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:underline"
+        className="break-words rounded-[16px] border-2 border-stroke bg-surface-0 p-4 text-stroke [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
         dangerouslySetInnerHTML={{ __html: body }}
       />
 
@@ -99,9 +99,7 @@ function DrawerDetails({
           <h3 id="receipts-heading" className="font-heading text-lg font-bold">
             Read receipts
           </h3>
-          {details.isSuccess && (
-            <p className="font-heading text-lg font-bold">{rate}%</p>
-          )}
+          {details.isSuccess && <p className="font-heading text-lg font-bold">{rate}%</p>}
         </div>
 
         {details.isPending && <Skeleton label={null} className="h-16 w-full" />}
