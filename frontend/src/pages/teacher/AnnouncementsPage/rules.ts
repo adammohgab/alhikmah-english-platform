@@ -83,6 +83,12 @@ export function readRate(read: number, total: number): number {
   return Math.round((read * 100) / total);
 }
 
+const WHEN = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+export function formatWhen(iso: string): string {
+  return WHEN.format(new Date(iso));
+}
+
 /* ---- Sanitizer -------------------------------------------------------------------------- */
 
 /** Elements that may stay in a rendered announcement. Everything else is unwrapped to text. */

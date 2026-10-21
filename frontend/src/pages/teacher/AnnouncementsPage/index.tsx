@@ -14,8 +14,15 @@ import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { ANNOUNCEMENTS_KEY, fetchMyAnnouncements, fetchMyClasses, fetchReceipts } from "./api";
 import type { AnnouncementRow } from "./api";
 import { AnnouncementComposer } from "./AnnouncementComposer";
-import { AnnouncementDrawer, formatWhen } from "./AnnouncementDrawer";
-import { PRIORITY_LABEL, PRIORITY_WORLD, isPriority, plainText, readRate } from "./rules";
+import { AnnouncementDrawer } from "./AnnouncementDrawer";
+import {
+  PRIORITY_LABEL,
+  PRIORITY_WORLD,
+  isPriority,
+  plainText,
+  readRate,
+  formatWhen,
+} from "./rules";
 import type { AnnouncementPriority } from "./rules";
 import { useReceiptsRealtime } from "./useReceiptsRealtime";
 

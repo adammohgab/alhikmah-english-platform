@@ -254,7 +254,7 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       attempt.score = finalScore;
       attempt.status = "graded";
       attempt.lockedBy = null;
-      attempt.feedback = String(args["feedback"] ?? "");
+      attempt.feedback = typeof args["feedback"] === "string" ? args["feedback"] : "";
       return ok({ attempt_id: attempt.id, score: finalScore });
     }
     case "release_grades": {
@@ -385,7 +385,7 @@ const asUser = (userId: string, role: "teacher" | "admin" | "student" = "teacher
   fake.role = role;
 };
 
-const rpc = supabase.rpc as unknown as (
+const rpc = supabase.rpc.bind(supabase) as unknown as (
   fn: string,
   args: Record<string, unknown>,
 ) => Promise<RpcResult>;

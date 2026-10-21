@@ -15,6 +15,7 @@ import {
   isPriority,
   readRate,
   sanitizeAnnouncementHtml,
+  formatWhen,
 } from "./rules";
 
 /* ========================================
@@ -23,12 +24,6 @@ import {
    row shows the student's name, and read rows show when they opened it. The read rate bar
    updates live through `useReceiptsRealtime`, which refreshes the open details too.
    ======================================== */
-
-const WHEN = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
-
-export function formatWhen(iso: string): string {
-  return WHEN.format(new Date(iso));
-}
 
 const byName = (a: RecipientDetail, b: RecipientDetail) =>
   (a.profiles?.full_name ?? "").localeCompare(b.profiles?.full_name ?? "");

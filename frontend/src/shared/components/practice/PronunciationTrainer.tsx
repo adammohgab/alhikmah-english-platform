@@ -863,8 +863,7 @@ export function PronunciationTrainer({
         recognizer.onresult = (event) => {
           const done: RecognitionResultLike[] = [];
           let interim = "";
-          for (let index = 0; index < event.results.length; index += 1) {
-            const entry = event.results[index];
+          for (const entry of event.results as unknown as RecognitionResultLike[]) {
             if (!entry) continue;
             if (entry.isFinal) done.push(entry);
             else interim += `${entry[0]?.transcript ?? ""} `;

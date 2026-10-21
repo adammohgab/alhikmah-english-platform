@@ -108,8 +108,8 @@ describe("GamesHubPage", () => {
     const list = await screen.findByRole("list", { name: "Games" });
     const cards = within(list).getAllByRole("listitem");
     expect(cards).toHaveLength(3);
-    expect(within(cards[0] as HTMLElement).getByText("1,240")).toBeInTheDocument();
-    expect(within(cards[1] as HTMLElement).getByText("Not played yet")).toBeInTheDocument();
+    expect(within(cards[0]!).getByText("1,240")).toBeInTheDocument();
+    expect(within(cards[1]!).getByText("Not played yet")).toBeInTheDocument();
     expect(screen.getByTestId("daily-play")).toHaveTextContent("1 game today");
   });
 
