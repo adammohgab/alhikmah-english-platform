@@ -159,7 +159,7 @@ const fromTable = (name: string) =>
     }
   ).from(name);
 
-function parseRows<T>(label: string, data: unknown, schema: z.ZodType<T>): T {
+function parseRows<T>(label: string, data: unknown, schema: z.ZodType<T>): T[] {
   const parsed = z.array(schema).safeParse(data ?? []);
   if (!parsed.success) throw new Error(`${label} returned data in an unexpected shape.`);
   return parsed.data;
