@@ -7,7 +7,10 @@ import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import GamesHubPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const tables: Record<string, Result> = {};
 
@@ -140,3 +143,4 @@ describe("GamesHubPage", () => {
     expect(await screen.findByText("The arcade is closed for now")).toBeInTheDocument();
   });
 });
+

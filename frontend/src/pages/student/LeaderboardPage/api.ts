@@ -64,7 +64,10 @@ interface DbError {
   code?: string;
 }
 
-type DbResult = { data: unknown; error: DbError | null };
+interface DbResult {
+  data: unknown;
+  error: DbError | null;
+}
 
 interface Filterable extends PromiseLike<DbResult> {
   eq(column: string, value: string | boolean): Filterable;
@@ -116,3 +119,4 @@ export async function fetchLeaderboard(
     "The leaderboard",
   );
 }
+

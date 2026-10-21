@@ -8,7 +8,10 @@ import { ToastContext, type ToastContextValue } from "@/app/providers/toast-cont
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import AchievementsPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const tables: Record<string, Result> = {};
 const rpcCalls: { fn: string; args: Record<string, unknown> }[] = [];
@@ -221,3 +224,4 @@ describe("AchievementsPage", () => {
     expect(await screen.findByRole("button", { name: "Try again" })).toBeInTheDocument();
   });
 });
+

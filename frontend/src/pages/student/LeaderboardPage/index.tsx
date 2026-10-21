@@ -155,7 +155,7 @@ function MyRankBar({ board }: { board: Board }) {
     <section
       aria-label="Your position"
       data-testid="my-rank-bar"
-      className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.5rem)] z-30 flex items-center gap-3 rounded-[20px] border-2 border-stroke bg-world-amber-300 px-4 py-3 shadow-retro-md md:bottom-4"
+      className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.5rem)] z-30 flex items-center gap-3 rounded-[20px] border-2 border-stroke bg-world-amber-300 px-4 py-3 shadow-retro-md"
     >
       <span className="grid h-12 min-w-12 place-items-center rounded-full border-2 border-stroke bg-surface-0 px-2 font-heading text-xl font-bold text-stroke">
         {me.rank}
@@ -194,7 +194,7 @@ export default function LeaderboardPage() {
 
   const classesQuery = useQuery({
     queryKey: [LEADERBOARD_CLASSES_KEY, studentId],
-    queryFn: () => fetchMyClasses(studentId as string),
+    queryFn: () => fetchMyClasses(studentId!),
     enabled: studentId !== undefined,
   });
 
@@ -204,7 +204,7 @@ export default function LeaderboardPage() {
 
   const boardQuery = useQuery({
     queryKey: [LEADERBOARD_KEY, classId, timeframe],
-    queryFn: () => fetchLeaderboard(classId as string, timeframe),
+    queryFn: () => fetchLeaderboard(classId!, timeframe),
     enabled: classId !== undefined,
   });
 
@@ -230,7 +230,7 @@ export default function LeaderboardPage() {
         onRetry={retry}
       />
     );
-  } else if (classes && classes.length === 0) {
+  } else if (classes?.length === 0) {
     body = (
       <EmptyState
         size="lg"
@@ -310,3 +310,4 @@ export default function LeaderboardPage() {
     </div>
   );
 }
+

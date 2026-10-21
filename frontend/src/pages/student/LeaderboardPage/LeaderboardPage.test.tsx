@@ -6,7 +6,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context";
 import LeaderboardPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const enrollments: { current: Result } = { current: { data: [], error: null } };
 const boards: Record<string, Result> = {};
@@ -156,3 +159,4 @@ describe("LeaderboardPage", () => {
     expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();
   });
 });
+

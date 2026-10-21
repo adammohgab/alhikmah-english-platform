@@ -44,7 +44,7 @@ function toEntry(row: LeaderboardEntryRow, userId: string): BoardEntry {
   return {
     rank: row.rank,
     studentId: row.student_id,
-    name: name ? name : "Student",
+    name: name ?? "Student",
     avatarUrl: row.avatar_url ?? null,
     badge: row.equipped_badge
       ? {
@@ -95,3 +95,4 @@ export function ordinal(n: number): string {
 export function formatXp(xp: number): string {
   return `${Math.round(xp).toLocaleString("en-US")} XP`;
 }
+
