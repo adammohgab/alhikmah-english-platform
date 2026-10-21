@@ -89,6 +89,10 @@ export const router = createBrowserRouter(
           element: <PlaceholderView title="Student Dashboard" />,
         },
         {
+          path: "ai-tutor",
+          ...page(() => import("@/pages/student/AiTutorPage")),
+        },
+        {
           path: "*",
           element: <PlaceholderView title="Student Section" />,
         },
