@@ -101,6 +101,10 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/student/ReadingPracticePage")),
         },
         {
+          path: "certificates",
+          ...page(() => import("@/pages/student/CertificatesPage")),
+        },
+        {
           path: "quests",
           ...page(() => import("@/pages/student/QuestsPage")),
         },
