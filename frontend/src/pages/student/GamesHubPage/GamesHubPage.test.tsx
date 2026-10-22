@@ -7,7 +7,10 @@ import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import GamesHubPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const tables: Record<string, Result> = {};
 
@@ -76,6 +79,11 @@ function renderPage() {
   );
 }
 
+/** The game grid is a <ul> whose tiles are nested lists of skill chips, so count direct children. */
+function gameCards(list: HTMLElement): HTMLElement[] {
+  return Array.from(list.children).filter((child): child is HTMLElement => child.tagName === "LI");
+}
+
 beforeEach(() => {
   tables["games"] = { data: games, error: null };
   tables["game_daily_featured"] = {
@@ -103,10 +111,10 @@ describe("GamesHubPage", () => {
   it("shows the personal best on every game card and today's plays", async () => {
     renderPage();
     const list = await screen.findByRole("list", { name: "Games" });
-    const cards = within(list).getAllByRole("listitem");
+    const cards = gameCards(list);
     expect(cards).toHaveLength(3);
-    expect(within(cards[0] as HTMLElement).getByText("1,240")).toBeInTheDocument();
-    expect(within(cards[1] as HTMLElement).getByText("Not played yet")).toBeInTheDocument();
+    expect(within(cards[0]!).getByText("1,240")).toBeInTheDocument();
+    expect(within(cards[1]!).getByText("Not played yet")).toBeInTheDocument();
     expect(screen.getByTestId("daily-play")).toHaveTextContent("1 game today");
   });
 
@@ -121,7 +129,7 @@ describe("GamesHubPage", () => {
     renderPage();
     const list = await screen.findByRole("list", { name: "Games" });
     await user.click(screen.getByRole("button", { name: "Speed" }));
-    expect(within(list).getAllByRole("listitem")).toHaveLength(1);
+    expect(gameCards(list)).toHaveLength(1);
     expect(within(list).getByRole("heading", { name: "Timed Quiz" })).toBeInTheDocument();
     expect(within(list).queryByRole("heading", { name: "Vocabulary Match" })).toBeNull();
   });

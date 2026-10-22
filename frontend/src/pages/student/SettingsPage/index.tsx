@@ -62,7 +62,11 @@ const TIER_HINT: Record<EffectsTier, string> = {
 
 const NOTIFICATION_ROWS: readonly { key: NotificationKey; label: string; hint: string }[] = [
   { key: "streakReminders", label: "Streak reminders", hint: "A nudge before your streak ends." },
-  { key: "deadlineReminders", label: "Deadline reminders", hint: "Assignments and quizzes due soon." },
+  {
+    key: "deadlineReminders",
+    label: "Deadline reminders",
+    hint: "Assignments and quizzes due soon.",
+  },
   { key: "announcements", label: "Announcements", hint: "News from your teachers and school." },
   { key: "newBadges", label: "New badges", hint: "When you earn a badge." },
   { key: "leaderboardChanges", label: "Leaderboard changes", hint: "When your rank moves." },
@@ -454,7 +458,10 @@ function PasswordCard({ username }: { username: string }) {
           {PASSWORD_RULES.map((rule) => (
             <li
               key={rule.id}
-              className={cn("flex items-center gap-2", rules[rule.id] ? "text-stroke" : "text-muted")}
+              className={cn(
+                "flex items-center gap-2",
+                rules[rule.id] ? "text-stroke" : "text-muted",
+              )}
             >
               <span
                 aria-hidden="true"
@@ -583,8 +590,8 @@ export default function SettingsPage() {
         <h1 className="font-display text-3xl font-bold text-stroke">Settings</h1>
         {user && (
           <p className="text-muted">
-            {user.fullName} · <span className="font-semibold">@{user.username}</span>. Your name
-            and class are managed by your school.
+            {user.fullName} · <span className="font-semibold">@{user.username}</span>. Your name and
+            class are managed by your school.
           </p>
         )}
       </header>

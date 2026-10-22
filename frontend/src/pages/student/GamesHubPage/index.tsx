@@ -162,9 +162,7 @@ function FeaturedBanner({ card, multiplier }: { card: GameCard; multiplier: numb
           {card.description ? ` ${card.description}` : ""}
         </p>
         {card.bestScore !== null && (
-          <p className="text-sm font-bold text-stroke">
-            Your best: {formatScore(card.bestScore)}
-          </p>
+          <p className="text-sm font-bold text-stroke">Your best: {formatScore(card.bestScore)}</p>
         )}
       </div>
       <Link
@@ -247,7 +245,7 @@ export default function GamesHubPage() {
 
   const query = useQuery({
     queryKey: [GAMES_HUB_KEY, studentId, today],
-    queryFn: () => fetchGamesHub(studentId as string, today),
+    queryFn: () => fetchGamesHub(studentId!, today),
     enabled: studentId !== undefined,
   });
 
@@ -327,10 +325,7 @@ export default function GamesHubPage() {
               onAction={() => setSkill("all")}
             />
           ) : (
-            <ul
-              aria-label="Games"
-              className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            >
+            <ul aria-label="Games" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((card) => (
                 <GameTile
                   key={card.id}

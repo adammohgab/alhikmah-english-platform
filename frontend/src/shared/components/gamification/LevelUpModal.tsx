@@ -39,9 +39,25 @@ export interface LevelUpModalProps {
 }
 
 const DEFAULT_REWARDS: LevelUpReward[] = [
-  { id: "level-up-coins", name: "Bonus coins", value: "+50 Coins", kind: "coins", description: "Added to your rewards" },
-  { id: "avatar-hat", name: "New Avatar Hat", kind: "cosmetic", description: "Unlocked in the shop" },
-  { id: "student-title", name: "New Title", kind: "title", description: "A fresh title for your profile" },
+  {
+    id: "level-up-coins",
+    name: "Bonus coins",
+    value: "+50 Coins",
+    kind: "coins",
+    description: "Added to your rewards",
+  },
+  {
+    id: "avatar-hat",
+    name: "New Avatar Hat",
+    kind: "cosmetic",
+    description: "Unlocked in the shop",
+  },
+  {
+    id: "student-title",
+    name: "New Title",
+    kind: "title",
+    description: "A fresh title for your profile",
+  },
 ];
 
 const REWARD_ICONS = {
@@ -76,7 +92,8 @@ export function LevelUpModal({
   const motionAllowed = effectsTier !== "low" && !prefersReducedMotion;
   const isOpen = controlledOpen ?? autoOpen;
   const shareText = useMemo(
-    () => `🎉 I reached Level ${level}${rankName ? ` — ${rankName}` : ""} on Al Hikmah English! Keep learning with me.`,
+    () =>
+      `🎉 I reached Level ${level}${rankName ? ` — ${rankName}` : ""} on Al Hikmah English! Keep learning with me.`,
     [level, rankName],
   );
 
@@ -97,9 +114,30 @@ export function LevelUpModal({
     play("fanfare");
     if (!motionAllowed || typeof confetti !== "function") return;
     const colors = ["#ffb84d", "#2fd6a3", "#ffd93d", "#ff6fa5", "#8b7cff"];
-    void confetti({ particleCount: 90, spread: 72, startVelocity: 42, origin: { x: 0.12, y: 0.68 }, colors, zIndex: 100 });
-    void confetti({ particleCount: 90, spread: 72, startVelocity: 42, origin: { x: 0.88, y: 0.68 }, colors, zIndex: 100 });
-    void confetti({ particleCount: 70, spread: 100, startVelocity: 32, origin: { x: 0.5, y: 0.45 }, colors, zIndex: 100 });
+    void confetti({
+      particleCount: 90,
+      spread: 72,
+      startVelocity: 42,
+      origin: { x: 0.12, y: 0.68 },
+      colors,
+      zIndex: 100,
+    });
+    void confetti({
+      particleCount: 90,
+      spread: 72,
+      startVelocity: 42,
+      origin: { x: 0.88, y: 0.68 },
+      colors,
+      zIndex: 100,
+    });
+    void confetti({
+      particleCount: 70,
+      spread: 100,
+      startVelocity: 32,
+      origin: { x: 0.5, y: 0.45 },
+      colors,
+      zIndex: 100,
+    });
   }, [isOpen, motionAllowed, play]);
 
   const setOpen = (next: boolean) => {
@@ -131,60 +169,133 @@ export function LevelUpModal({
     >
       <div className="flex flex-col items-center gap-5 px-1 pb-2 pt-3 text-center">
         <div className="relative grid h-40 w-40 place-items-center" aria-label={`Level ${level}`}>
-          <div aria-hidden="true" className={cn("absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,var(--world-main,#ffb84d)_12deg,transparent_24deg)] opacity-70", motionAllowed && "animate-[spin_18s_linear_infinite]", "motion-reduce:animate-none")} />
-          <div aria-hidden="true" className="absolute inset-3 rounded-full border-2 border-dashed border-[var(--world-deep,#8f4300)]/50" />
-          <div className={cn("relative grid h-28 w-28 place-items-center rounded-full border-[3px] border-stroke bg-[var(--world-main,#ffb84d)] text-stroke shadow-retro-md", motionAllowed && "motion-safe:animate-in motion-safe:zoom-in-50 motion-safe:duration-500", "motion-reduce:animate-none")}>
+          <div
+            aria-hidden="true"
+            className={cn(
+              "absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,var(--world-main,#ffb84d)_12deg,transparent_24deg)] opacity-70",
+              motionAllowed && "animate-[spin_18s_linear_infinite]",
+              "motion-reduce:animate-none",
+            )}
+          />
+          <div
+            aria-hidden="true"
+            className="border-[var(--world-deep,#8f4300)]/50 absolute inset-3 rounded-full border-2 border-dashed"
+          />
+          <div
+            className={cn(
+              "relative grid h-28 w-28 place-items-center rounded-full border-[3px] border-stroke bg-[var(--world-main,#ffb84d)] text-stroke shadow-retro-md",
+              motionAllowed &&
+                "motion-safe:animate-in motion-safe:zoom-in-50 motion-safe:duration-500",
+              "motion-reduce:animate-none",
+            )}
+          >
             <div className="flex flex-col items-center leading-none">
               <span className="text-[11px] font-black uppercase tracking-[0.2em]">Level</span>
               <span className="font-heading text-5xl font-black tabular-nums">{level}</span>
             </div>
           </div>
-          <Sparkles aria-hidden="true" className="absolute right-1 top-5 text-[var(--world-deep,#8f4300)]" size={25} />
-          <Star aria-hidden="true" className="absolute bottom-4 left-0 text-[var(--world-pop,#2fd6a3)]" size={22} />
+          <Sparkles
+            aria-hidden="true"
+            className="absolute right-1 top-5 text-[var(--world-deep,#8f4300)]"
+            size={25}
+          />
+          <Star
+            aria-hidden="true"
+            className="absolute bottom-4 left-0 text-[var(--world-pop,#2fd6a3)]"
+            size={22}
+          />
         </div>
 
         <div className="space-y-1">
-          <p className="font-heading text-2xl font-black text-ink">{title ?? "Amazing work!"}</p>
-          <p className="text-sm text-muted">{rankName ? `Your new rank: ${rankName}` : "Your next adventure starts now."}</p>
+          <p className="text-ink font-heading text-2xl font-black">{title ?? "Amazing work!"}</p>
+          <p className="text-sm text-muted">
+            {rankName ? `Your new rank: ${rankName}` : "Your next adventure starts now."}
+          </p>
         </div>
 
         <section className="w-full max-w-md text-left" aria-labelledby="level-up-rewards-heading">
-          <h3 id="level-up-rewards-heading" className="mb-2 flex items-center gap-2 font-heading text-base font-bold text-ink">
+          <h3
+            id="level-up-rewards-heading"
+            className="text-ink mb-2 flex items-center gap-2 font-heading text-base font-bold"
+          >
             <Award size={19} aria-hidden="true" /> Your new rewards
           </h3>
           <ul className="space-y-2">
             {rewards.map((reward) => {
               const Icon = REWARD_ICONS[reward.kind];
               return (
-                <li key={reward.id} className="flex items-center gap-3 rounded-xl border-2 border-stroke/15 bg-surface-1 p-3">
+                <li
+                  key={reward.id}
+                  className="bg-surface-1 flex items-center gap-3 rounded-xl border-2 border-stroke/15 p-3"
+                >
                   {reward.imageUrl ? (
-                    <img src={reward.imageUrl} alt="" className="h-11 w-11 rounded-lg object-cover" />
+                    <img
+                      src={reward.imageUrl}
+                      alt=""
+                      className="h-11 w-11 rounded-lg object-cover"
+                    />
                   ) : (
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-stroke/15 bg-[var(--world-soft,#fff1bd)] text-[var(--world-deep,#8f4300)]"><Icon size={22} aria-hidden="true" /></span>
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-stroke/15 bg-[var(--world-soft,#fff1bd)] text-[var(--world-deep,#8f4300)]">
+                      <Icon size={22} aria-hidden="true" />
+                    </span>
                   )}
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-bold text-ink">{reward.name}</span>
-                    {reward.description && <span className="block text-xs text-muted">{reward.description}</span>}
+                    <span className="text-ink block text-sm font-bold">{reward.name}</span>
+                    {reward.description && (
+                      <span className="block text-xs text-muted">{reward.description}</span>
+                    )}
                   </span>
-                  {reward.value && <span className="shrink-0 text-sm font-black text-[var(--world-deep,#8f4300)]">{reward.value}</span>}
-                  <Check aria-hidden="true" size={17} className="shrink-0 text-[var(--world-pop,#16865f)]" />
+                  {reward.value && (
+                    <span className="shrink-0 text-sm font-black text-[var(--world-deep,#8f4300)]">
+                      {reward.value}
+                    </span>
+                  )}
+                  <Check
+                    aria-hidden="true"
+                    size={17}
+                    className="shrink-0 text-[var(--world-pop,#16865f)]"
+                  />
                 </li>
               );
             })}
           </ul>
         </section>
 
-        <div className="w-full max-w-md rounded-xl border-2 border-dashed border-[var(--world-deep,#8f4300)]/40 bg-[var(--world-soft,#fff1bd)] p-4 text-stroke">
-          <div className="mb-2 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider"><Sparkles size={15} aria-hidden="true" /> Level-up card</div>
-          <p className="font-heading text-lg font-black">Level {level}{rankName ? ` · ${rankName}` : ""}</p>
+        <div className="border-[var(--world-deep,#8f4300)]/40 w-full max-w-md rounded-xl border-2 border-dashed bg-[var(--world-soft,#fff1bd)] p-4 text-stroke">
+          <div className="mb-2 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider">
+            <Sparkles size={15} aria-hidden="true" /> Level-up card
+          </div>
+          <p className="font-heading text-lg font-black">
+            Level {level}
+            {rankName ? ` · ${rankName}` : ""}
+          </p>
           <p className="mt-1 text-sm">{shareText}</p>
-          <Button type="button" variant="secondary" size="sm" className="mt-3" onClick={() => void share()}>
-            {copied ? <Check size={16} /> : typeof navigator !== "undefined" && navigator.share ? <Share2 size={16} /> : <Copy size={16} />}
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="mt-3"
+            onClick={() => void share()}
+          >
+            {copied ? (
+              <Check size={16} />
+            ) : typeof navigator !== "undefined" && "share" in navigator ? (
+              <Share2 size={16} />
+            ) : (
+              <Copy size={16} />
+            )}
             {copied ? "Copied!" : "Share your achievement"}
           </Button>
         </div>
 
-        <Button type="button" className="w-full max-w-md" onClick={() => { setOpen(false); onContinue?.(); }}>
+        <Button
+          type="button"
+          className="w-full max-w-md"
+          onClick={() => {
+            setOpen(false);
+            onContinue?.();
+          }}
+        >
           Continue learning
         </Button>
       </div>

@@ -111,18 +111,18 @@ function asRecord(value: unknown): Record<string, unknown> {
 
 /** Reads the notification switches, keeping the default for anything missing or malformed. */
 export function parseNotificationPrefs(json: unknown): NotificationPrefs {
-  const stored = asRecord(asRecord(json).notifications);
+  const stored = asRecord(asRecord(json)["notifications"]);
   const prefs: NotificationPrefs = { ...DEFAULT_NOTIFICATION_PREFS };
   for (const key of NOTIFICATION_KEYS) {
     const value = stored[key];
     if (typeof value === "boolean") prefs[key] = value;
   }
-  if (isReminderTime(stored.reminderTime)) prefs.reminderTime = stored.reminderTime;
+  if (isReminderTime(stored["reminderTime"])) prefs.reminderTime = stored["reminderTime"];
   return prefs;
 }
 
 function parseVolume(json: unknown): number | null {
-  const volume = asRecord(asRecord(json).audio).volume;
+  const volume = asRecord(asRecord(json)["audio"])["volume"];
   return typeof volume === "number" && Number.isFinite(volume) ? clampVolume(volume) : null;
 }
 
@@ -144,10 +144,7 @@ export function toSettings(row: unknown): StudentSettings {
 }
 
 export async function fetchSettings(userId: string): Promise<StudentSettings> {
-  const { data, error } = await settingsTable()
-    .select(COLUMNS)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const { data, error } = await settingsTable().select(COLUMNS).eq("user_id", userId).maybeSingle();
   if (error) throw new Error(error.message);
   return data === null ? DEFAULT_SETTINGS : toSettings(data);
 }
@@ -173,24 +170,24 @@ export async function saveSettings(userId: string, patch: SettingsPatch): Promis
   const hasRow = current.data !== null;
 
   const row: Record<string, unknown> = { user_id: userId };
-  if (patch.soundEnabled !== undefined) row.sound_enabled = patch.soundEnabled;
-  if (patch.reducedMotion !== undefined) row.prefers_reduced_motion = patch.reducedMotion;
+  if (patch.soundEnabled !== undefined) row["sound_enabled"] = patch.soundEnabled;
+  if (patch.reducedMotion !== undefined) row["prefers_reduced_motion"] = patch.reducedMotion;
   if (patch.effectsTier !== undefined) {
-    row.effects_tier = patch.effectsTier;
+    row["effects_tier"] = patch.effectsTier;
   } else if (!hasRow) {
     // The column defaults to "balanced". Without a pick, keep the automatic tier in charge.
-    row.effects_tier = null;
+    row["effects_tier"] = null;
   }
 
   if (patch.volume !== undefined || patch.notifications !== undefined) {
-    const bag = { ...asRecord(asRecord(current.data).notifications_json) };
+    const bag = { ...asRecord(asRecord(current.data)["notifications_json"]) };
     if (patch.notifications !== undefined) {
-      bag.notifications = { ...parseNotificationPrefs(bag), ...patch.notifications };
+      bag["notifications"] = { ...parseNotificationPrefs(bag), ...patch.notifications };
     }
     if (patch.volume !== undefined) {
-      bag.audio = { ...asRecord(bag.audio), volume: clampVolume(patch.volume) };
+      bag["audio"] = { ...asRecord(bag["audio"]), volume: clampVolume(patch.volume) };
     }
-    row.notifications_json = bag;
+    row["notifications_json"] = bag;
   }
 
   const { error } = await settingsTable().upsert(row, { onConflict: "user_id" });

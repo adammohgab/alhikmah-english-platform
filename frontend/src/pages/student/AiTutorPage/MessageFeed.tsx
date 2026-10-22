@@ -24,6 +24,7 @@ export function MessageFeed({ messages, streamingLabel }: MessageFeedProps) {
         />
       ))}
       {streamingLabel && (
+        // eslint-disable-next-line jsx-a11y/aria-role -- `role` is ChatMessage's own speaker prop, not an ARIA role.
         <ChatMessage role="assistant" content={streamingLabel} streaming assistantName="Pip" />
       )}
     </ChatThread>

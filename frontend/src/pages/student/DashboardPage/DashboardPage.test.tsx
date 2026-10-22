@@ -198,7 +198,7 @@ describe("DashboardPage", () => {
       "section",
     );
     expect(card).not.toBeNull();
-    const scope = within(card as HTMLElement);
+    const scope = within(card!);
     expect(await scope.findByText("Introductions")).toBeVisible();
     expect(scope.getByText("1 of 3 lessons done")).toBeVisible();
     await user.click(scope.getByRole("button", { name: "Resume" }));

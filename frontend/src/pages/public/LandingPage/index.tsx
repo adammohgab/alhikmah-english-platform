@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import Lenis from "lenis";
-import logo from "@/shared/assets/logo.png";
 import { getRoleHomePath } from "@/app/guards/guard-utils";
 import { useAuth } from "@/app/providers/auth-context";
+import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
 import { PublicFooter } from "@/shared/components/layout/PublicFooter";
 import { PublicHeader } from "@/shared/components/layout/PublicHeader";
 import { Button } from "@/shared/components/ui/Button";
@@ -49,7 +49,7 @@ const PLATFORM_NAME = "Al Hikmah English Platform";
 const PAGE_TITLE = `Practice English every day | ${PLATFORM_NAME}`;
 const PAGE_DESCRIPTION =
   "Lessons, quizzes, games and an AI tutor in one place for the students and teachers of Al Hikmah. Level up as you learn.";
-const SHARE_IMAGE = logo;
+const SHARE_IMAGE = SCHOOL_LOGO_SRC;
 const SHARE_IMAGE_ALT = "Al Hikmah Private School logo";
 
 const HEADER_HEIGHT_PX = 64;
@@ -167,25 +167,29 @@ interface MetaTag {
 }
 
 /** Title, description, OpenGraph and Twitter tags, restored when the page unmounts. */
-function useSeo(title: string, description: string, image: string, imageAlt: string): void {
+function useSeo(title: string, description: string, image: string | null, imageAlt: string): void {
   useEffect(() => {
     const pageUrl = new URL(import.meta.env.BASE_URL, window.location.origin).href;
-    const imageUrl = new URL(image, window.location.origin).href;
-    const tags: readonly MetaTag[] = [
+    const tags: MetaTag[] = [
       { attribute: "name", key: "description", content: description },
       { attribute: "property", key: "og:type", content: "website" },
       { attribute: "property", key: "og:site_name", content: PLATFORM_NAME },
       { attribute: "property", key: "og:title", content: title },
       { attribute: "property", key: "og:description", content: description },
       { attribute: "property", key: "og:url", content: pageUrl },
-      { attribute: "property", key: "og:image", content: imageUrl },
-      { attribute: "property", key: "og:image:alt", content: imageAlt },
       { attribute: "name", key: "twitter:card", content: "summary" },
       { attribute: "name", key: "twitter:title", content: title },
       { attribute: "name", key: "twitter:description", content: description },
-      { attribute: "name", key: "twitter:image", content: imageUrl },
-      { attribute: "name", key: "twitter:image:alt", content: imageAlt },
     ];
+    if (image !== null) {
+      const imageUrl = new URL(image, window.location.origin).href;
+      tags.push(
+        { attribute: "property", key: "og:image", content: imageUrl },
+        { attribute: "property", key: "og:image:alt", content: imageAlt },
+        { attribute: "name", key: "twitter:image", content: imageUrl },
+        { attribute: "name", key: "twitter:image:alt", content: imageAlt },
+      );
+    }
 
     const previousTitle = document.title;
     document.title = title;
