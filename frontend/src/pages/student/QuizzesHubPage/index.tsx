@@ -1,265 +1,293 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Clock, Lock } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
-import { SearchField } from "@/shared/components/ui/SearchField";
 import { Select } from "@/shared/components/ui/Select";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/ui/Tabs";
-import { HistoryRow } from "./HistoryRow";
-import { QuizCard } from "./QuizCard";
-import { useAvailableQuizzes, useQuizHistory } from "./hooks";
-import {
-  courseOptions,
-  filterAvailable,
-  filterHistory,
-  splitQuizzes,
-  type HistoryStatus,
-} from "./rules";
+import { cn } from "@/shared/lib/utils/cn";
+import { QUIZZES_KEY, fetchQuizzes, type QuizRow, type QuizSource } from "./api";
 
-/* Quizzes hub (STUDENT-SPEC ST-07, STU-CORE-08).
-   Three tabs: Available now, Upcoming, Completed. Search by title and filter by course on every
-   tab, and by result on Completed. Quizzes closing within 24 hours are highlighted, and past
-   quizzes show the grade the student earned. */
+/* Quizzes hub (STUDENT-SPEC ST-07, task STU-CORE-08).
+   Three tabs: Available now, Upcoming (locked or not open yet) and Completed (past attempts with
+   the earned percentage). Search by title and filter by status. A quiz closing within 24 hours is
+   marked as urgent and listed first. Available and Upcoming share one list from `my_quizzes`;
+   Completed reads the history list. */
 
-type HubTab = "available" | "upcoming" | "completed";
+type Tab = "now" | "upcoming" | "completed";
 
-const ALL_COURSES = "__all__";
-
-const STATUS_OPTIONS: ReadonlyArray<{ value: HistoryStatus; label: string }> = [
-  { value: "all", label: "All results" },
-  { value: "passed", label: "Passed" },
-  { value: "not_passed", label: "Not passed" },
-  { value: "pending", label: "Awaiting score" },
+const TABS: ReadonlyArray<{ id: Tab; label: string; source: QuizSource; empty: string }> = [
+  {
+    id: "now",
+    label: "Available now",
+    source: "available",
+    empty: "No quizzes are open right now.",
+  },
+  { id: "upcoming", label: "Upcoming", source: "available", empty: "No upcoming quizzes." },
+  { id: "completed", label: "Completed", source: "history", empty: "No quizzes taken yet." },
 ];
 
-function ListSkeleton() {
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const isClosed = (row: QuizRow) => row.status === "closed";
+const isUpcoming = (row: QuizRow) => row.status === "locked" || row.status === "upcoming";
+
+const STATUS_LABEL: Record<string, string> = {
+  ready: "Ready",
+  locked: "Locked",
+  upcoming: "Upcoming",
+  closed: "Closed",
+  passed: "Passed",
+  failed: "Failed",
+};
+
+/** The status a row is filtered and labelled by in its tab. */
+function rowStatus(row: QuizRow, tab: Tab): string {
+  if (tab === "completed") return row.passed == null ? "done" : row.passed ? "passed" : "failed";
+  return row.status ?? "ready";
+}
+const labelFor = (status: string) => STATUS_LABEL[status] ?? (status === "done" ? "Done" : status);
+
+const urgent = (row: QuizRow, now: number): boolean =>
+  !!row.closes_at &&
+  !isUpcoming(row) &&
+  Date.parse(row.closes_at) - now <= DAY_MS &&
+  Date.parse(row.closes_at) > now;
+
+function whenText(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const time = Date.parse(iso);
+  return Number.isNaN(time)
+    ? null
+    : new Date(time).toLocaleString("en", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+}
+
+function Card({ row, tab, now }: { row: QuizRow; tab: Tab; now: number }) {
+  const hot = tab === "now" && urgent(row, now);
+  const quizId = encodeURIComponent(row.id);
+  const attempts =
+    row.attempts_used == null
+      ? null
+      : `${row.attempts_used} of ${row.attempts_allowed ?? "unlimited"} attempts`;
+  const score = tab === "completed" ? row.score_pct : row.best_score_pct;
+  const opens = whenText(row.lock?.opens_at);
+  const closes = whenText(row.closes_at);
+
   return (
-    <div className="flex flex-col gap-4" aria-busy="true">
-      <Skeleton shape="rect" className="h-28 w-full" label="Loading quizzes…" />
-      <Skeleton shape="rect" className="h-28 w-full" label={null} />
-      <Skeleton shape="rect" className="h-28 w-full" label={null} />
-    </div>
+    <li
+      className={cn(
+        "flex flex-col gap-2 rounded-[20px] border-2 bg-surface-0 p-4 shadow-[2px_2px_0px_#000]",
+        hot ? "border-danger-600" : "border-stroke",
+      )}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h3 className="font-display min-w-0 text-[18px] leading-tight text-stroke [overflow-wrap:anywhere]">
+          {row.title}
+        </h3>
+        <span className="shrink-0 rounded-full border-2 border-stroke px-2 text-[12px] font-bold text-stroke">
+          {labelFor(rowStatus(row, tab))}
+        </span>
+      </div>
+
+      <p className="text-[14px] text-muted">
+        {[row.class_name, row.course, row.unit].filter(Boolean).join(" | ")}
+      </p>
+
+      <p className="flex flex-wrap gap-x-4 text-[14px] text-stroke">
+        {row.question_count != null && <span>{row.question_count} questions</span>}
+        {row.time_limit_min != null && <span>{row.time_limit_min} min</span>}
+        {attempts && tab !== "completed" && <span>{attempts}</span>}
+        {tab === "completed" && row.attempt_no != null && <span>Attempt {row.attempt_no}</span>}
+        {tab === "completed" && whenText(row.submitted_at) && (
+          <span>{whenText(row.submitted_at)}</span>
+        )}
+      </p>
+
+      {hot && (
+        <p className="flex w-fit items-center gap-1 rounded-full border-2 border-danger-600 bg-danger-100 px-2 text-[13px] font-bold text-danger-600">
+          <Clock size={14} aria-hidden="true" className="motion-safe:animate-pulse" />
+          Closing soon{closes ? `: ${closes}` : ""}
+        </p>
+      )}
+      {!hot && tab === "now" && closes && <p className="text-[13px] text-muted">Closes {closes}</p>}
+
+      {tab === "upcoming" && (
+        <p className="flex items-center gap-1 text-[14px] font-bold text-stroke">
+          <Lock size={14} aria-hidden="true" />
+          {row.lock?.reason ?? (opens ? `Opens ${opens}` : "Not open yet")}
+          {row.lock?.reason && opens ? ` (opens ${opens})` : ""}
+        </p>
+      )}
+
+      {score != null && (
+        <div>
+          <p className="text-[16px] font-bold text-stroke">
+            {tab === "completed" ? "Score" : "Best score"}: {Math.round(score)}%
+          </p>
+          <div className="h-3 w-full rounded-full border-2 border-stroke" aria-hidden="true">
+            <div
+              className="h-full rounded-full bg-[var(--world-main,#ffb84d)]"
+              style={{ width: `${Math.max(0, Math.min(100, score))}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {tab === "now" && (
+        <Link
+          to={`/student/quizzes/${quizId}`}
+          className="mt-1 inline-flex min-h-11 w-fit items-center rounded-full border-2 border-stroke bg-[var(--world-main,#ffb84d)] px-4 font-bold text-stroke shadow-[2px_2px_0px_#000]"
+        >
+          {row.attempts_used ? "Try again" : "Start quiz"}
+        </Link>
+      )}
+      {tab === "completed" && row.attempt_id && (
+        <Link
+          to={`/student/quizzes/${quizId}/result/${encodeURIComponent(row.attempt_id)}`}
+          className="mt-1 inline-flex min-h-11 w-fit items-center rounded-full border-2 border-stroke px-4 font-bold text-stroke shadow-[2px_2px_0px_#000]"
+        >
+          View result
+        </Link>
+      )}
+    </li>
   );
 }
 
-function countLabel(text: string, count: number | undefined): string {
-  return count === undefined ? text : `${text} (${count})`;
-}
+function List({ tab, source, empty }: { tab: Tab; source: QuizSource; empty: string }) {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const now = useMemo(() => Date.now(), []);
+  const query = useInfiniteQuery({
+    queryKey: [QUIZZES_KEY, source],
+    queryFn: ({ pageParam }) => fetchQuizzes(source, pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (last) => last.next_cursor ?? undefined,
+  });
 
-function LoadMore({
-  visible,
-  loading,
-  onLoad,
-}: {
-  visible: boolean;
-  loading: boolean;
-  onLoad: () => void;
-}) {
-  if (!visible) return null;
+  const inTab = useMemo(() => {
+    const all = query.data?.pages.flatMap((page) => page.items) ?? [];
+    if (tab === "completed") return all;
+    const open = all.filter((row) => !isClosed(row));
+    const rows =
+      tab === "upcoming" ? open.filter(isUpcoming) : open.filter((row) => !isUpcoming(row));
+    // Quizzes closing soonest come first, so the urgent ones lead the list.
+    return [...rows].sort((a, b) => {
+      const aTime = a.closes_at ? Date.parse(a.closes_at) : Number.POSITIVE_INFINITY;
+      const bTime = b.closes_at ? Date.parse(b.closes_at) : Number.POSITIVE_INFINITY;
+      return aTime - bTime;
+    });
+  }, [query.data, tab]);
+
+  const statuses = useMemo(
+    () => Array.from(new Set(inTab.map((row) => rowStatus(row, tab)))),
+    [inTab, tab],
+  );
+  const needle = search.trim().toLowerCase();
+  const rows = inTab.filter(
+    (row) =>
+      (status === "all" || rowStatus(row, tab) === status) &&
+      (needle === "" || row.title.toLowerCase().includes(needle)),
+  );
+
+  if (query.isPending) {
+    return (
+      <div className="flex flex-col gap-3" aria-busy="true">
+        {[0, 1, 2].map((n) => (
+          <Skeleton key={n} shape="rect" className="h-40 w-full" />
+        ))}
+      </div>
+    );
+  }
+  if (query.isError) {
+    return (
+      <ErrorState
+        description="Your quizzes could not load. Check your connection and try again."
+        onRetry={() => void query.refetch()}
+      />
+    );
+  }
+
   return (
-    <div className="flex justify-center pt-2">
-      <Button variant="secondary" onClick={onLoad} disabled={loading}>
-        {loading ? "Loading…" : "Load more"}
-      </Button>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-end gap-3">
+        <label className="flex flex-col gap-1 text-[14px] text-stroke">
+          Search by title
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Quiz title"
+            className="min-h-11 rounded-[12px] border-2 border-stroke bg-surface-0 px-3"
+          />
+        </label>
+        {statuses.length > 1 && (
+          <div className="flex flex-col gap-1 text-[14px] text-stroke">
+            <span id={`status-filter-${tab}`}>Status</span>
+            <Select
+              aria-labelledby={`status-filter-${tab}`}
+              value={status}
+              onValueChange={setStatus}
+              options={[
+                { value: "all", label: "All" },
+                ...statuses.map((value) => ({ value, label: labelFor(value) })),
+              ]}
+            />
+          </div>
+        )}
+      </div>
+      {rows.length === 0 ? (
+        <EmptyState size="sm" title={needle || status !== "all" ? "No quizzes match." : empty} />
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {rows.map((row) => (
+            <Card key={`${row.id}-${row.attempt_id ?? ""}`} row={row} tab={tab} now={now} />
+          ))}
+        </ul>
+      )}
+      {query.hasNextPage && (
+        <div className="flex justify-center">
+          <Button
+            variant="secondary"
+            loading={query.isFetchingNextPage}
+            onClick={() => void query.fetchNextPage()}
+          >
+            Load more
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function QuizzesHubPage() {
-  const [tab, setTab] = useState<HubTab>("available");
-  const [search, setSearch] = useState("");
-  const [course, setCourse] = useState<string | null>(null);
-  const [status, setStatus] = useState<HistoryStatus>("all");
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 60_000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const available = useAvailableQuizzes();
-  const history = useQuizHistory();
-
-  const availableItems = useMemo(
-    () => available.data?.pages.flatMap((page) => page.items) ?? [],
-    [available.data],
-  );
-  const historyItems = useMemo(
-    () => history.data?.pages.flatMap((page) => page.items) ?? [],
-    [history.data],
-  );
-
-  const filters = useMemo(() => ({ search, course }), [search, course]);
-  const tabs = useMemo(
-    () => splitQuizzes(filterAvailable(availableItems, filters), now),
-    [availableItems, filters, now],
-  );
-  const completed = useMemo(
-    () => filterHistory(historyItems, filters, status),
-    [historyItems, filters, status],
-  );
-
-  const unfiltered = useMemo(() => splitQuizzes(availableItems, now), [availableItems, now]);
-
-  const courses = useMemo(
-    () => courseOptions([...availableItems, ...historyItems]),
-    [availableItems, historyItems],
-  );
-  const hasFilter =
-    search.trim() !== "" || course !== null || (tab === "completed" && status !== "all");
-
-  function renderAvailableList(
-    query: typeof available,
-    items: typeof tabs.available,
-    emptyTitle: string,
-    emptyText: string,
-  ): ReactNode {
-    if (query.isPending) return <ListSkeleton />;
-    if (query.isError) {
-      return (
-        <ErrorState
-          size="sm"
-          description="Your quizzes could not load. Check your connection and try again."
-          onRetry={() => void query.refetch()}
-        />
-      );
-    }
-    return (
-      <>
-        {items.length === 0 ? (
-          <EmptyState
-            size="sm"
-            title={hasFilter ? "No quizzes match" : emptyTitle}
-            description={hasFilter ? "Try a different search or course." : emptyText}
-          />
-        ) : (
-          <ul className="flex flex-col gap-4">
-            {items.map((quiz) => (
-              <QuizCard key={quiz.id} quiz={quiz} now={now} />
-            ))}
-          </ul>
-        )}
-        <LoadMore
-          visible={query.hasNextPage}
-          loading={query.isFetchingNextPage}
-          onLoad={() => void query.fetchNextPage()}
-        />
-      </>
-    );
-  }
-
+  const [tab, setTab] = useState<Tab>("now");
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-heading text-[28px] font-bold leading-tight text-stroke md:text-[34px]">
-          Quizzes
-        </h1>
-        <p className="text-[16px] font-medium text-stroke/80">
-          Find a quiz to take, see what opens next, and review your results.
-        </p>
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
+      <header>
+        <h1 className="font-display text-[28px] leading-tight text-stroke">Quizzes</h1>
+        <p className="text-[14px] text-muted">Take a quiz or look back at your results.</p>
       </header>
-
-      <div className="flex flex-col gap-3 md:flex-row md:items-end">
-        <div className="md:flex-1">
-          <SearchField
-            aria-label="Search quizzes by title"
-            placeholder="Search by quiz title"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            onClear={() => setSearch("")}
-          />
-        </div>
-        <div className="md:w-56">
-          <Select
-            aria-label="Filter by course"
-            value={course ?? ALL_COURSES}
-            onValueChange={(value) => setCourse(value === ALL_COURSES ? null : value)}
-            options={[
-              { value: ALL_COURSES, label: "All courses" },
-              ...courses.map((title) => ({ value: title, label: title })),
-            ]}
-          />
-        </div>
-        {tab === "completed" && (
-          <div className="md:w-48">
-            <Select
-              aria-label="Filter by result"
-              value={status}
-              onValueChange={(value) => setStatus(value as HistoryStatus)}
-              options={STATUS_OPTIONS.map((option) => ({ ...option }))}
-            />
-          </div>
-        )}
-      </div>
-
-      <Tabs value={tab} onValueChange={(value) => setTab(value as HubTab)}>
+      <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <TabsList aria-label="Quiz status">
-          <TabsTrigger value="available">
-            {countLabel("Available now", available.data ? unfiltered.available.length : undefined)}
-          </TabsTrigger>
-          <TabsTrigger value="upcoming">
-            {countLabel("Upcoming", available.data ? unfiltered.upcoming.length : undefined)}
-          </TabsTrigger>
-          <TabsTrigger value="completed">
-            {countLabel("Completed", history.data ? historyItems.length : undefined)}
-          </TabsTrigger>
+          {TABS.map((entry) => (
+            <TabsTrigger key={entry.id} value={entry.id}>
+              {entry.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
-
-        <TabsContent value="available" className="mt-4">
-          {renderAvailableList(
-            available,
-            tabs.available,
-            "No quizzes to take right now",
-            "When your teacher opens a quiz, it will show up here.",
-          )}
-        </TabsContent>
-
-        <TabsContent value="upcoming" className="mt-4">
-          {renderAvailableList(
-            available,
-            tabs.upcoming,
-            "Nothing coming up",
-            "Quizzes that open later or are still locked will appear here.",
-          )}
-        </TabsContent>
-
-        <TabsContent value="completed" className="mt-4">
-          {history.isPending ? (
-            <ListSkeleton />
-          ) : history.isError ? (
-            <ErrorState
-              size="sm"
-              description="Your past quizzes could not load. Check your connection and try again."
-              onRetry={() => void history.refetch()}
-            />
-          ) : (
-            <>
-              {completed.length === 0 ? (
-                <EmptyState
-                  size="sm"
-                  title={hasFilter ? "No quizzes match" : "No quizzes taken yet."}
-                  description={
-                    hasFilter
-                      ? "Try a different search, course or result."
-                      : "Once you finish a quiz, your grade will show up here."
-                  }
-                />
-              ) : (
-                <ul className="flex flex-col gap-4">
-                  {completed.map((attempt) => (
-                    <HistoryRow key={attempt.attemptId} attempt={attempt} />
-                  ))}
-                </ul>
-              )}
-              <LoadMore
-                visible={history.hasNextPage}
-                loading={history.isFetchingNextPage}
-                onLoad={() => void history.fetchNextPage()}
-              />
-            </>
-          )}
-        </TabsContent>
+        {TABS.map((entry) => (
+          <TabsContent key={entry.id} value={entry.id} className="mt-4">
+            {tab === entry.id && <List tab={entry.id} source={entry.source} empty={entry.empty} />}
+          </TabsContent>
+        ))}
       </Tabs>
     </main>
   );

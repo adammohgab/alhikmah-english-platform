@@ -11,8 +11,6 @@ export interface MessageFeedProps {
   streamingLabel?: string | undefined;
 }
 
-const ASSISTANT_ROLE: TutorMessage["role"] = "assistant";
-
 export function MessageFeed({ messages, streamingLabel }: MessageFeedProps) {
   return (
     <ChatThread label="AI Tutor conversation" className="min-h-[420px] flex-1">
@@ -26,16 +24,12 @@ export function MessageFeed({ messages, streamingLabel }: MessageFeedProps) {
         />
       ))}
       {streamingLabel && (
-<<<<<<< HEAD
         <ChatMessage
           role={"assistant" as const}
           content={streamingLabel}
           streaming
           assistantName="Pip"
         />
-=======
-        <ChatMessage role={ASSISTANT_ROLE} content={streamingLabel} streaming assistantName="Pip" />
->>>>>>> db2dafd63d37787f56813d0a14ae4e00e5ee088c
       )}
     </ChatThread>
   );

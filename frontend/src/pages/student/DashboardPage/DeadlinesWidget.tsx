@@ -1,226 +1,190 @@
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, ChevronRight, ClipboardList, Clock, ListChecks } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle, Clock } from "lucide-react";
 import { z } from "zod";
-import { useAuth } from "@/app/providers/auth-context";
-import { normalizeApiError } from "@/shared/api/error-normalizer";
 import { supabase } from "@/shared/api/supabase";
-import { Card } from "@/shared/components/ui/Card";
+import { normalizeApiError } from "@/shared/api/error-normalizer";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { cn } from "@/shared/lib/utils/cn";
-import {
-  DEADLINE_LIMIT,
-  overdueAssignments,
-  toDeadlines,
-  type Deadline,
-  type RawDeadline,
-} from "./deadlines";
 
-/* Upcoming deadlines widget (STUDENT-SPEC ST-01, STU-CORE-02).
-   Assignments and quizzes the student still has to do, overdue ones first and then by due date.
-   Overdue items use the danger color with a warning icon and the word "Overdue" (never color
-   alone). Items due within 24 hours carry a pulsing clock tag. A row opens the assessment start
-   page directly: the quiz brief (ST-08) or the assignment details (ST-12). */
+/* Upcoming deadlines widget (STUDENT-SPEC ST-01 section 4, task STU-CORE-02).
+   Up to five assignments and quizzes from `my_deadlines`, soonest first, overdue ones on top in
+   the danger color with an alert line for work not yet handed in. Items due within 24 hours get
+   a pulsing clock tag. Each row opens the assessment's start page. */
 
-const HEADING_ID = "deadlines-heading";
+const LIMIT = 5;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-/* ---------- my_deadlines ---------- */
-
-const courseName = z.union([
-  z.string(),
-  z.object({ title: z.string() }).transform((value) => value.title),
-]);
-
-const deadlineRow = z.object({
+const deadline = z.object({
   kind: z.enum(["assignment", "quiz"]),
   id: z.string(),
   title: z.string(),
-  course: courseName.nullish(),
-  due_at: z.string().nullish(),
+  course: z.string().nullish(),
+  due_at: z.string(),
   status: z.string().nullish(),
   action: z.string().nullish(),
   overdue: z.boolean().nullish(),
 });
+export type Deadline = z.infer<typeof deadline>;
 
-interface RpcClient {
-  rpc: (
-    fn: string,
-    args: Record<string, unknown>,
-  ) => PromiseLike<{ data: unknown; error: { message: string; code?: string } | null }>;
+type LooseRpc = (
+  fn: string,
+  args: Record<string, unknown>,
+) => PromiseLike<{ data: unknown; error: { message: string; code?: string } | null }>;
+
+const DEADLINES_KEY = ["student", "deadlines"] as const;
+
+async function fetchDeadlines(): Promise<Deadline[]> {
+  const rpc = supabase.rpc.bind(supabase) as unknown as LooseRpc;
+  const { data, error } = await rpc("my_deadlines", { limit: LIMIT });
+  if (error) throw new Error(normalizeApiError(error).message);
+  const parsed = z.array(deadline).safeParse(data);
+  if (!parsed.success) throw new Error("Your deadlines came back in an unexpected shape.");
+  return parsed.data;
 }
 
-/* `my_deadlines({ limit })` returns rows of `{ kind, id, title, course, due_at, status, action,
-   overdue }` (API-CONTRACT section 3.1) and an empty list until assessments exist. */
-async function fetchMyDeadlines(): Promise<RawDeadline[]> {
-  const result = await (supabase as unknown as RpcClient).rpc("my_deadlines", {
-    limit: DEADLINE_LIMIT,
-  });
-  if (result.error) throw new Error(normalizeApiError(result.error).message);
-  return z
-    .array(deadlineRow)
-    .parse(result.data ?? [])
-    .map((row) => ({
-      kind: row.kind,
-      id: row.id,
-      title: row.title,
-      course: row.course ?? null,
-      dueAt: row.due_at ?? null,
-      status: row.status ?? null,
-      action: row.action ?? null,
-      overdue: row.overdue ?? null,
-    }));
-}
-
-function useMyDeadlines() {
-  const userId = useAuth().user?.id ?? null;
-  return useQuery({
-    queryKey: ["student-dashboard", "deadlines", userId],
-    queryFn: fetchMyDeadlines,
-    enabled: userId !== null,
-    refetchOnWindowFocus: true,
+/** Overdue first (oldest first), then upcoming, soonest first. */
+function chronological(items: Deadline[]): Deadline[] {
+  return [...items].sort((a, b) => {
+    const aOver = a.overdue === true ? 0 : 1;
+    const bOver = b.overdue === true ? 0 : 1;
+    return aOver - bOver || Date.parse(a.due_at) - Date.parse(b.due_at);
   });
 }
 
-/* ---------- Row ---------- */
+const startPage = (item: Deadline): string =>
+  item.kind === "quiz"
+    ? `/student/quizzes/${encodeURIComponent(item.id)}`
+    : `/student/assignments/${encodeURIComponent(item.id)}`;
 
-function DeadlineRow({ item }: { item: Deadline }) {
-  const Icon = item.kind === "quiz" ? ListChecks : ClipboardList;
-  const kindLabel = item.kind === "quiz" ? "Quiz" : "Assignment";
-
-  return (
-    <li>
-      <Link
-        to={item.path}
-        data-overdue={item.overdue ? "true" : undefined}
-        data-due-soon={item.dueSoon ? "true" : undefined}
-        className={cn(
-          "flex items-center gap-3 rounded-[16px] border-2 p-3 transition-colors",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke",
-          item.overdue
-            ? "border-danger-600 bg-danger-100"
-            : "border-stroke bg-white hover:bg-[var(--world-soft,#ffd93d)]/30",
-        )}
-      >
-        <Icon
-          aria-hidden="true"
-          size={22}
-          strokeWidth={2.5}
-          className={cn("shrink-0", item.overdue ? "text-danger-600" : "text-stroke")}
-        />
-
-        <div className="min-w-0 flex-1">
-          <p
-            className={cn(
-              "font-heading text-[16px] font-semibold leading-snug [overflow-wrap:anywhere]",
-              item.overdue ? "text-danger-600" : "text-stroke",
-            )}
-          >
-            {item.title}
-          </p>
-          <p className="text-[13px] text-muted [overflow-wrap:anywhere]">
-            {[kindLabel, item.course, item.statusLabel]
-              .filter((part) => part !== null)
-              .join(" · ")}
-          </p>
-          <p className="mt-1 flex flex-wrap items-center gap-2 text-[13px] font-bold">
-            {item.overdue && (
-              <AlertTriangle
-                aria-hidden="true"
-                size={14}
-                strokeWidth={2.5}
-                className="text-danger-600"
-              />
-            )}
-            {item.dueSoon && (
-              <span className="inline-flex items-center gap-1 rounded-full border-2 border-stroke bg-[#FFB020] px-2 py-0.5 text-[12px] text-stroke motion-safe:animate-pulse [[data-effects-tier=low]_&]:animate-none">
-                <Clock aria-hidden="true" size={12} strokeWidth={2.5} />
-                Due soon
-              </span>
-            )}
-            <span className={item.overdue ? "text-danger-600" : "text-stroke"}>
-              {item.dueText}
-            </span>
-          </p>
-        </div>
-
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border-2 border-stroke bg-[var(--world-main,#ffb84d)] px-3 py-1 text-[13px] font-bold text-stroke">
-          {item.actionLabel}
-          <ChevronRight aria-hidden="true" size={14} strokeWidth={2.5} />
-        </span>
-      </Link>
-    </li>
-  );
+function relative(dueAt: string, now: number): string {
+  const ms = Date.parse(dueAt) - now;
+  const abs = Math.abs(ms);
+  const hours = Math.floor(abs / 3_600_000);
+  const days = Math.floor(abs / DAY_MS);
+  const span =
+    abs < 3_600_000
+      ? `${Math.max(1, Math.floor(abs / 60_000))} min`
+      : days >= 1
+        ? `${days} day${days === 1 ? "" : "s"}`
+        : `${hours} h`;
+  return ms < 0 ? `Overdue by ${span}` : `Due in ${span}`;
 }
 
-/* ---------- Widget ---------- */
+const STATUS_LABEL: Record<string, string> = {
+  not_started: "Not started",
+  in_progress: "In progress",
+};
+const statusText = (status: string | null | undefined): string | null =>
+  status ? (STATUS_LABEL[status] ?? status.replace(/_/g, " ")) : null;
 
-export function DeadlinesWidget() {
+export function DeadlinesWidget({ className }: { className?: string | undefined }) {
+  const query = useQuery({ queryKey: DEADLINES_KEY, queryFn: fetchDeadlines });
   const [now, setNow] = useState(() => Date.now());
+
+  // Keeps "due in 3 h" and the 24-hour tag honest while the dashboard stays open.
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
 
-  const query = useMyDeadlines();
-  const items = useMemo(
-    () => (query.data === undefined ? [] : toDeadlines(query.data, now)),
-    [query.data, now],
-  );
-  const late = overdueAssignments(items);
+  const items = query.data ? chronological(query.data).slice(0, LIMIT) : [];
+  const overdue = items.filter((item) => item.overdue === true).length;
 
   return (
-    <Card as="section" aria-labelledby={HEADING_ID}>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id={HEADING_ID} className="font-heading text-[22px] font-bold text-stroke">
-          Upcoming deadlines
-        </h2>
-        <Link
-          to="/student/assignments"
-          className="text-[14px] font-bold text-stroke underline underline-offset-2"
-        >
-          All assignments
-        </Link>
-      </div>
+    <section
+      aria-labelledby="deadlines-heading"
+      className={cn(
+        "rounded-[20px] border-2 border-stroke bg-surface-0 p-4 shadow-[2px_2px_0px_#000]",
+        className,
+      )}
+    >
+      <h2 id="deadlines-heading" className="font-display mb-2 text-[20px] text-stroke">
+        Upcoming deadlines
+      </h2>
 
-      <div className="mt-3 flex flex-col gap-3">
-        {query.isPending ? (
-          <div className="flex flex-col gap-3" aria-busy="true">
-            <Skeleton shape="rect" className="h-16 w-full" label="Loading deadlines…" />
-            <Skeleton shape="rect" className="h-16 w-full" label={null} />
-          </div>
-        ) : query.isError ? (
-          <ErrorState
-            size="sm"
-            description="Your deadlines could not load. Check your connection and try again."
-            onRetry={() => void query.refetch()}
-          />
-        ) : items.length === 0 ? (
-          <EmptyState
-            size="sm"
-            title="Nothing due. Nice."
-            description="New work will show up here."
-          />
-        ) : (
-          <>
-            {late > 0 && (
-              <p className="flex items-center gap-2 text-[14px] font-bold text-danger-600">
-                <AlertTriangle aria-hidden="true" size={16} strokeWidth={2.5} />
-                {late === 1
-                  ? "1 assignment is overdue and not submitted."
-                  : `${late} assignments are overdue and not submitted.`}
-              </p>
-            )}
-            <ul className="flex flex-col gap-3">
-              {items.map((item) => (
-                <DeadlineRow key={item.key} item={item} />
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-    </Card>
+      {query.isPending ? (
+        <div className="flex flex-col gap-2" aria-busy="true">
+          {[0, 1, 2].map((n) => (
+            <Skeleton key={n} shape="rect" className="h-14 w-full" />
+          ))}
+        </div>
+      ) : query.isError ? (
+        <ErrorState
+          size="sm"
+          description="Your deadlines could not load. Check your connection and try again."
+          onRetry={() => void query.refetch()}
+        />
+      ) : items.length === 0 ? (
+        <EmptyState size="sm" title="Nothing due soon. Nice work!" />
+      ) : (
+        <>
+          {overdue > 0 && (
+            <p
+              role="status"
+              className="mb-2 flex items-center gap-2 rounded-[12px] border-2 border-danger-600 bg-danger-100 px-3 py-1 text-[14px] font-bold text-danger-600"
+            >
+              <AlertTriangle size={16} aria-hidden="true" />
+              {overdue} {overdue === 1 ? "item is" : "items are"} overdue and not handed in
+            </p>
+          )}
+          <ul className="flex flex-col">
+            {items.map((item) => {
+              const late = item.overdue === true;
+              const soon = !late && Date.parse(item.due_at) - now <= DAY_MS;
+              const status = statusText(item.status);
+              return (
+                <li key={`${item.kind}-${item.id}`}>
+                  <Link
+                    to={startPage(item)}
+                    className="flex items-center justify-between gap-3 rounded-[12px] p-2 hover:bg-[var(--world-soft,#ffd93d)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-stroke"
+                  >
+                    <span className="min-w-0">
+                      <span
+                        className={cn(
+                          "block font-bold [overflow-wrap:anywhere]",
+                          late ? "text-danger-600" : "text-stroke",
+                        )}
+                      >
+                        {item.title}
+                      </span>
+                      <span className="block text-[13px] text-muted">
+                        {item.kind === "quiz" ? "Quiz" : "Assignment"}
+                        {item.course ? ` | ${item.course}` : ""}
+                        {status ? ` | ${status}` : ""}
+                      </span>
+                    </span>
+                    <span
+                      className={cn(
+                        "flex shrink-0 items-center gap-1 rounded-full border-2 px-2 text-[12px] font-bold",
+                        late
+                          ? "border-danger-600 bg-danger-100 text-danger-600"
+                          : soon
+                            ? "border-stroke bg-[var(--world-main,#ffb84d)] text-stroke"
+                            : "border-stroke text-stroke",
+                      )}
+                    >
+                      {(late || soon) && (
+                        <Clock
+                          size={14}
+                          aria-hidden="true"
+                          className={soon ? "motion-safe:animate-pulse" : undefined}
+                        />
+                      )}
+                      {relative(item.due_at, now)}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
+    </section>
   );
 }
+
+export default DeadlinesWidget;

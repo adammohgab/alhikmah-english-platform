@@ -158,11 +158,6 @@ function toBadge(definition: DefinitionRow, data: AchievementsData): Badge {
       ? "progress"
       : "locked";
 
-<<<<<<< HEAD
-=======
-  const written = definition.description?.trim() ?? "";
-  const shownHint = hint ?? "";
->>>>>>> 5d1a7374a2357c6e9924d4cd06309ce4a9961e2a
   const description = hidden
     ? "Keep exploring to discover this badge."
     : (definition.description?.trim() ?? hint ?? "Keep learning to unlock this badge.");
