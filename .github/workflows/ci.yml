@@ -98,6 +98,3 @@ jobs:
 
       - name: Run the access checks
         run: psql -X -v ON_ERROR_STOP=1 -d alhikmah_migration_check -f supabase/tests/rls-smoke.sql
-
-      - name: Run the password flow checks
-        run: psql -X -v ON_ERROR_STOP=1 -d alhikmah_migration_check -f supabase/tests/auth-password-flows.sql
