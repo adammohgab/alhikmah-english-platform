@@ -5,7 +5,9 @@
 --    04-AUTH-AND-ACCESS section 5: admins see them, teachers see requests of their own students.
 -- 2. request_password_reset(...): the public entry point for that table. Always returns the same
 --    body, so nobody can learn which usernames exist. It limits one device to 3 requests per hour.
--- 3. complete_password_change(): clears must_change_password for the caller, only after the
+-- 3. password_change_gates: the hash of the temporary password an admin or teacher issued
+--    (041_auth_reset_password.sql). No client access.
+-- 4. complete_password_change(): clears must_change_password for the caller, only after the
 --    password was changed. The client cannot write the profile row (no update policy by design).
 
 -- ------------------------------------------------------------
@@ -63,6 +65,16 @@ create policy password_reset_requests_select_teacher on public.password_reset_re
   );
 
 -- ------------------------------------------------------------
+-- 1b. Gate rows (no policy on purpose: only the functions below and in 041 touch the table)
+-- ------------------------------------------------------------
+create table if not exists public.password_change_gates (
+  profile_id uuid primary key references public.profiles (id) on delete cascade,
+  temp_hash text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.password_change_gates enable row level security;
+
+-- ------------------------------------------------------------
 -- 2. request_password_reset
 -- ------------------------------------------------------------
 -- p_device_key is a random id the browser keeps. It is hashed here and never stored as sent.
@@ -89,6 +101,7 @@ declare
   v_device_hash text;
   v_ip_hash text;
   v_profile_id uuid;
+  v_request_id uuid;
   v_recent integer;
 begin
   if v_username !~ '^[a-z0-9._-]{3,32}$'
@@ -138,7 +151,31 @@ begin
   insert into public.password_reset_requests
     (username, full_name, grade_class, note, profile_id, device_hash, ip_hash)
   values
-    (v_username, v_full_name, v_grade_class, v_note, v_profile_id, v_device_hash, v_ip_hash);
+    (v_username, v_full_name, v_grade_class, v_note, v_profile_id, v_device_hash, v_ip_hash)
+  returning id into v_request_id;
+
+  -- Notify every active admin, and the teachers of the student's classes when the username
+  -- matched a student (04-AUTH-AND-ACCESS section 3). The text is the same either way.
+  insert into public.notifications (user_id, kind, title, body, payload, priority)
+  select recipients.user_id,
+         'password_reset_request',
+         'Password reset request',
+         v_full_name || ' asked for a password reset.',
+         jsonb_build_object('request_id', v_request_id),
+         'normal'
+  from (
+    select p.id as user_id
+    from public.profiles p
+    where p.role in ('admin', 'super_admin') and p.status = 'active'
+    union
+    select ct.teacher_id
+    from public.class_enrollments ce
+    join public.class_teachers ct on ct.class_id = ce.class_id
+    join public.profiles t on t.id = ct.teacher_id and t.status = 'active'
+    where v_profile_id is not null
+      and ce.student_id = v_profile_id
+      and ce.status = 'active'
+  ) recipients;
 
   return jsonb_build_object('ok', true);
 end;
@@ -162,16 +199,33 @@ set search_path = ''
 as $$
 declare
   v_user_id uuid := auth.uid();
+  v_hash text;
+  v_temp_hash text;
+  v_updated_at timestamptz;
+  v_last_sign_in timestamptz;
   v_changed boolean;
 begin
   if v_user_id is null then
     raise exception using errcode = 'P0001', message = 'unauthenticated';
   end if;
 
-  select u.updated_at > coalesce(u.last_sign_in_at, '-infinity'::timestamptz)
-    into v_changed
+  select u.encrypted_password, u.updated_at, u.last_sign_in_at
+    into v_hash, v_updated_at, v_last_sign_in
   from auth.users u
   where u.id = v_user_id;
+
+  select g.temp_hash into v_temp_hash
+  from public.password_change_gates g
+  where g.profile_id = v_user_id;
+
+  if found then
+    -- A temporary password was issued by reset_password(): the stored hash must be different.
+    v_changed := v_hash is distinct from v_temp_hash;
+  else
+    -- No temporary password on record (for example an account created by an import). A password
+    -- change updates the account row after the last sign-in, so that is the check.
+    v_changed := v_updated_at > coalesce(v_last_sign_in, '-infinity'::timestamptz);
+  end if;
 
   if not coalesce(v_changed, false) then
     raise exception using errcode = 'P0001', message = 'password_not_changed';
@@ -185,8 +239,10 @@ begin
   if not found then
     raise exception using errcode = 'P0001', message = 'account_inactive';
   end if;
+
+  delete from public.password_change_gates where profile_id = v_user_id;
 end;
 $$;
 
-revoke all on function public.complete_password_change() from public;
+revoke all on function public.complete_password_change() from public, anon;
 grant execute on function public.complete_password_change() to authenticated;

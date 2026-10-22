@@ -101,6 +101,10 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: Json;
       };
+      reset_password: {
+        Args: { p_profile_id: string; p_request_id?: string | null };
+        Returns: Json;
+      };
       request_password_reset: {
         Args: {
           p_username: string;
