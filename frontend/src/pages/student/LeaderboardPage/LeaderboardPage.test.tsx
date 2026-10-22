@@ -4,9 +4,26 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context";
+import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import LeaderboardPage from "./index";
 
+<<<<<<< HEAD
 type Result = { data: unknown; error: { message: string } | null };
+=======
+const sound: SoundContextValue = {
+  play: vi.fn(),
+  volume: 0.35,
+  setVolume: vi.fn(),
+  muted: false,
+  setMuted: vi.fn(),
+  toggleMute: vi.fn(),
+};
+
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
+>>>>>>> 8cf1e832d340894eebd56084815b61dded1212a9
 
 const enrollments: { current: Result } = { current: { data: [], error: null } };
 const boards: Record<string, Result> = {};
@@ -62,11 +79,13 @@ function renderPage() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
-      <AuthContext.Provider value={auth}>
-        <MemoryRouter>
-          <LeaderboardPage />
-        </MemoryRouter>
-      </AuthContext.Provider>
+      <SoundContext.Provider value={sound}>
+        <AuthContext.Provider value={auth}>
+          <MemoryRouter>
+            <LeaderboardPage />
+          </MemoryRouter>
+        </AuthContext.Provider>
+      </SoundContext.Provider>
     </QueryClientProvider>,
   );
 }

@@ -109,18 +109,18 @@ function Poster({ card, size }: { card: GameCard; size: "md" | "lg" }) {
 function SkillChips({ skills }: { skills: SkillId[] }) {
   if (skills.length === 0) return null;
   return (
-    <ul className="flex flex-wrap gap-1.5" aria-label="Skills">
+    <div className="flex flex-wrap gap-1.5" aria-label="Skills">
       {skills.map((id) => {
         const skill = skillById(id);
         return (
-          <li key={id}>
+          <span key={id}>
             <Chip size="sm" world={skill.world}>
               {skill.label}
             </Chip>
-          </li>
+          </span>
         );
       })}
-    </ul>
+    </div>
   );
 }
 
