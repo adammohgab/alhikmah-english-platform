@@ -15,6 +15,7 @@ import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { Tooltip } from "@/shared/components/ui/Tooltip";
 import { STUDENT_PROFILE_KEY, fetchStudentProfile, levelProgress, updatePinnedBadges, xpAtLevel } from "./api";
 import type { ProfileBadge } from "./api";
+import AvatarStudioModal from "./AvatarStudioModal";
 
 const numberFormat = new Intl.NumberFormat("en-US");
 
@@ -123,6 +124,7 @@ export default function ProfilePage() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [pinDialogOpen, setPinDialogOpen] = useState(false);
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
 
   const query = useQuery({
     queryKey: [STUDENT_PROFILE_KEY, studentId],
@@ -178,6 +180,9 @@ export default function ProfilePage() {
               {profile.className && <span className="inline-flex items-center gap-2 rounded-full border-2 border-stroke bg-white px-3 py-1.5 text-sm font-semibold"><CalendarDays size={16} aria-hidden="true" />{profile.className}</span>}
               <span className="inline-flex items-center gap-2 rounded-full border-2 border-stroke bg-white px-3 py-1.5 text-sm font-semibold"><Flame size={16} aria-hidden="true" />{profile.currentStreak} day streak</span>
             </div>
+            <div className="mt-4 flex justify-center sm:justify-start">
+              <Button onClick={() => setAvatarDialogOpen(true)}><PencilLine size={17} aria-hidden="true" /> Edit avatar</Button>
+            </div>
           </div>
           <div className="w-full max-w-xs rounded-2xl border-2 border-stroke bg-white p-4 sm:w-44">
             <div className="flex items-center justify-between text-xs font-bold"><span>LEVEL PROGRESS</span><span>{Math.round(progress)}%</span></div>
@@ -203,6 +208,13 @@ export default function ProfilePage() {
       </section>
 
       <PinnedBadgesDialog open={pinDialogOpen} onOpenChange={setPinDialogOpen} badges={profile.badges} pinnedIds={pinnedIds} busy={pinMutation.isPending} onSave={(ids) => pinMutation.mutate(ids)} />
+      <AvatarStudioModal
+        open={avatarDialogOpen}
+        onOpenChange={setAvatarDialogOpen}
+        currentLevel={profile.currentLevel}
+        avatarUrl={profile.avatarUrl}
+        onSaved={() => void queryClient.invalidateQueries({ queryKey: [STUDENT_PROFILE_KEY, studentId] })}
+      />
     </main>
   );
 }
