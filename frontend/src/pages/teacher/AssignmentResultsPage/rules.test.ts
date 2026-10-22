@@ -16,7 +16,14 @@ describe("results rules", () => {
       row({ status: "graded", released: false }),
       row({ status: "graded", released: true }),
     ]);
-    expect(s).toMatchObject({ total: 4, notStarted: 1, submitted: 1, graded: 2, late: 1, unreleased: 1 });
+    expect(s).toMatchObject({
+      total: 4,
+      notStarted: 1,
+      submitted: 1,
+      graded: 2,
+      late: 1,
+      unreleased: 1,
+    });
   });
   it("escapes CSV cells and blocks formulas", () => {
     expect(csvCell('say "hi", ok')).toBe('"say ""hi"", ok"');

@@ -7,9 +7,6 @@ import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import LeaderboardPage from "./index";
 
-<<<<<<< HEAD
-type Result = { data: unknown; error: { message: string } | null };
-=======
 const sound: SoundContextValue = {
   play: vi.fn(),
   volume: 0.35,
@@ -23,7 +20,6 @@ interface Result {
   data: unknown;
   error: { message: string } | null;
 }
->>>>>>> 8cf1e832d340894eebd56084815b61dded1212a9
 
 const enrollments: { current: Result } = { current: { data: [], error: null } };
 const boards: Record<string, Result> = {};
@@ -125,8 +121,8 @@ describe("LeaderboardPage", () => {
     const list = screen.getByRole("list", { name: "Ranking" });
     const rows = within(list).getAllByRole("listitem");
     expect(rows).toHaveLength(2);
-    expect(within(rows[0] as HTMLElement).getByText("Karim")).toBeInTheDocument();
-    expect(within(rows[1] as HTMLElement).getByText("Sara")).toBeInTheDocument();
+    expect(within(rows[0]!).getByText("Karim")).toBeInTheDocument();
+    expect(within(rows[1]!).getByText("Sara")).toBeInTheDocument();
   });
 
   it("asks for this week first and pins the student's standing", async () => {

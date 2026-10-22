@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
-import logo from "@/shared/assets/logo.png";
+import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
 
 const NAV_LINKS = [
   { label: "Courses", to: "/courses" },
@@ -51,14 +51,16 @@ export function Navbar({ hidden, solid }: NavbarProps) {
         )}
       >
         <div className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center" aria-label="Al Hikmah Private School home">
-            <img
-              src={logo}
-              alt="Al Hikmah Private School"
-              className="h-11 w-auto sm:h-12"
-              draggable={false}
-            />
-          </Link>
+          {SCHOOL_LOGO_SRC !== null && (
+            <Link to="/" className="flex items-center" aria-label="Al Hikmah Private School home">
+              <img
+                src={SCHOOL_LOGO_SRC}
+                alt="Al Hikmah Private School"
+                className="h-11 w-auto sm:h-12"
+                draggable={false}
+              />
+            </Link>
+          )}
 
           <ul className="hidden items-center gap-7 lg:flex">
             {NAV_LINKS.map((link) => (
