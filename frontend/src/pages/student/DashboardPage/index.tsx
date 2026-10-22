@@ -3,14 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/app/providers/auth-context";
 import { ContinueLearningCard } from "./ContinueLearningCard";
 import { DailyXpCard } from "./DailyXpCard";
+import { DeadlinesWidget } from "./DeadlinesWidget";
 import { GreetingHero } from "./GreetingHero";
+import { QuestsWidget } from "./QuestsWidget";
 import { fetchDailyXp, fetchDashboardProfile, fetchResume } from "./api";
 import { firstNameOf, greetingFor, schoolHour } from "./rules";
 import { useStudentStats } from "./useStudentStats";
 
 /* Student Dashboard (STUDENT-SPEC ST-01, STU-CORE-01).
    Greeting hero with the level badge and avatar, the Continue Learning card that opens the
-   right lesson, and the daily XP goal bar. Each block loads and fails on its own, so one slow
+   right lesson, and the daily XP goal bar, plus the side widgets of STU-CORE-02 (upcoming
+   deadlines and today's daily quests). Each block loads and fails on its own, so one slow
    or failed request never blanks the page. */
 
 export default function DashboardPage() {
@@ -67,6 +70,11 @@ export default function DashboardPage() {
           failed={dailyXp.isError}
           onRetry={() => void dailyXp.refetch()}
         />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <QuestsWidget />
+        <DeadlinesWidget />
       </div>
     </main>
   );
