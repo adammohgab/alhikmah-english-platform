@@ -133,7 +133,11 @@ export default function AiTutorPage() {
                 Quick prompts
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                {["Explain this rule", "Give me an example", "Test my knowledge"].map((prompt) => (
+                {[
+                  "Explain this rule",
+                  "Give me an example",
+                  "Test my knowledge",
+                ].map((prompt) => (
                   <button
                     key={prompt}
                     type="button"
