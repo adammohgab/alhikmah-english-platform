@@ -1,0 +1,35 @@
+name: tmp-prettier
+on:
+  push:
+    branches: ["tmp/prettier-debug"]
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write .
+      - name: Commit formatted files
+        working-directory: .
+        run: |
+          git config user.name "format-bot"
+          git config user.email "format-bot@users.noreply.github.com"
+          git status --short
+          if [ -n "$(git status --porcelain -- frontend)" ]; then
+            git add frontend
+            git commit -m "tmp: prettier output"
+            git push origin HEAD:tmp/prettier-debug
+          fi
