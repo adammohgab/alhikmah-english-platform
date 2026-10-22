@@ -111,6 +111,13 @@ export interface Database {
         };
         Returns: Json;
       };
+<<<<<<< HEAD
+=======
+      reset_password: {
+        Args: { p_profile_id: string; p_request_id?: string | null };
+        Returns: Json;
+      };
+>>>>>>> db2dafd63d37787f56813d0a14ae4e00e5ee088c
     };
     Enums: {
       user_role: DbUserRole;

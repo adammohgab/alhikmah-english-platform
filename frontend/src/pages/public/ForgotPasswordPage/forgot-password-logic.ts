@@ -117,10 +117,7 @@ export function recordDeviceRequest(now: number = Date.now()): void {
 /* ---------- Submit ---------- */
 
 export type ResetOutcome =
-  | { kind: "sent" }
-  | { kind: "rate-limited" }
-  | { kind: "network" }
-  | { kind: "failed" };
+  { kind: "sent" } | { kind: "rate-limited" } | { kind: "network" } | { kind: "failed" };
 
 export const DEVICE_KEY_STORAGE_KEY = "alhikmah:device-key";
 

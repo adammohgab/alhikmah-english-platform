@@ -72,11 +72,14 @@ function GroupRow({ group, busy, onPractice }: GroupRowProps) {
       void queryClient.invalidateQueries({ queryKey: LIBRARY_KEY });
       toast.show({
         title: result.added > 0 ? "Added to your library" : "Already in your library",
-        description: result.added > 0 ? `${result.added} new ${result.added === 1 ? "word" : "words"} added.` : undefined,
+        ...(result.added > 0
+          ? { description: `${result.added} new ${result.added === 1 ? "word" : "words"} added.` }
+          : {}),
         type: "success",
       });
     },
-    onError: (error: Error) => toast.show({ title: "Could not add words", description: error.message, type: "error" }),
+    onError: (error: Error) =>
+      toast.show({ title: "Could not add words", description: error.message, type: "error" }),
   });
 
   return (
@@ -88,7 +91,12 @@ function GroupRow({ group, busy, onPractice }: GroupRowProps) {
             {group.count} {group.count === 1 ? "word" : "words"}
           </p>
         </div>
-        <Button variant="outline" size="sm" aria-expanded={open} onClick={() => setOpen((value) => !value)}>
+        <Button
+          variant="outline"
+          size="sm"
+          aria-expanded={open}
+          onClick={() => setOpen((value) => !value)}
+        >
           {open ? "Hide words" : "Learn"}
         </Button>
         <Button size="sm" loading={busy} onClick={() => onPractice(group)}>
@@ -99,7 +107,13 @@ function GroupRow({ group, busy, onPractice }: GroupRowProps) {
       {open && (
         <div className="mt-4 flex flex-col gap-3">
           {words.isPending && <ListSkeleton />}
-          {words.isError && <ErrorState size="sm" description={words.error.message} onRetry={() => void words.refetch()} />}
+          {words.isError && (
+            <ErrorState
+              size="sm"
+              description={words.error.message}
+              onRetry={() => void words.refetch()}
+            />
+          )}
           {words.data && (
             <>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -108,7 +122,12 @@ function GroupRow({ group, busy, onPractice }: GroupRowProps) {
                 ))}
               </div>
               <div>
-                <Button variant="secondary" size="sm" loading={add.isPending} onClick={() => add.mutate()}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  loading={add.isPending}
+                  onClick={() => add.mutate()}
+                >
                   Add all to my library
                 </Button>
               </div>
@@ -131,12 +150,19 @@ export default function VocabularyPracticePage() {
   const [startingUnit, setStartingUnit] = useState<string | null>(null);
 
   const library = useQuery({ queryKey: LIBRARY_KEY, queryFn: fetchLibrary });
-  const groups = useQuery({ queryKey: GROUPS_KEY, queryFn: fetchVocabGroups, enabled: tab === "lessons" });
+  const groups = useQuery({
+    queryKey: GROUPS_KEY,
+    queryFn: fetchVocabGroups,
+    enabled: tab === "lessons",
+  });
 
   const words = useMemo(() => library.data ?? [], [library.data]);
   const topics = useMemo(() => topicsOf(words), [words]);
   const counts = useMemo(() => countByMastery(words), [words]);
-  const visible = useMemo(() => filterWords(words, { search, mastery, topic }), [words, search, mastery, topic]);
+  const visible = useMemo(
+    () => filterWords(words, { search, mastery, topic }),
+    [words, search, mastery, topic],
+  );
   const dueCount = useMemo(() => {
     const now = Date.now();
     return words.filter((word) => isDue(word, now)).length;
@@ -145,13 +171,16 @@ export default function VocabularyPracticePage() {
   const star = useMutation({
     mutationFn: (word: LibraryWord) => setStarred(word.id, !word.starred),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: LIBRARY_KEY }),
-    onError: (error: Error) => toast.show({ title: "Could not update the star", description: error.message, type: "error" }),
+    onError: (error: Error) =>
+      toast.show({ title: "Could not update the star", description: error.message, type: "error" }),
   });
 
   const applyReview = (wordId: string, outcome: ReviewOutcome) => {
     queryClient.setQueryData<LibraryWord[]>(LIBRARY_KEY, (current) =>
       current?.map((word) =>
-        word.id === wordId ? { ...word, mastery: outcome.mastery, nextReviewAt: outcome.nextReviewAt } : word,
+        word.id === wordId
+          ? { ...word, mastery: outcome.mastery, nextReviewAt: outcome.nextReviewAt }
+          : word,
       ),
     );
   };
@@ -164,14 +193,22 @@ export default function VocabularyPracticePage() {
         queryFn: () => fetchGroupWords(group.unitId),
       });
       await addWordsToLibrary(lessonWords);
-      const fresh = await queryClient.fetchQuery({ queryKey: LIBRARY_KEY, queryFn: fetchLibrary, staleTime: 0 });
+      const fresh = await queryClient.fetchQuery({
+        queryKey: LIBRARY_KEY,
+        queryFn: fetchLibrary,
+        staleTime: 0,
+      });
       const ids = new Set(lessonWords.map((item) => item.id));
       const set = buildSession(
         fresh.filter((word) => word.vocabItemId !== null && ids.has(word.vocabItemId)),
         Date.now(),
       );
       if (set.length === 0) {
-        toast.show({ title: "No words to practice", description: "This unit has no words yet.", type: "info" });
+        toast.show({
+          title: "No words to practice",
+          description: "This unit has no words yet.",
+          type: "info",
+        });
         return;
       }
       setSession(set);
@@ -195,7 +232,9 @@ export default function VocabularyPracticePage() {
   }
 
   const unitQuery = search.trim().toLowerCase();
-  const shownGroups = (groups.data ?? []).filter((group) => group.title.toLowerCase().includes(unitQuery));
+  const shownGroups = (groups.data ?? []).filter((group) =>
+    group.title.toLowerCase().includes(unitQuery),
+  );
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-5 p-4">
@@ -215,13 +254,17 @@ export default function VocabularyPracticePage() {
           placeholder="Search words and meanings"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          clearable
           onClear={() => setSearch("")}
         />
 
         <TabsContent value="library" className="flex flex-col gap-4">
           {library.isPending && <ListSkeleton />}
-          {library.isError && <ErrorState description={library.error.message} onRetry={() => void library.refetch()} />}
+          {library.isError && (
+            <ErrorState
+              description={library.error.message}
+              onRetry={() => void library.refetch()}
+            />
+          )}
           {library.data && words.length === 0 && (
             <EmptyState
               title="Your library is empty"
@@ -234,14 +277,15 @@ export default function VocabularyPracticePage() {
             <>
               <div className="flex flex-wrap items-center gap-3">
                 <p className="flex-1 font-body text-[14px] text-muted">
-                  {words.length} {words.length === 1 ? "word" : "words"} · {counts.learning} learning · {counts.mastered} mastered ·{" "}
-                  {dueCount} to review
+                  {words.length} {words.length === 1 ? "word" : "words"} · {counts.learning}{" "}
+                  learning · {counts.mastered} mastered · {dueCount} to review
                 </p>
                 <Button
                   disabled={visible.length === 0}
                   onClick={() => setSession(buildSession(visible, Date.now()))}
                 >
-                  Practice {Math.min(visible.length, 20)} {Math.min(visible.length, 20) === 1 ? "card" : "cards"}
+                  Practice {Math.min(visible.length, 20)}{" "}
+                  {Math.min(visible.length, 20) === 1 ? "card" : "cards"}
                 </Button>
               </div>
 
@@ -253,12 +297,20 @@ export default function VocabularyPracticePage() {
               />
 
               {topics.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by topic">
+                <div
+                  className="flex flex-wrap items-center gap-2"
+                  role="group"
+                  aria-label="Filter by topic"
+                >
                   <Chip selected={topic === null} onClick={() => setTopic(null)}>
                     All topics
                   </Chip>
                   {topics.map((name) => (
-                    <Chip key={name} selected={topic === name} onClick={() => setTopic(topic === name ? null : name)}>
+                    <Chip
+                      key={name}
+                      selected={topic === name}
+                      onClick={() => setTopic(topic === name ? null : name)}
+                    >
                       {name}
                     </Chip>
                   ))}
@@ -266,7 +318,11 @@ export default function VocabularyPracticePage() {
               )}
 
               {visible.length === 0 ? (
-                <EmptyState size="sm" title="No matching words" description="Try a different search or filter." />
+                <EmptyState
+                  size="sm"
+                  title="No matching words"
+                  description="Try a different search or filter."
+                />
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {visible.map((item) => (
@@ -292,9 +348,15 @@ export default function VocabularyPracticePage() {
 
         <TabsContent value="lessons" className="flex flex-col gap-4">
           {groups.isPending && <ListSkeleton />}
-          {groups.isError && <ErrorState description={groups.error.message} onRetry={() => void groups.refetch()} />}
+          {groups.isError && (
+            <ErrorState description={groups.error.message} onRetry={() => void groups.refetch()} />
+          )}
           {groups.data && shownGroups.length === 0 && (
-            <EmptyState size="sm" title="No lesson words found" description="Words from your units will show up here." />
+            <EmptyState
+              size="sm"
+              title="No lesson words found"
+              description="Words from your units will show up here."
+            />
           )}
           {shownGroups.length > 0 && (
             <ul className="flex flex-col gap-4">
