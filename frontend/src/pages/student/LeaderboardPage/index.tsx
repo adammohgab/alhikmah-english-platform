@@ -194,7 +194,7 @@ export default function LeaderboardPage() {
 
   const classesQuery = useQuery({
     queryKey: [LEADERBOARD_CLASSES_KEY, studentId],
-    queryFn: () => fetchMyClasses(studentId as string),
+    queryFn: () => fetchMyClasses(studentId!),
     enabled: studentId !== undefined,
   });
 
@@ -204,7 +204,7 @@ export default function LeaderboardPage() {
 
   const boardQuery = useQuery({
     queryKey: [LEADERBOARD_KEY, classId, timeframe],
-    queryFn: () => fetchLeaderboard(classId as string, timeframe),
+    queryFn: () => fetchLeaderboard(classId!, timeframe),
     enabled: classId !== undefined,
   });
 
@@ -230,7 +230,7 @@ export default function LeaderboardPage() {
         onRetry={retry}
       />
     );
-  } else if (classes && classes.length === 0) {
+  } else if (classes?.length === 0) {
     body = (
       <EmptyState
         size="lg"

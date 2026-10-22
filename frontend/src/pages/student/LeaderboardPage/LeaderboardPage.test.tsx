@@ -109,8 +109,8 @@ describe("LeaderboardPage", () => {
     const list = screen.getByRole("list", { name: "Ranking" });
     const rows = within(list).getAllByRole("listitem");
     expect(rows).toHaveLength(2);
-    expect(within(rows[0] as HTMLElement).getByText("Karim")).toBeInTheDocument();
-    expect(within(rows[1] as HTMLElement).getByText("Sara")).toBeInTheDocument();
+    expect(within(rows[0]!).getByText("Karim")).toBeInTheDocument();
+    expect(within(rows[1]!).getByText("Sara")).toBeInTheDocument();
   });
 
   it("asks for this week first and pins the student's standing", async () => {
