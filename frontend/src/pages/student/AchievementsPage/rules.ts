@@ -160,7 +160,7 @@ function toBadge(definition: DefinitionRow, data: AchievementsData): Badge {
 
   const description = hidden
     ? "Keep exploring to discover this badge."
-    : (definition.description?.trim() ?? hint ?? "Keep learning to unlock this badge.");
+    : (definition.description?.trim() || hint || "Keep learning to unlock this badge.");
 
   return {
     id: definition.id,

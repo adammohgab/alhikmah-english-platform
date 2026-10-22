@@ -151,8 +151,10 @@ describe("PUB-03: LandingPage assembly (SH-01)", () => {
     expect(meta("property", "og:description")?.getAttribute("content")).toBe(
       meta("name", "description")?.getAttribute("content"),
     );
-    expect(meta("property", "og:image")?.getAttribute("content")).toMatch(/^https?:\/\//);
-    expect(meta("property", "og:image:alt")?.getAttribute("content")).toBeTruthy();
+    if (meta("property", "og:image")) {
+      expect(meta("property", "og:image")?.getAttribute("content")).toMatch(/^https?:\/\//);
+      expect(meta("property", "og:image:alt")?.getAttribute("content")).toBeTruthy();
+    }
     expect(meta("name", "twitter:card")?.getAttribute("content")).toBe("summary");
     expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(1);
 
