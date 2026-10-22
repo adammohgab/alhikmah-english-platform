@@ -29,112 +29,7 @@ const CONTEXT_MESSAGES: Record<PipCompanionContext, string> = {
   general: "Every small step counts. Keep going — you've got this!",
 };
 
-<<<<<<< HEAD
 /** A small, dismissible student companion. It uses the existing Pip sticker artwork. */
-=======
-function wholeCount(value: number | undefined): number {
-  return value !== undefined && Number.isFinite(value) && value > 0 ? Math.floor(value) : 0;
-}
-
-function pickAdvice(
-  props: Pick<
-    PipCompanionProps,
-    "context" | "xpToNextLevel" | "streakDays" | "doneToday" | "lessonHint"
-  >,
-): Advice {
-  const { context, doneToday, lessonHint } = props;
-  const days = wholeCount(props.streakDays);
-  const xp = wholeCount(props.xpToNextLevel);
-
-  if (days > 0 && doneToday === false) {
-    return {
-      id: `streak:${days}`,
-      kind: "streak",
-      text: `Your ${days}-day streak is waiting! Finish one lesson, activity, quiz or practice set today to keep it.`,
-    };
-  }
-  if (xp > 0 && xp <= LEVEL_NUDGE_MAX_XP) {
-    return {
-      id: `level:${xp}`,
-      kind: "level",
-      text: `You are ${xp} XP away from leveling up!`,
-    };
-  }
-  const hint = lessonHint?.trim();
-  if (context === "lesson" && hint) {
-    return { id: `hint:${hint}`, kind: "hint", text: hint };
-  }
-  if (days === 0 && doneToday === false) {
-    return {
-      id: "start",
-      kind: "start",
-      text: "Start a streak today: finish one lesson, activity, quiz or practice set.",
-    };
-  }
-  if (doneToday === true) {
-    return {
-      id: "done",
-      kind: "done",
-      text: "Great work today! Come back tomorrow to keep your streak growing.",
-    };
-  }
-  return { id: `cheer:${context}`, kind: "cheer", text: CHEER[context] };
-}
-
-/* ---- Session persistence ----
-   Storage can be unavailable (private mode, blocked cookies). Then Pip simply stays hidden
-   only until the page reloads: the in-memory state still works, so nothing is lost. */
-
-const HIDDEN_KEY = "alhikmah.pip.hidden";
-
-function readHidden(): boolean {
-  try {
-    return window.sessionStorage.getItem(HIDDEN_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function persistHidden(): boolean {
-  try {
-    window.sessionStorage.setItem(HIDDEN_KEY, "1");
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/* ---- Styles ---- */
-
-const STYLE_ID = "pip-companion-styles";
-
-const STYLES = `
-.pip-bob{animation:pip-bob 3.2s ease-in-out infinite}
-.pip-bob--alert{animation:pip-wiggle 3.2s ease-in-out infinite}
-.pip-bubble{transform-origin:100% 100%;animation:pip-pop 0.18s cubic-bezier(0.34,1.56,0.64,1) 1}
-@keyframes pip-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes pip-wiggle{0%,60%,100%{transform:rotate(0deg)}68%{transform:rotate(-8deg)}76%{transform:rotate(7deg)}84%{transform:rotate(-4deg)}92%{transform:rotate(0deg)}}
-@keyframes pip-pop{0%{opacity:0;transform:scale(0.92)}100%{opacity:1;transform:scale(1)}}
-[data-effects-tier="low"] .pip-bob,[data-effects-tier="low"] .pip-bubble{animation:none}
-@media (prefers-reduced-motion:reduce){.pip-bob,.pip-bubble{animation:none}}
-`;
-
-function usePipStyles(): void {
-  useInsertionEffect(() => {
-    if (document.getElementById(STYLE_ID)) return;
-    const style = document.createElement("style");
-    style.id = STYLE_ID;
-    style.textContent = STYLES;
-    document.head.appendChild(style);
-  }, []);
-}
-
-/* ---- Component ---- */
-
-const ICON_BUTTON =
-  "inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-stroke bg-surface-0 text-stroke outline-none transition-transform hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-stroke focus-visible:ring-offset-2";
-
->>>>>>> 396e3f56b4bb9fc3d6568f7fba82333a823da2b2
 export function PipCompanion({
   context = "general",
   xpToNextLevel,
@@ -169,13 +64,8 @@ export function PipCompanion({
   if (disabled || dismissed) return null;
 
   return (
-<<<<<<< HEAD
     <aside
       aria-label="Pip learning companion"
-=======
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- only listens for Escape bubbling up from the focusable controls inside
-    <div
->>>>>>> 396e3f56b4bb9fc3d6568f7fba82333a823da2b2
       className={cn(
         "pointer-events-none fixed bottom-20 right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 sm:bottom-6 sm:right-6",
         className,

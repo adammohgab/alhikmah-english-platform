@@ -47,7 +47,7 @@ export async function fetchAssignmentDetails(
   signal?: AbortSignal,
 ): Promise<AssignmentDetails> {
   const response = await fetch(`/api/student/assignments/${encodeURIComponent(assignmentId)}`, {
-    signal,
+    ...(signal ? { signal } : {}),
     credentials: "include",
   });
   if (response.status === 404) throw new Error("NOT_FOUND");

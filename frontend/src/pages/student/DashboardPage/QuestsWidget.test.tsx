@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ToastContext, type ToastContextValue } from "@/app/providers/toast-context";
+import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import { QuestsWidget } from "./QuestsWidget";
 
 interface Reply {
@@ -28,6 +29,14 @@ vi.mock("@/shared/api/supabase", () => ({
 
 const show = vi.fn(() => "toast");
 const toast: ToastContextValue = { show, dismiss: vi.fn(), dismissAll: vi.fn(), toasts: [] };
+const sound: SoundContextValue = {
+  play: vi.fn(),
+  volume: 0.35,
+  setVolume: vi.fn(),
+  muted: false,
+  setMuted: vi.fn(),
+  toggleMute: vi.fn(),
+};
 
 function instance(
   id: string,
@@ -57,9 +66,11 @@ function renderWidget() {
   return render(
     <QueryClientProvider client={client}>
       <ToastContext.Provider value={toast}>
-        <MemoryRouter>
-          <QuestsWidget />
-        </MemoryRouter>
+        <SoundContext.Provider value={sound}>
+          <MemoryRouter>
+            <QuestsWidget />
+          </MemoryRouter>
+        </SoundContext.Provider>
       </ToastContext.Provider>
     </QueryClientProvider>,
   );
@@ -87,18 +98,23 @@ describe("QuestsWidget", () => {
     renderWidget();
     expect(await screen.findByText("Finish a lesson")).toBeVisible();
     expect(screen.getByText("Play a game")).toBeVisible();
-    expect(screen.getAllByText("3/3")).toHaveLength(2);
-    expect(screen.getByText("1/3")).toBeVisible();
-    expect(
-      screen.getByRole("progressbar", { name: "Play a game progress" }),
-    ).toHaveAttribute("aria-valuenow", "1");
+    expect(screen.getAllByText("3 / 3")).toHaveLength(2);
+    expect(screen.getByText("1 / 3")).toBeVisible();
+    expect(screen.getByRole("progressbar", { name: "Play a game" })).toHaveAttribute(
+      "aria-valuenow",
+      "1",
+    );
     expect(screen.getByText("1 of 3 claimed")).toBeVisible();
   });
 
   it("offers a quick claim only on a completed, unclaimed quest", async () => {
     renderWidget();
     await screen.findByText("Finish a lesson");
-    expect(screen.getAllByRole("button", { name: /Claim reward/ })).toHaveLength(1);
+    expect(
+      screen
+        .getAllByRole("button", { name: /Claim reward/ })
+        .filter((button) => !button.hasAttribute("disabled")),
+    ).toHaveLength(1);
     expect(screen.getByRole("button", { name: "Claim reward: Finish a lesson" })).toBeVisible();
     expect(screen.getByText("Claimed")).toBeVisible();
   });
@@ -124,7 +140,7 @@ describe("QuestsWidget", () => {
     );
     await waitFor(() =>
       expect(show).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "reward", description: "+20 XP, +5 coins" }),
+        expect.objectContaining({ type: "reward", title: "+20 XP, +5 coins" }),
       ),
     );
     const row = screen.getByText("Finish a lesson").closest("li") as HTMLElement;
@@ -160,7 +176,7 @@ describe("QuestsWidget", () => {
   it("says so when there are no quests today", async () => {
     state.rows = [];
     renderWidget();
-    expect(await screen.findByText("No quests today")).toBeVisible();
+    expect(await screen.findByText(/No quests today/)).toBeVisible();
   });
 
   it("offers a retry when the quests cannot load", async () => {

@@ -32,20 +32,9 @@ interface SpeechResult {
   transcript: string;
 }
 
-<<<<<<< HEAD
 interface SpeechEvent {
   results: ArrayLike<ArrayLike<SpeechResult>>;
 }
-=======
-  useEffect(() => {
-    const hasSpeechRecognition =
-      typeof window !== "undefined" &&
-      (!!(window as typeof window & { SpeechRecognition?: unknown }).SpeechRecognition ||
-        !!(window as typeof window & { webkitSpeechRecognition?: unknown })
-          .webkitSpeechRecognition);
-    setSpeechReady(hasSpeechRecognition);
-  }, []);
->>>>>>> 396e3f56b4bb9fc3d6568f7fba82333a823da2b2
 
 interface SpeechErrorEvent {
   error: string;
@@ -199,18 +188,8 @@ export function TutorInputBar({
           aria-live="polite"
           aria-label={`${remaining} of ${dailyLimit} AI messages remaining today`}
         >
-<<<<<<< HEAD
           {remaining} / {dailyLimit} messages left today
         </span>
-=======
-          {listening ? (
-            <VolumeX size={16} aria-hidden="true" />
-          ) : (
-            <Volume2 size={16} aria-hidden="true" />
-          )}
-          {listening ? "Listening" : "Audio"}
-        </Button>
->>>>>>> 396e3f56b4bb9fc3d6568f7fba82333a823da2b2
       </div>
 
       <div className="flex flex-wrap gap-2" aria-label="Suggested prompts">

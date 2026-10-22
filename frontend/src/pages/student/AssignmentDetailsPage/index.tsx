@@ -2,7 +2,32 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAssignmentDetails } from "./api";
 import { formatDate, formatDuration, formatSize, formatWordTarget } from "./format";
 import type { AssignmentAttachment, AssignmentDetails } from "./types";
-import styles from "./AssignmentDetailsPage.module.css";
+import importedStyles from "./AssignmentDetailsPage.module.css";
+
+type StyleName =
+  | "page"
+  | "header"
+  | "section"
+  | "muted"
+  | "startRow"
+  | "primary"
+  | "secondary"
+  | "prose"
+  | "facts"
+  | "list"
+  | "attachments"
+  | "attachment"
+  | "attachmentHead"
+  | "attachmentName"
+  | "audio"
+  | "linkRow"
+  | "tableWrap"
+  | "table"
+  | "num"
+  | "criterionName"
+  | "criterionDesc"
+  | "srOnly";
+const styles = importedStyles as Record<StyleName, string>;
 
 /* Audio uploads do not guarantee caption tracks. */
 /* eslint-disable jsx-a11y/media-has-caption */

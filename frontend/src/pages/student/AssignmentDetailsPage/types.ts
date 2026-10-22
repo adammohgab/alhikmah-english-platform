@@ -5,8 +5,8 @@ export interface AssignmentAttachment {
   name: string;
   type: AttachmentType;
   url: string;
-  sizeBytes?: number;
-  durationSeconds?: number;
+  sizeBytes?: number | undefined;
+  durationSeconds?: number | undefined;
 }
 
 export interface RubricCriterion {
@@ -26,12 +26,12 @@ export interface AssignmentDraftSummary {
 export interface AssignmentDetails {
   id: string;
   title: string;
-  courseName?: string;
-  dueAt?: string;
+  courseName?: string | undefined;
+  dueAt?: string | undefined;
   prompt: string;
   formattingGuidelines: string[];
-  wordCount: { min?: number; max?: number };
+  wordCount: { min?: number | undefined; max?: number | undefined };
   attachments: AssignmentAttachment[];
   rubric: RubricCriterion[];
-  draft?: AssignmentDraftSummary | null;
+  draft?: AssignmentDraftSummary | null | undefined;
 }
