@@ -26,7 +26,7 @@ export function BadgeTile({ badge, onOpen }: { badge: Badge; onOpen: (badge: Bad
         onClick={() => onOpen(badge)}
         aria-label={`${badge.name}, ${stateLabel(badge)}${badge.pinned ? ", pinned" : ""}`}
         className={cn(
-          "flex h-full w-full flex-col items-center gap-2 rounded-[20px] border-2 border-stroke p-4 text-center shadow-retro-sm transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none",
+          "flex h-full w-full flex-col items-center gap-2 rounded-[20px] border-2 border-stroke p-4 text-center shadow-retro-sm transition-transform hover:-translate-y-0.5 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
           unlocked ? "bg-surface-0" : "bg-surface-100",
         )}
       >

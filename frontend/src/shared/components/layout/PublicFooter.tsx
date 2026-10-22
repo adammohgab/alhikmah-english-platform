@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
+import logo from "@/shared/assets/logo.png";
 import { getRoleHomePath } from "@/app/guards/guard-utils";
 import { useAuth } from "@/app/providers/auth-context";
 import { cn } from "@/shared/lib/utils/cn";
@@ -73,17 +73,9 @@ export function PublicFooter({ accreditation, className }: PublicFooterProps) {
       <div className="mx-auto w-full max-w-[1200px] px-4 py-10 sm:px-6">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="max-w-sm">
-            {SCHOOL_LOGO_SRC !== null && (
-              <div className="inline-block rounded-[12px] bg-surface-0 p-5">
-                <img
-                  src={SCHOOL_LOGO_SRC}
-                  alt={SCHOOL_NAME}
-                  width={221}
-                  height={48}
-                  className="h-12 w-auto"
-                />
-              </div>
-            )}
+            <div className="inline-block rounded-[12px] bg-surface-0 p-5">
+              <img src={logo} alt={SCHOOL_NAME} width={221} height={48} className="h-12 w-auto" />
+            </div>
             <p className="mt-2 font-heading text-[18px] font-semibold">{SCHOOL_NAME}</p>
             {accreditation !== undefined && accreditation !== null && (
               <p className="mt-1 font-body text-[14px] font-medium text-muted">{accreditation}</p>
