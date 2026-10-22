@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { CircleAlert, Info, TriangleAlert } from "lucide-react";
-import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
+import logo from "@/shared/assets/logo.png";
 import { getRoleHomePath } from "@/app/guards/guard-utils";
 import { useAuth } from "@/app/providers/auth-context";
 import { Button } from "@/shared/components/ui/Button";
@@ -281,11 +281,9 @@ export default function LoginPage() {
       <div className={CARD_COLUMN_CLASS}>
         <section aria-labelledby={headingId} className={CARD_CLASS}>
           <div className={BRAND_CLASS}>
-            {SCHOOL_LOGO_SRC !== null && (
-              <Link to={HOME_PATH} aria-label="Go to the home page" className={LOGO_LINK_CLASS}>
-                <img src={SCHOOL_LOGO_SRC} alt="" width={147} height={32} className="h-8 w-auto" />
-              </Link>
-            )}
+            <Link to={HOME_PATH} aria-label="Go to the home page" className={LOGO_LINK_CLASS}>
+              <img src={logo} alt="" width={147} height={32} className="h-8 w-auto" />
+            </Link>
             <span className={WORDMARK_CLASS}>English Platform</span>
           </div>
 

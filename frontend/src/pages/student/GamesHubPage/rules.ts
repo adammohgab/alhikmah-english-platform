@@ -22,7 +22,14 @@ export const SKILLS: readonly Skill[] = [
 ];
 
 export type GameIconId =
-  "match" | "builder" | "grammar" | "reading" | "sentence" | "spelling" | "quiz" | "arcade";
+  | "match"
+  | "builder"
+  | "grammar"
+  | "reading"
+  | "sentence"
+  | "spelling"
+  | "quiz"
+  | "arcade";
 
 interface GamePresentation {
   skills: readonly SkillId[];
@@ -48,7 +55,7 @@ export function presentationFor(slug: string): GamePresentation {
 }
 
 export const skillById = (id: SkillId): Skill =>
-  SKILLS.find((skill) => skill.id === id) ?? SKILLS[0]!;
+  SKILLS.find((skill) => skill.id === id) ?? (SKILLS[0] as Skill);
 
 /** The day key the server uses for the featured game: the UTC calendar day. */
 export const utcDayKey = (date: Date): string => date.toISOString().slice(0, 10);
@@ -140,7 +147,8 @@ const scoreFormat = new Intl.NumberFormat("en-US");
 export const formatScore = (score: number): string => scoreFormat.format(Math.round(score));
 
 /** 1.5 -> "1.5x", 2 -> "2x". */
-export const formatMultiplier = (multiplier: number): string => `${Number(multiplier.toFixed(2))}x`;
+export const formatMultiplier = (multiplier: number): string =>
+  `${Number(multiplier.toFixed(2))}x`;
 
 /** The game screen route (ST-22). The game slug is the game's id in the URL. */
 export const playPath = (slug: string): string => `/student/games/${encodeURIComponent(slug)}/play`;

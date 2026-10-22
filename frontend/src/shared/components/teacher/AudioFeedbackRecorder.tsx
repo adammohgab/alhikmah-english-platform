@@ -277,10 +277,7 @@ export function AudioFeedbackRecorder({
         audio: { echoCancellation: true, noiseSuppression: true },
       });
       const mimeType = pickMimeType((type) => MediaRecorder.isTypeSupported(type));
-      const rec = new MediaRecorder(
-        media,
-        mimeType ? { mimeType, audioBitsPerSecond: 96_000 } : undefined,
-      );
+      const rec = new MediaRecorder(media, mimeType ? { mimeType, audioBitsPerSecond: 96_000 } : undefined);
       stream.current = media;
       recorder.current = rec;
       chunks.current = [];
@@ -475,7 +472,11 @@ export function AudioFeedbackRecorder({
                 <Button onClick={() => void save()} loading={phase === "uploading"}>
                   <Upload size={16} aria-hidden="true" /> Save feedback
                 </Button>
-                <Button variant="ghost" onClick={reset} disabled={phase === "uploading"}>
+                <Button
+                  variant="ghost"
+                  onClick={reset}
+                  disabled={phase === "uploading"}
+                >
                   <RotateCcw size={16} aria-hidden="true" /> Re-record
                 </Button>
               </>
