@@ -54,7 +54,8 @@ function destinationFor(row: NotificationRow): string | null {
 
 function Item({ row, onOpen }: { row: NotificationRow; onOpen: (row: NotificationRow) => void }) {
   const category = categorize(row.kind);
-  const Icon = category === "announcements" ? Megaphone : row.priority === "urgent" ? BellRing : Sparkles;
+  const Icon =
+    category === "announcements" ? Megaphone : row.priority === "urgent" ? BellRing : Sparkles;
   return (
     <li>
       <button
@@ -69,7 +70,9 @@ function Item({ row, onOpen }: { row: NotificationRow; onOpen: (row: Notificatio
           <Icon size={17} aria-hidden="true" />
         </span>
         <span className="min-w-0 flex-1">
-          <span className={cn("block text-stroke", row.is_read ? "font-semibold" : "font-extrabold")}>
+          <span
+            className={cn("block text-stroke", row.is_read ? "font-semibold" : "font-extrabold")}
+          >
             {!row.is_read && <span className="sr-only">Unread: </span>}
             {row.title}
           </span>
@@ -167,7 +170,9 @@ export default function NotificationsPage() {
               </span>
             )}
           </h1>
-          <p className="font-medium text-muted">Announcements, rewards, and updates from your school.</p>
+          <p className="font-medium text-muted">
+            Announcements, rewards, and updates from your school.
+          </p>
         </div>
         <Button
           variant="outline"
@@ -185,9 +190,23 @@ export default function NotificationsPage() {
             key={item}
             selected={filter === item}
             onClick={() => setFilter(item)}
-            aria-label={item === "all" ? "All" : item === "unread" ? "Unread" : item === "announcements" ? "Announcements" : "Activity"}
+            aria-label={
+              item === "all"
+                ? "All"
+                : item === "unread"
+                  ? "Unread"
+                  : item === "announcements"
+                    ? "Announcements"
+                    : "Activity"
+            }
           >
-            {item === "all" ? "All" : item === "unread" ? "Unread" : item === "announcements" ? "Announcements" : "Activity"}
+            {item === "all"
+              ? "All"
+              : item === "unread"
+                ? "Unread"
+                : item === "announcements"
+                  ? "Announcements"
+                  : "Activity"}
           </Chip>
         ))}
       </div>
@@ -210,7 +229,9 @@ export default function NotificationsPage() {
           <EmptyState
             size="sm"
             title="You are all caught up."
-            description={filter === "all" ? "No notifications yet." : "Nothing here in this category."}
+            description={
+              filter === "all" ? "No notifications yet." : "Nothing here in this category."
+            }
           />
         ) : (
           <ul className="space-y-1">
@@ -222,7 +243,11 @@ export default function NotificationsPage() {
 
         {list.hasNextPage && (
           <div className="p-3 text-center">
-            <Button variant="outline" loading={list.isFetchingNextPage} onClick={() => void list.fetchNextPage()}>
+            <Button
+              variant="outline"
+              loading={list.isFetchingNextPage}
+              onClick={() => void list.fetchNextPage()}
+            >
               Load older notifications
             </Button>
           </div>

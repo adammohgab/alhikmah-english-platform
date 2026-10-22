@@ -77,7 +77,12 @@ function wholeCount(value: number | undefined): number {
   return value !== undefined && Number.isFinite(value) && value > 0 ? Math.floor(value) : 0;
 }
 
-function pickAdvice(props: Pick<PipCompanionProps, "context" | "xpToNextLevel" | "streakDays" | "doneToday" | "lessonHint">): Advice {
+function pickAdvice(
+  props: Pick<
+    PipCompanionProps,
+    "context" | "xpToNextLevel" | "streakDays" | "doneToday" | "lessonHint"
+  >,
+): Advice {
   const { context, doneToday, lessonHint } = props;
   const days = wholeCount(props.streakDays);
   const xp = wholeCount(props.xpToNextLevel);

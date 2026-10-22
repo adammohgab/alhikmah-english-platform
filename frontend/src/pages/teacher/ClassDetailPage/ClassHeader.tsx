@@ -32,7 +32,10 @@ function QrImage({ value }: { value: string }) {
     };
   }, [value]);
   if (failed) return <p className="text-sm text-muted">The QR code could not be drawn.</p>;
-  if (!src) return <div className="h-56 w-56 animate-pulse rounded-[12px] bg-surface-100" aria-hidden="true" />;
+  if (!src)
+    return (
+      <div className="h-56 w-56 animate-pulse rounded-[12px] bg-surface-100" aria-hidden="true" />
+    );
   return (
     <img
       src={src}
@@ -50,9 +53,7 @@ export function ClassHeader({ data }: { data: ClassOverview }) {
   const { class: cls, term, teachers } = data;
   const code = cls.join_code ?? null;
   const enabled = cls.join_code_enabled !== false && code !== null;
-  const link = code
-    ? joinLink(window.location.origin, import.meta.env.BASE_URL ?? "/", code)
-    : "";
+  const link = code ? joinLink(window.location.origin, import.meta.env.BASE_URL ?? "/", code) : "";
 
   const copy = async () => {
     try {
@@ -70,7 +71,7 @@ export function ClassHeader({ data }: { data: ClassOverview }) {
   return (
     <header className="flex flex-wrap items-start justify-between gap-4 rounded-[20px] border-2 border-stroke bg-surface-0 p-5 shadow-retro-sm">
       <div className="min-w-0 space-y-2">
-        <h1 className="truncate font-display text-2xl font-extrabold">{cls.name}</h1>
+        <h1 className="font-display truncate text-2xl font-extrabold">{cls.name}</h1>
         <div className="flex flex-wrap items-center gap-2">
           {cls.grade_level && <Chip size="sm">Grade {cls.grade_level}</Chip>}
           {term && <Chip size="sm">{term.name}</Chip>}
@@ -94,7 +95,7 @@ export function ClassHeader({ data }: { data: ClassOverview }) {
             onClick={() => void copy()}
             disabled={!enabled}
             aria-label={`Copy join link for code ${code}`}
-            className="inline-flex min-h-9 items-center gap-2 rounded-full border-2 border-stroke bg-surface-100 px-3 font-mono text-sm font-extrabold shadow-retro-sm disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="inline-flex min-h-9 items-center gap-2 rounded-full border-2 border-stroke bg-surface-100 px-3 font-mono text-sm font-extrabold shadow-retro-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
           >
             <Copy size={16} aria-hidden="true" /> {formatJoinCode(code)}
           </button>
@@ -113,7 +114,10 @@ export function ClassHeader({ data }: { data: ClassOverview }) {
       >
         <div className="flex flex-col items-center gap-3">
           {link && <QrImage value={link} />}
-          <p className="font-mono text-3xl font-extrabold tracking-widest" data-testid="invite-code">
+          <p
+            className="font-mono text-3xl font-extrabold tracking-widest"
+            data-testid="invite-code"
+          >
             {code ? formatJoinCode(code) : ""}
           </p>
           <p className="break-all text-center text-sm text-muted">{link}</p>

@@ -6,7 +6,15 @@ import { ProgressBar } from "@/shared/components/ui/ProgressBar";
 import { useToast } from "@/shared/hooks/useToast";
 import { reviewWord, type ReviewOutcome } from "./api";
 import { Flashcard } from "./Flashcard";
-import { RATINGS, isFinished, rate, startSession, type LibraryWord, type Rating, type SessionState } from "./rules";
+import {
+  RATINGS,
+  isFinished,
+  rate,
+  startSession,
+  type LibraryWord,
+  type Rating,
+  type SessionState,
+} from "./rules";
 
 /* Flashcard practice set (ST-15). The student flips the card (click or Space), then rates it with
    one of three buttons, or with keys 1, 2 and 3. Each rating is saved with `review_word` before
@@ -23,7 +31,8 @@ export interface SessionViewProps {
 function isInteractive(target: EventTarget | null): boolean {
   return (
     target instanceof HTMLElement &&
-    target.closest("button, a, input, textarea, select, [role='tab'], [contenteditable='true']") !== null
+    target.closest("button, a, input, textarea, select, [role='tab'], [contenteditable='true']") !==
+      null
   );
 }
 
@@ -46,7 +55,11 @@ export function SessionView({ words, onExit, onReviewed }: SessionViewProps) {
       setFlipped(false);
     },
     onError: (error: Error) =>
-      toast.show({ title: "Could not save your answer", description: error.message, type: "error" }),
+      toast.show({
+        title: "Could not save your answer",
+        description: error.message,
+        type: "error",
+      }),
   });
 
   const submit = useCallback(
@@ -77,7 +90,10 @@ export function SessionView({ words, onExit, onReviewed }: SessionViewProps) {
   if (finished) {
     const total = state.tally.need_practice + state.tally.almost + state.tally.mastered;
     return (
-      <section aria-labelledby="vocab-result" className="mx-auto flex w-full max-w-xl flex-col gap-4 text-center">
+      <section
+        aria-labelledby="vocab-result"
+        className="mx-auto flex w-full max-w-xl flex-col gap-4 text-center"
+      >
         <h2 id="vocab-result" className="font-display text-[28px] text-stroke">
           Set complete
         </h2>
@@ -86,7 +102,10 @@ export function SessionView({ words, onExit, onReviewed }: SessionViewProps) {
         </p>
         <dl className="grid grid-cols-3 gap-3">
           {RATINGS.map((option) => (
-            <div key={option.id} className="rounded-[14px] border-2 border-stroke bg-surface-0 p-3 shadow-retro-sm">
+            <div
+              key={option.id}
+              className="rounded-[14px] border-2 border-stroke bg-surface-0 p-3 shadow-retro-sm"
+            >
               <dt className="font-body text-[13px] text-muted">{option.label}</dt>
               <dd className="font-display text-[28px] text-stroke">{state.tally[option.id]}</dd>
             </div>
@@ -102,7 +121,10 @@ export function SessionView({ words, onExit, onReviewed }: SessionViewProps) {
   if (current === undefined) return null;
 
   return (
-    <section aria-label="Flashcard practice" className="mx-auto flex w-full max-w-xl flex-col gap-4">
+    <section
+      aria-label="Flashcard practice"
+      className="mx-auto flex w-full max-w-xl flex-col gap-4"
+    >
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" onClick={onExit}>
           <ArrowLeft aria-hidden="true" size={16} /> Exit
@@ -121,11 +143,21 @@ export function SessionView({ words, onExit, onReviewed }: SessionViewProps) {
 
       <Flashcard word={current} flipped={flipped} onFlip={() => setFlipped((open) => !open)} />
 
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3" role="group" aria-label="How well did you know it?">
+      <div
+        className="grid grid-cols-1 gap-2 sm:grid-cols-3"
+        role="group"
+        aria-label="How well did you know it?"
+      >
         {RATINGS.map((option) => (
           <Button
             key={option.id}
-            variant={option.id === "mastered" ? "success" : option.id === "need_practice" ? "danger" : "secondary"}
+            variant={
+              option.id === "mastered"
+                ? "success"
+                : option.id === "need_practice"
+                  ? "danger"
+                  : "secondary"
+            }
             disabled={!flipped}
             loading={review.isPending && review.variables?.rating === option.id}
             onClick={() => submit(option.id)}
@@ -135,7 +167,9 @@ export function SessionView({ words, onExit, onReviewed }: SessionViewProps) {
         ))}
       </div>
       <p className="text-center font-body text-[13px] text-muted">
-        {flipped ? "Rate it with the buttons or keys 1, 2 and 3." : "Flip the card to see the meaning, then rate it."}
+        {flipped
+          ? "Rate it with the buttons or keys 1, 2 and 3."
+          : "Flip the card to see the meaning, then rate it."}
       </p>
     </section>
   );

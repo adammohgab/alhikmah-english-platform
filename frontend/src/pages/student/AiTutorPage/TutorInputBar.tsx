@@ -25,7 +25,8 @@ export function TutorInputBar({ remaining, onSend, disabled = false }: TutorInpu
     const hasSpeechRecognition =
       typeof window !== "undefined" &&
       (!!(window as typeof window & { SpeechRecognition?: unknown }).SpeechRecognition ||
-        !!(window as typeof window & { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition);
+        !!(window as typeof window & { webkitSpeechRecognition?: unknown })
+          .webkitSpeechRecognition);
     setSpeechReady(hasSpeechRecognition);
   }, []);
 
@@ -57,7 +58,11 @@ export function TutorInputBar({ remaining, onSend, disabled = false }: TutorInpu
           className="gap-2"
           aria-pressed={listening}
         >
-          {listening ? <VolumeX size={16} aria-hidden="true" /> : <Volume2 size={16} aria-hidden="true" />}
+          {listening ? (
+            <VolumeX size={16} aria-hidden="true" />
+          ) : (
+            <Volume2 size={16} aria-hidden="true" />
+          )}
           {listening ? "Listening" : "Audio"}
         </Button>
       </div>

@@ -52,12 +52,19 @@ export function WordCard({
             {partOfSpeech !== null && <span className="italic">{partOfSpeech}</span>}
             {pronunciation !== null && <span>{pronunciation}</span>}
             {level !== null && (
-              <span className="rounded-full border-2 border-stroke px-1.5 text-[12px] font-bold text-stroke">{level}</span>
+              <span className="rounded-full border-2 border-stroke px-1.5 text-[12px] font-bold text-stroke">
+                {level}
+              </span>
             )}
           </p>
         </div>
         {canSpeak() && (
-          <IconButton variant="ghost" size="sm" aria-label={`Pronounce ${word}`} onClick={() => speakWord(word)}>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label={`Pronounce ${word}`}
+            onClick={() => speakWord(word)}
+          >
             <Volume2 aria-hidden="true" size={18} />
           </IconButton>
         )}
@@ -75,7 +82,9 @@ export function WordCard({
       </header>
 
       <p className="font-body text-[16px] text-stroke">{meaning}</p>
-      {example !== null && example !== "" && <p className="font-body text-[15px] italic text-muted">“{example}”</p>}
+      {example !== null && example !== "" && (
+        <p className="font-body text-[15px] italic text-muted">“{example}”</p>
+      )}
 
       <footer className="mt-1 flex flex-wrap items-center gap-2">
         {hasArabic && (

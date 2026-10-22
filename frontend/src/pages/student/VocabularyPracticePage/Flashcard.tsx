@@ -34,7 +34,9 @@ export function Flashcard({ word, flipped, onFlip }: FlashcardProps) {
           style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
         >
           <span className={FACE} aria-hidden={flipped} data-face="front">
-            <span className="font-display text-[40px] leading-tight text-stroke sm:text-[48px]">{word.word}</span>
+            <span className="font-display text-[40px] leading-tight text-stroke sm:text-[48px]">
+              {word.word}
+            </span>
             <span className="flex flex-wrap items-center justify-center gap-2 font-body text-[15px] text-muted">
               {word.partOfSpeech !== null && <span className="italic">{word.partOfSpeech}</span>}
               {word.level !== null && (
@@ -46,12 +48,22 @@ export function Flashcard({ word, flipped, onFlip }: FlashcardProps) {
             {word.pronunciation !== null && (
               <span className="font-body text-[15px] text-muted">{word.pronunciation}</span>
             )}
-            <span className="mt-2 font-body text-[13px] text-muted">Tap the card or press Space to flip</span>
+            <span className="mt-2 font-body text-[13px] text-muted">
+              Tap the card or press Space to flip
+            </span>
           </span>
 
-          <span className={`${FACE} [transform:rotateY(180deg)]`} aria-hidden={!flipped} data-face="back">
+          <span
+            className={`${FACE} [transform:rotateY(180deg)]`}
+            aria-hidden={!flipped}
+            data-face="back"
+          >
             {word.arabicMeaning !== null && word.arabicMeaning !== "" && (
-              <span dir="rtl" lang="ar" className="font-display text-[34px] leading-snug text-stroke">
+              <span
+                dir="rtl"
+                lang="ar"
+                className="font-display text-[34px] leading-snug text-stroke"
+              >
                 {word.arabicMeaning}
               </span>
             )}

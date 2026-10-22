@@ -81,10 +81,38 @@ interface TierLook {
 }
 
 const LOOKS: Record<FlameTier, TierLook> = {
-  cold: { scale: 0.7, outer: "#EEF0F5", inner: "#FFFFFF", core: "#FFFFFF", ember: "#EEF0F5", embers: 0 },
-  sparks: { scale: 0.62, outer: "#FF9A3D", inner: "#FFD93D", core: "#FFF6C2", ember: "#FFB84D", embers: 4 },
-  blaze: { scale: 0.92, outer: "#FF6B3D", inner: "#FFB02E", core: "#FFF1A8", ember: "#FFB84D", embers: 6 },
-  radiant: { scale: 1, outer: "#2F7BFF", inner: "#4DD8FF", core: "#E8FBFF", ember: "#8CDCFF", embers: 9 },
+  cold: {
+    scale: 0.7,
+    outer: "#EEF0F5",
+    inner: "#FFFFFF",
+    core: "#FFFFFF",
+    ember: "#EEF0F5",
+    embers: 0,
+  },
+  sparks: {
+    scale: 0.62,
+    outer: "#FF9A3D",
+    inner: "#FFD93D",
+    core: "#FFF6C2",
+    ember: "#FFB84D",
+    embers: 4,
+  },
+  blaze: {
+    scale: 0.92,
+    outer: "#FF6B3D",
+    inner: "#FFB02E",
+    core: "#FFF1A8",
+    ember: "#FFB84D",
+    embers: 6,
+  },
+  radiant: {
+    scale: 1,
+    outer: "#2F7BFF",
+    inner: "#4DD8FF",
+    core: "#E8FBFF",
+    ember: "#8CDCFF",
+    embers: 9,
+  },
 };
 
 /* ---- Embers ----
@@ -212,7 +240,13 @@ function FlameArt({ tier, look }: FlameArtProps) {
           />
           {lit ? (
             <g className="sf-inner">
-              <path d={INNER_PATH} fill={look.inner} stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+              <path
+                d={INNER_PATH}
+                fill={look.inner}
+                stroke={INK}
+                strokeWidth="2"
+                strokeLinejoin="round"
+              />
               <ellipse cx="32" cy="64" rx="6" ry="7" fill={look.core} />
             </g>
           ) : null}
@@ -396,11 +430,7 @@ export function StreakFlame({
               className="relative inline-block shrink-0"
               style={{ height, width: Math.round(height * 0.8) }}
             >
-              <svg
-                viewBox="0 0 64 80"
-                focusable="false"
-                className="h-full w-full overflow-visible"
-              >
+              <svg viewBox="0 0 64 80" focusable="false" className="h-full w-full overflow-visible">
                 <FlameArt tier={tier} look={look} />
               </svg>
               <span className="absolute -bottom-1 -right-2.5">
