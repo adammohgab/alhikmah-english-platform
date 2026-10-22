@@ -215,7 +215,9 @@ export default function LoginPage() {
         void navigate(SET_NEW_PASSWORD_PATH, { replace: true });
         return;
       case "not-active":
-        void navigate(ACCOUNT_NOT_ACTIVE_PATH, { replace: true });
+        void navigate(`${ACCOUNT_NOT_ACTIVE_PATH}?reason=${encodeURIComponent(outcome.reason)}`, {
+          replace: true,
+        });
         return;
       default:
         setFailure(FAILURE_MESSAGES[outcome.kind]);

@@ -23,7 +23,7 @@ import type { UserRole } from "@/shared/types/database.types";
    `signInWithUsername` when the function ships, and the page needs no change.
 
    After a successful sign-in the page reads the profile and decides where the person goes:
-     status locked, archived or disabled   sign out, then /account-not-active
+     status locked, archived or disabled   sign out, then /account-not-active?reason={status}
      must change password                  /set-new-password (the session is kept)
      otherwise                             the "redirect" or "next" path when it belongs to the
                                            role area, else /student, /teacher or /admin
@@ -83,7 +83,8 @@ export function normalizeUsername(value: string): string {
 }
 
 export type LoginValidation =
-  { success: true; data: LoginValues } | { success: false; errors: LoginErrors };
+  | { success: true; data: LoginValues }
+  | { success: false; errors: LoginErrors };
 
 /** Validates the whole form. The password is never trimmed, since spaces may be part of it. */
 export function validateLogin(values: LoginValues): LoginValidation {
@@ -142,7 +143,7 @@ export function writeRememberPreference(remember: boolean): void {
 export type SignInOutcome =
   | { kind: "success"; destination: string }
   | { kind: "must-change-password" }
-  | { kind: "not-active" }
+  | { kind: "not-active"; reason: string }
   | { kind: "invalid-credentials" }
   | { kind: "rate-limited" }
   | { kind: "network" }
@@ -233,7 +234,7 @@ export async function signInWithUsername(
 
   if (BLOCKED_STATUSES.includes(accountStatus)) {
     await dropSession();
-    return { kind: "not-active" };
+    return { kind: "not-active", reason: accountStatus };
   }
 
   if (mustChangePassword) return { kind: "must-change-password" };

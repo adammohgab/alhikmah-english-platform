@@ -256,7 +256,9 @@ describe("PUB-04: LoginPage (SH-02)", () => {
 
       await fillAndSubmit(user, "someone", "secret1");
 
-      expect((await screen.findByTestId("where")).textContent).toBe("/account-not-active");
+      expect((await screen.findByTestId("where")).textContent).toBe(
+        "/account-not-active?reason=locked",
+      );
       expect(mocks.signOut).toHaveBeenCalledWith({ scope: "local" });
     });
 
@@ -267,7 +269,9 @@ describe("PUB-04: LoginPage (SH-02)", () => {
 
       await fillAndSubmit(user, "someone", "secret1");
 
-      expect((await screen.findByTestId("where")).textContent).toBe("/account-not-active");
+      expect((await screen.findByTestId("where")).textContent).toBe(
+        "/account-not-active?reason=archived",
+      );
     });
 
     it("keeps the session and asks for a new password after a temporary one", async () => {
