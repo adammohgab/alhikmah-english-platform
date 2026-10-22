@@ -264,7 +264,9 @@ export default function SetNewPasswordPage() {
   if (!isAuthenticated || user === null) {
     return <Navigate to={LOGIN_PATH} replace />;
   }
-  if (!user.mustChangePassword && !saved) {
+  // While saving, the session refresh can drop the flag before the confirmation shows, so a save
+  // in progress also keeps the person here.
+  if (!user.mustChangePassword && !saved && !submitting) {
     return <Navigate to={getRoleHomePath(user.role)} replace />;
   }
 
