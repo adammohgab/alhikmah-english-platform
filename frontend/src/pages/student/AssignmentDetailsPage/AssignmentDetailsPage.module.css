@@ -1,5 +1,5 @@
 .page {
-  max-inline-size: 60rem;
+  max-inline-size: 68rem;
   margin-inline: auto;
   padding: 2rem 1.25rem 4rem;
   color: rgb(var(--ink));
@@ -20,8 +20,24 @@
   line-height: 1.2;
 }
 
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  align-items: start;
+  gap: 2rem;
+  margin-block-start: 2rem;
+}
+
+.main {
+  min-inline-size: 0;
+}
+
 .section {
   margin-block-start: 2.5rem;
+}
+
+.main > .section:first-child {
+  margin-block-start: 0;
 }
 
 .section h2 {
@@ -57,6 +73,15 @@
 .primary {
   background: rgb(var(--world-main));
   color: rgb(var(--ink));
+}
+
+.factsColumn .startRow {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.factsColumn .primary {
+  inline-size: 100%;
 }
 
 .secondary {
@@ -97,6 +122,62 @@
 
 .facts dd {
   margin: 0;
+}
+
+.factsColumn {
+  position: sticky;
+  inset-block-start: 1rem;
+  padding: 1.25rem;
+  border: 2px solid rgb(var(--ink));
+  border-radius: 1.25rem;
+  background: rgb(var(--surface));
+  box-shadow: 2px 2px 0 #000;
+}
+
+.factsColumn h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.factList {
+  margin: 0;
+}
+
+.factList div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.55rem;
+  border-block-end: 1px solid rgb(var(--ink-2) / 0.25);
+}
+
+.factList div:last-child {
+  border-block-end: 0;
+}
+
+.factList dt {
+  color: rgb(var(--ink-2));
+}
+
+.factList dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: end;
+}
+
+.factNote {
+  display: block;
+  color: rgb(var(--ink-2));
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.note {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgb(var(--ink));
+  border-radius: 0.85rem;
+  background: rgb(var(--world-soft));
 }
 
 .list {
@@ -217,6 +298,17 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+@media (max-width: 58rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .factsColumn {
+    position: static;
+    order: -1;
+  }
 }
 
 @media (max-width: 40rem) {
