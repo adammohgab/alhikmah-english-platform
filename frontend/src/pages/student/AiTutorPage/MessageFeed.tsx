@@ -24,7 +24,12 @@ export function MessageFeed({ messages, streamingLabel }: MessageFeedProps) {
         />
       ))}
       {streamingLabel && (
-        <ChatMessage role="assistant" content={streamingLabel} streaming assistantName="Pip" />
+        <ChatMessage
+          role={"assistant" as const}
+          content={streamingLabel}
+          streaming
+          assistantName="Pip"
+        />
       )}
     </ChatThread>
   );

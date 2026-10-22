@@ -76,11 +76,68 @@ export function resolveEffectsTier(signals: EffectsSignals): EffectsTier {
   return isBatterySaver(signals.battery) ? "balanced" : "high";
 }
 
+/* ========================================
+   Personal effects preferences (STUDENT-SPEC ST-31 "Appearance" and "Sound and effects").
+   A person's own choice sits on top of the automatic tier: reduced motion forces low, and a
+   picked tier replaces the automatic one. Cached in localStorage so it applies before the
+   account settings load; the settings page saves the same values to `user_settings`.
+   ======================================== */
+
+export const EFFECTS_STORAGE_KEY = "alhikmah.effects";
+
+export interface EffectsPreferences {
+  /** The tier the person picked, or null to keep the automatic choice. */
+  tier: EffectsTier | null;
+  /** The person's own reduced-motion switch (the OS setting still applies on top). */
+  reducedMotion: boolean;
+}
+
+export const DEFAULT_EFFECTS_PREFERENCES: EffectsPreferences = { tier: null, reducedMotion: false };
+
+export function isEffectsTier(value: unknown): value is EffectsTier {
+  return typeof value === "string" && (EFFECTS_TIERS as readonly string[]).includes(value);
+}
+
+/** Reads the cached preferences; anything missing or malformed falls back to the defaults. */
+export function readEffectsPreferences(): EffectsPreferences {
+  let raw: string | null = null;
+  try {
+    raw = window.localStorage.getItem(EFFECTS_STORAGE_KEY);
+  } catch {
+    // Storage blocked: the choice simply won't persist across reloads.
+  }
+  if (!raw) return DEFAULT_EFFECTS_PREFERENCES;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null) return DEFAULT_EFFECTS_PREFERENCES;
+    const { tier, reducedMotion } = parsed as Record<string, unknown>;
+    return {
+      tier: isEffectsTier(tier) ? tier : null,
+      reducedMotion: reducedMotion === true,
+    };
+  } catch {
+    // Corrupt cached value: use the defaults and overwrite it on the next change.
+    return DEFAULT_EFFECTS_PREFERENCES;
+  }
+}
+
+export function writeEffectsPreferences(preferences: EffectsPreferences): void {
+  try {
+    window.localStorage.setItem(EFFECTS_STORAGE_KEY, JSON.stringify(preferences));
+  } catch {
+    // Storage blocked or full: the choice simply won't persist across reloads.
+  }
+}
+
 export interface EffectsContextValue {
   /** The active tier, mirrored on `<html data-effects-tier>`. */
   tier: EffectsTier;
-  /** Live value of the OS `prefers-reduced-motion` setting. When true the tier is low. */
+  /** True when the OS setting or the person's own switch asks for reduced motion. The tier is low. */
   prefersReducedMotion: boolean;
+  /** The person's own choices, before the automatic tier is applied. */
+  preferences: EffectsPreferences;
+  /** Applies a change to the person's choices at once, everywhere in the app. */
+  setPreferences: (patch: Partial<EffectsPreferences>) => void;
   /** 3D scenes (WebGL canvases) may render: high tier only. */
   canRender3D: boolean;
   /** Complex animation (GSAP, particle bursts, celebrations) may run: balanced and high. */

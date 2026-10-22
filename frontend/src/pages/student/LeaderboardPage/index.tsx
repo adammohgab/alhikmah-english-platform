@@ -10,12 +10,7 @@ import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { SegmentedControl } from "@/shared/components/ui/SegmentedControl";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { cn } from "@/shared/lib/utils/cn";
-import {
-  LEADERBOARD_CLASSES_KEY,
-  LEADERBOARD_KEY,
-  fetchLeaderboard,
-  fetchMyClasses,
-} from "./api";
+import { LEADERBOARD_CLASSES_KEY, LEADERBOARD_KEY, fetchLeaderboard, fetchMyClasses } from "./api";
 import type { Timeframe } from "./api";
 import { TIMEFRAMES, buildBoard, formatXp, ordinal } from "./rules";
 import type { Board, BoardEntry } from "./rules";
@@ -75,9 +70,7 @@ function PodiumCard({ entry, rank }: { entry: BoardEntry; rank: PodiumRank }) {
         aria-hidden="true"
       />
       <div className="flex w-full min-w-0 flex-col items-center gap-0.5 text-center">
-        <p className="w-full truncate font-heading text-base font-bold text-stroke">
-          {entry.name}
-        </p>
+        <p className="w-full truncate font-heading text-base font-bold text-stroke">{entry.name}</p>
         {entry.isMe && <YouTag />}
         <p className="font-heading text-sm font-bold text-muted">{formatXp(entry.xp)}</p>
       </div>
@@ -155,7 +148,7 @@ function MyRankBar({ board }: { board: Board }) {
     <section
       aria-label="Your position"
       data-testid="my-rank-bar"
-      className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.5rem)] z-30 flex items-center gap-3 rounded-[20px] border-2 border-stroke bg-world-amber-300 px-4 py-3 shadow-retro-md md:bottom-4"
+      className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.5rem)] z-30 flex items-center gap-3 rounded-[20px] border-2 border-stroke bg-world-amber-300 px-4 py-3 shadow-retro-md"
     >
       <span className="grid h-12 min-w-12 place-items-center rounded-full border-2 border-stroke bg-surface-0 px-2 font-heading text-xl font-bold text-stroke">
         {me.rank}
@@ -194,7 +187,7 @@ export default function LeaderboardPage() {
 
   const classesQuery = useQuery({
     queryKey: [LEADERBOARD_CLASSES_KEY, studentId],
-    queryFn: () => fetchMyClasses(studentId as string),
+    queryFn: () => fetchMyClasses(studentId!),
     enabled: studentId !== undefined,
   });
 
@@ -204,7 +197,7 @@ export default function LeaderboardPage() {
 
   const boardQuery = useQuery({
     queryKey: [LEADERBOARD_KEY, classId, timeframe],
-    queryFn: () => fetchLeaderboard(classId as string, timeframe),
+    queryFn: () => fetchLeaderboard(classId!, timeframe),
     enabled: classId !== undefined,
   });
 
@@ -230,7 +223,7 @@ export default function LeaderboardPage() {
         onRetry={retry}
       />
     );
-  } else if (classes && classes.length === 0) {
+  } else if (classes?.length === 0) {
     body = (
       <EmptyState
         size="lg"

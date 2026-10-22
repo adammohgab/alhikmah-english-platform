@@ -1,8 +1,11 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   EffectsContext,
+  readEffectsPreferences,
   resolveEffectsTier,
+  writeEffectsPreferences,
+  type EffectsPreferences,
   type BatteryStatus,
   type EffectsContextValue,
 } from "@/shared/hooks/useEffectsTier";
@@ -45,6 +48,8 @@ export interface EffectsProviderProps {
 export function EffectsProvider({ children }: EffectsProviderProps) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(readReducedMotion);
   const [battery, setBattery] = useState<BatteryStatus | null>(null);
+  const [preferences, setPreferencesState] = useState<EffectsPreferences>(readEffectsPreferences);
+  const preferencesRef = useRef(preferences);
   const [hardware] = useState(() => {
     const nav = navigator as HintedNavigator;
     return { hardwareConcurrency: nav.hardwareConcurrency, deviceMemory: nav.deviceMemory };
@@ -94,9 +99,23 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
     };
   }, []);
 
+  // The person's own choices: applied at once, cached for the next visit.
+  const setPreferences = useCallback((patch: Partial<EffectsPreferences>) => {
+    const next = { ...preferencesRef.current, ...patch };
+    preferencesRef.current = next;
+    setPreferencesState(next);
+    writeEffectsPreferences(next);
+  }, []);
+
+  // Reduced motion from the OS or from the person's own switch always forces the low tier.
+  const reduceMotion = prefersReducedMotion || preferences.reducedMotion;
   const tier = useMemo(
-    () => resolveEffectsTier({ prefersReducedMotion, battery, ...hardware }),
-    [prefersReducedMotion, battery, hardware],
+    () =>
+      reduceMotion
+        ? "low"
+        : (preferences.tier ??
+          resolveEffectsTier({ prefersReducedMotion: false, battery, ...hardware })),
+    [reduceMotion, preferences.tier, battery, hardware],
   );
 
   // Mirror the tier on <html> so CSS can react to it.
@@ -121,11 +140,13 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
   const value = useMemo<EffectsContextValue>(
     () => ({
       tier,
-      prefersReducedMotion,
+      prefersReducedMotion: reduceMotion,
+      preferences,
+      setPreferences,
       canRender3D: tier === "high",
       canAnimateComplex: tier !== "low",
     }),
-    [tier, prefersReducedMotion],
+    [tier, reduceMotion, preferences, setPreferences],
   );
 
   return <EffectsContext.Provider value={value}>{children}</EffectsContext.Provider>;
