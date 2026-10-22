@@ -46,7 +46,10 @@ interface LooseClient {
   from: (table: string) => { select: (columns: string) => LooseQuery };
 }
 
-const client = (): LooseClient => supabase as unknown as LooseClient;
+const client = (): LooseClient => {
+  const raw: unknown = supabase;
+  return raw as LooseClient;
+};
 
 function unwrap(result: LooseResult): unknown {
   if (result.error) throw new Error(normalizeApiError(result.error).message);
