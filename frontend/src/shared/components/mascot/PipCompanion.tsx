@@ -64,7 +64,14 @@ export function PipCompanion({
   return (
     <aside
       aria-label="Pip learning companion"
+<<<<<<< HEAD
       className={cn("fixed bottom-20 right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 sm:bottom-6 sm:right-6", className)}
+=======
+      className={cn(
+        "pointer-events-none fixed bottom-20 right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 sm:bottom-6 sm:right-6",
+        className,
+      )}
+>>>>>>> origin/adammohgab-st-12-assignment-details
     >
       {!collapsed && (
         <section

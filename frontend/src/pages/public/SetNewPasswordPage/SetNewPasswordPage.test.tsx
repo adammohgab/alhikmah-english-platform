@@ -23,7 +23,7 @@ const mocks = vi.hoisted(() => ({
   refreshSession: vi.fn(),
   rpc: vi.fn(),
   signOut: vi.fn(),
-  clearFlag: { current: (): void => undefined },
+  clearFlag: { current: () => undefined },
 }));
 
 vi.mock("@/shared/api/supabase", () => ({
@@ -251,7 +251,6 @@ describe("SetNewPasswordPage", () => {
     await user.type(screen.getByLabelText(/^Confirm new password/), "abcdefg1!");
     await user.click(screen.getByRole("button", { name: "Set password and continue" }));
 
-    expect(await screen.findByText(/Password saved/)).toBeVisible();
     expect(await screen.findByText(/Password saved/)).toBeVisible();
     expect(mocks.updateUser).toHaveBeenCalledWith({ password: "abcdefg1!" });
     expect(mocks.rpc).toHaveBeenCalledWith("complete_password_change");

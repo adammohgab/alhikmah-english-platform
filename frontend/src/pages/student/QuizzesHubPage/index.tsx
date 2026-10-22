@@ -82,81 +82,93 @@ function Card({ row, tab, now }: { row: QuizRow; tab: Tab; now: number }) {
   const closes = whenText(row.closes_at);
 
   return (
-    <li
-      className={cn(
-        "flex flex-col gap-2 rounded-[20px] border-2 bg-surface-0 p-4 shadow-[2px_2px_0px_#000]",
-        hot ? "border-danger-600" : "border-stroke",
-      )}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <h3 className="font-display min-w-0 text-[18px] leading-tight text-stroke [overflow-wrap:anywhere]">
-          {row.title}
-        </h3>
-        <span className="shrink-0 rounded-full border-2 border-stroke px-2 text-[12px] font-bold text-stroke">
-          {labelFor(rowStatus(row, tab))}
-        </span>
-      </div>
-
-      <p className="text-[14px] text-muted">
-        {[row.class_name, row.course, row.unit].filter(Boolean).join(" | ")}
-      </p>
-
-      <p className="flex flex-wrap gap-x-4 text-[14px] text-stroke">
-        {row.question_count != null && <span>{row.question_count} questions</span>}
-        {row.time_limit_min != null && <span>{row.time_limit_min} min</span>}
-        {attempts && tab !== "completed" && <span>{attempts}</span>}
-        {tab === "completed" && row.attempt_no != null && <span>Attempt {row.attempt_no}</span>}
-        {tab === "completed" && whenText(row.submitted_at) && (
-          <span>{whenText(row.submitted_at)}</span>
+    <li>
+      <article
+        aria-labelledby={`quiz-${row.id}-title`}
+        data-urgent={hot ? "true" : undefined}
+        className={cn(
+          "flex flex-col gap-2 rounded-[20px] border-2 bg-surface-0 p-4 shadow-[2px_2px_0px_#000]",
+          hot ? "border-danger-600" : "border-stroke",
         )}
-      </p>
-
-      {hot && (
-        <p className="flex w-fit items-center gap-1 rounded-full border-2 border-danger-600 bg-danger-100 px-2 text-[13px] font-bold text-danger-600">
-          <Clock size={14} aria-hidden="true" className="motion-safe:animate-pulse" />
-          Closing soon{closes ? `: ${closes}` : ""}
-        </p>
-      )}
-      {!hot && tab === "now" && closes && <p className="text-[13px] text-muted">Closes {closes}</p>}
-
-      {tab === "upcoming" && (
-        <p className="flex items-center gap-1 text-[14px] font-bold text-stroke">
-          <Lock size={14} aria-hidden="true" />
-          {row.lock?.reason ?? (opens ? `Opens ${opens}` : "Not open yet")}
-          {row.lock?.reason && opens ? ` (opens ${opens})` : ""}
-        </p>
-      )}
-
-      {score != null && (
-        <div>
-          <p className="text-[16px] font-bold text-stroke">
-            {tab === "completed" ? "Score" : "Best score"}: {Math.round(score)}%
-          </p>
-          <div className="h-3 w-full rounded-full border-2 border-stroke" aria-hidden="true">
-            <div
-              className="h-full rounded-full bg-[var(--world-main,#ffb84d)]"
-              style={{ width: `${Math.max(0, Math.min(100, score))}%` }}
-            />
-          </div>
+      >
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <h3
+            id={`quiz-${row.id}-title`}
+            className="font-display min-w-0 text-[18px] leading-tight text-stroke [overflow-wrap:anywhere]"
+          >
+            {row.title}
+          </h3>
+          <span className="shrink-0 rounded-full border-2 border-stroke px-2 text-[12px] font-bold text-stroke">
+            {labelFor(rowStatus(row, tab))}
+          </span>
         </div>
-      )}
 
-      {tab === "now" && (
-        <Link
-          to={`/student/quizzes/${quizId}`}
-          className="mt-1 inline-flex min-h-11 w-fit items-center rounded-full border-2 border-stroke bg-[var(--world-main,#ffb84d)] px-4 font-bold text-stroke shadow-[2px_2px_0px_#000]"
-        >
-          {row.attempts_used ? "Try again" : "Start quiz"}
-        </Link>
-      )}
-      {tab === "completed" && row.attempt_id && (
-        <Link
-          to={`/student/quizzes/${quizId}/result/${encodeURIComponent(row.attempt_id)}`}
-          className="mt-1 inline-flex min-h-11 w-fit items-center rounded-full border-2 border-stroke px-4 font-bold text-stroke shadow-[2px_2px_0px_#000]"
-        >
-          View result
-        </Link>
-      )}
+        <p className="text-[14px] text-muted">
+          {[row.class_name, row.course, row.unit].filter(Boolean).join(" | ")}
+        </p>
+
+        <p className="flex flex-wrap gap-x-4 text-[14px] text-stroke">
+          {row.question_count != null && <span>{row.question_count} questions</span>}
+          {row.time_limit_min != null && <span>{row.time_limit_min} min</span>}
+          {attempts && tab !== "completed" && <span>{attempts}</span>}
+          {tab === "completed" && row.attempt_no != null && <span>Attempt {row.attempt_no}</span>}
+          {tab === "completed" && whenText(row.submitted_at) && (
+            <span>{whenText(row.submitted_at)}</span>
+          )}
+        </p>
+
+        {hot && (
+          <p className="flex w-fit items-center gap-1 rounded-full border-2 border-danger-600 bg-danger-100 px-2 text-[13px] font-bold text-danger-600">
+            <Clock size={14} aria-hidden="true" className="motion-safe:animate-pulse" />
+            <span>Due soon</span>
+            {closes && <span>: {closes}</span>}
+          </p>
+        )}
+        {!hot && tab === "now" && closes && (
+          <p className="text-[13px] text-muted">Closes {closes}</p>
+        )}
+
+        {tab === "upcoming" && (
+          <p className="flex items-center gap-1 text-[14px] font-bold text-stroke">
+            <Lock size={14} aria-hidden="true" />
+            {row.lock?.reason ?? (opens ? `Opens ${opens}` : "Not open yet")}
+            {row.lock?.reason && opens ? ` (opens ${opens})` : ""}
+          </p>
+        )}
+
+        {score != null && (
+          <div>
+            <p className="text-[16px] font-bold text-stroke">
+              {tab === "completed" ? "Score" : "Best score"}: {Math.round(score)}%
+            </p>
+            <div className="h-3 w-full rounded-full border-2 border-stroke" aria-hidden="true">
+              <div
+                className="h-full rounded-full bg-[var(--world-main,#ffb84d)]"
+                style={{ width: `${Math.max(0, Math.min(100, score))}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {tab === "now" && (
+          <Link
+            to={`/student/quizzes/${quizId}`}
+            aria-label={`Start quiz: ${row.title}`}
+            className="mt-1 inline-flex min-h-11 w-fit items-center rounded-full border-2 border-stroke bg-[var(--world-main,#ffb84d)] px-4 font-bold text-stroke shadow-[2px_2px_0px_#000]"
+          >
+            {row.attempts_used ? "Try again" : "Start quiz"}
+          </Link>
+        )}
+        {tab === "completed" && row.attempt_id && (
+          <Link
+            to={`/student/quizzes/${quizId}/result/${encodeURIComponent(row.attempt_id)}`}
+            aria-label={`View result: ${row.title}, attempt ${row.attempt_no ?? 1}`}
+            className="mt-1 inline-flex min-h-11 w-fit items-center rounded-full border-2 border-stroke px-4 font-bold text-stroke shadow-[2px_2px_0px_#000]"
+          >
+            View result
+          </Link>
+        )}
+      </article>
     </li>
   );
 }
@@ -219,7 +231,7 @@ function List({ tab, source, empty }: { tab: Tab; source: QuizSource; empty: str
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1 text-[14px] text-stroke">
-          Search by title
+          Search quizzes by title
           <input
             type="search"
             value={search}
@@ -269,6 +281,28 @@ function List({ tab, source, empty }: { tab: Tab; source: QuizSource; empty: str
 
 export default function QuizzesHubPage() {
   const [tab, setTab] = useState<Tab>("now");
+  const available = useInfiniteQuery({
+    queryKey: [QUIZZES_KEY, "available"],
+    queryFn: ({ pageParam }) => fetchQuizzes("available", pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (last) => last.next_cursor ?? undefined,
+  });
+  const history = useInfiniteQuery({
+    queryKey: [QUIZZES_KEY, "history"],
+    queryFn: ({ pageParam }) => fetchQuizzes("history", pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (last) => last.next_cursor ?? undefined,
+  });
+  const availableRows = available.data?.pages.flatMap((page) => page.items) ?? [];
+  const upcomingCount = availableRows.filter((row) => !isClosed(row) && isUpcoming(row)).length;
+  const nowCount = availableRows.filter((row) => !isClosed(row) && !isUpcoming(row)).length;
+  const completedCount = history.data?.pages.flatMap((page) => page.items).length ?? 0;
+  const counts: Record<Tab, number> = {
+    now: nowCount,
+    upcoming: upcomingCount,
+    completed: completedCount,
+  };
+
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
       <header>
@@ -279,7 +313,7 @@ export default function QuizzesHubPage() {
         <TabsList aria-label="Quiz status">
           {TABS.map((entry) => (
             <TabsTrigger key={entry.id} value={entry.id}>
-              {entry.label}
+              {entry.label} ({counts[entry.id]})
             </TabsTrigger>
           ))}
         </TabsList>
