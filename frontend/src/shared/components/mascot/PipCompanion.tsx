@@ -210,6 +210,7 @@ export function PipCompanion({
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- only listens for Escape bubbling up from the focusable controls inside
     <div
       className={cn(
         "pointer-events-none fixed right-4 z-30 flex flex-col items-end gap-2",
