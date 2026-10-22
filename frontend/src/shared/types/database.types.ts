@@ -93,8 +93,26 @@ export interface Database {
       };
     };
     Functions: {
+      complete_password_change: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
       get_platform_settings: {
         Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
+      request_password_reset: {
+        Args: {
+          p_username: string;
+          p_full_name: string;
+          p_grade_class?: string | null;
+          p_note?: string | null;
+          p_device_key?: string | null;
+        };
+        Returns: Json;
+      };
+      reset_password: {
+        Args: { p_profile_id: string; p_request_id?: string | null };
         Returns: Json;
       };
     };
