@@ -74,7 +74,10 @@ export function csvCell(value: string | number | null | undefined): string {
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
-export function buildResultsCsv(rows: readonly SubmissionRow[], maxPoints: number | null | undefined) {
+export function buildResultsCsv(
+  rows: readonly SubmissionRow[],
+  maxPoints: number | null | undefined,
+) {
   const header = ["Student", "Status", "Score", "Max score", "Submitted at", "Late"];
   const lines = rows.map((row) =>
     [

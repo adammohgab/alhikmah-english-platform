@@ -61,7 +61,10 @@ const reviewResult = z.object({
   next_review_at: z.string().nullable(),
 });
 
-const addResult = z.object({ added: z.number().int().nonnegative(), skipped: z.number().int().nonnegative() });
+const addResult = z.object({
+  added: z.number().int().nonnegative(),
+  skipped: z.number().int().nonnegative(),
+});
 
 export interface VocabGroup {
   unitId: string;
@@ -113,23 +116,29 @@ const LIBRARY_COLUMNS =
   "id, word, part_of_speech, meaning, arabic_meaning, example, vocab_item_id, mastery, starred, next_review_at, vocabulary_items(level, pronunciation, vocabulary_lists(tags))";
 
 export async function fetchLibrary(): Promise<LibraryWord[]> {
-  const result = await client().from("library_words").select(LIBRARY_COLUMNS).order("word", { ascending: true });
+  const result = await client()
+    .from("library_words")
+    .select(LIBRARY_COLUMNS)
+    .order("word", { ascending: true });
   if (result.error) fail(result.error);
-  return z.array(libraryRow).parse(result.data).map((row) => ({
-    id: row.id,
-    word: row.word,
-    partOfSpeech: row.part_of_speech,
-    pronunciation: row.vocabulary_items?.pronunciation ?? null,
-    meaning: row.meaning ?? "",
-    arabicMeaning: row.arabic_meaning,
-    example: row.example,
-    level: row.vocabulary_items?.level ?? null,
-    tags: row.vocabulary_items?.vocabulary_lists?.tags ?? [],
-    vocabItemId: row.vocab_item_id,
-    mastery: row.mastery,
-    starred: row.starred,
-    nextReviewAt: row.next_review_at,
-  }));
+  return z
+    .array(libraryRow)
+    .parse(result.data)
+    .map((row) => ({
+      id: row.id,
+      word: row.word,
+      partOfSpeech: row.part_of_speech,
+      pronunciation: row.vocabulary_items?.pronunciation ?? null,
+      meaning: row.meaning ?? "",
+      arabicMeaning: row.arabic_meaning,
+      example: row.example,
+      level: row.vocabulary_items?.level ?? null,
+      tags: row.vocabulary_items?.vocabulary_lists?.tags ?? [],
+      vocabItemId: row.vocab_item_id,
+      mastery: row.mastery,
+      starred: row.starred,
+      nextReviewAt: row.next_review_at,
+    }));
 }
 
 export async function fetchVocabGroups(): Promise<VocabGroup[]> {
@@ -157,7 +166,9 @@ export async function fetchGroupWords(unitId: string): Promise<LessonWord[]> {
 }
 
 /** Copies lesson words to the student's library. Words already there are skipped by the server. */
-export async function addWordsToLibrary(words: readonly LessonWord[]): Promise<{ added: number; skipped: number }> {
+export async function addWordsToLibrary(
+  words: readonly LessonWord[],
+): Promise<{ added: number; skipped: number }> {
   const result = await client().rpc("add_words_to_library", {
     items: words.map((item) => ({
       word: item.word,

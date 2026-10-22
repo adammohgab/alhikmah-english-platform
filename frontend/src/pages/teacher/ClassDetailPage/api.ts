@@ -123,7 +123,9 @@ const table = (name: string) =>
 
 export async function fetchRules(classId: string): Promise<ClassRules | null> {
   const { data, error } = await table("class_rules")
-    .select("games_enabled, ai_tutor_enabled, late_submission_allowed, late_penalty_percent, bonus_multiplier")
+    .select(
+      "games_enabled, ai_tutor_enabled, late_submission_allowed, late_penalty_percent, bonus_multiplier",
+    )
     .eq("class_id", classId)
     .maybeSingle();
   if (error) throw new Error(normalizeApiError(error).message);
