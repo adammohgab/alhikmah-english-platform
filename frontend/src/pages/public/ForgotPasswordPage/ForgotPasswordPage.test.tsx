@@ -70,7 +70,10 @@ async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText(/^Full name/), "Sara Khaled");
 }
 
-type RpcResult = { data: unknown; error: { message: string } | null };
+interface RpcResult {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 /** One mock serves both calls the page makes: the school details and the reset request. */
 function stubRpc(options: { publicState?: unknown; reset?: RpcResult }) {

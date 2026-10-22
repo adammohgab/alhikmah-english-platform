@@ -47,7 +47,7 @@ export const router = createBrowserRouter(
     },
     {
       path: "/account-not-active",
-      element: <PlaceholderView title="This Account is Not Active" />,
+      ...page(() => import("@/pages/public/AccountNotActivePage")),
     },
     {
       path: "/maintenance",
