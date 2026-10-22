@@ -34,16 +34,15 @@ export const router = createBrowserRouter(
       path: "/forgot-password",
       element: (
         <PublicOnlyRoute>
-          <Outlet />
+          <PlaceholderView title="Reset Password Request" />
         </PublicOnlyRoute>
       ),
-      children: [{ index: true, ...page(() => import("@/pages/public/ForgotPasswordPage")) }],
     },
 
     // Special System States
     {
       path: "/set-new-password",
-      ...page(() => import("@/pages/public/SetNewPasswordPage")),
+      element: <PlaceholderView title="Set a New Password" />,
     },
     {
       path: "/account-not-active",
@@ -104,10 +103,6 @@ export const router = createBrowserRouter(
         {
           path: "notifications",
           ...page(() => import("@/pages/student/NotificationsPage")),
-        },
-        {
-          path: "settings",
-          ...page(() => import("@/pages/student/SettingsPage")),
         },
         {
           path: "*",

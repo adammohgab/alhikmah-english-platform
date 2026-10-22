@@ -64,10 +64,7 @@ interface DbError {
   code?: string;
 }
 
-interface DbResult {
-  data: unknown;
-  error: DbError | null;
-}
+type DbResult = { data: unknown; error: DbError | null };
 
 interface Filterable extends PromiseLike<DbResult> {
   eq(column: string, value: string | boolean): Filterable;

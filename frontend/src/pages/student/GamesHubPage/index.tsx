@@ -48,7 +48,7 @@ import "./games-hub.css";
 
 const PANEL = "rounded-[20px] border-2 border-stroke bg-surface-0 shadow-retro-sm";
 const PLAY_LINK =
-  "inline-flex min-h-10 items-center justify-center gap-1.5 rounded-[12px] border-2 border-stroke px-4 font-heading text-base font-bold text-stroke shadow-retro-sm transition-transform hover:-translate-y-0.5 hover:shadow-retro-md motion-reduce:transition-none";
+  "inline-flex min-h-10 items-center justify-center gap-1.5 rounded-[12px] border-2 border-stroke px-4 font-heading text-base font-bold text-stroke shadow-retro-sm transition-transform hover:-translate-y-0.5 motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 after:absolute after:inset-0 after:rounded-[16px] after:content-['']";
 
 /* Static class strings per world: Tailwind finds classes by scanning the text. */
 const WORLD_FILL: Record<WorldId, string> = {
@@ -109,18 +109,18 @@ function Poster({ card, size }: { card: GameCard; size: "md" | "lg" }) {
 function SkillChips({ skills }: { skills: SkillId[] }) {
   if (skills.length === 0) return null;
   return (
-    <div className="flex flex-wrap gap-1.5" aria-label="Skills">
+    <ul className="flex flex-wrap gap-1.5" aria-label="Skills">
       {skills.map((id) => {
         const skill = skillById(id);
         return (
-          <span key={id}>
+          <li key={id}>
             <Chip size="sm" world={skill.world}>
               {skill.label}
             </Chip>
-          </span>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
 
@@ -162,7 +162,9 @@ function FeaturedBanner({ card, multiplier }: { card: GameCard; multiplier: numb
           {card.description ? ` ${card.description}` : ""}
         </p>
         {card.bestScore !== null && (
-          <p className="text-sm font-bold text-stroke">Your best: {formatScore(card.bestScore)}</p>
+          <p className="text-sm font-bold text-stroke">
+            Your best: {formatScore(card.bestScore)}
+          </p>
         )}
       </div>
       <Link
@@ -245,7 +247,7 @@ export default function GamesHubPage() {
 
   const query = useQuery({
     queryKey: [GAMES_HUB_KEY, studentId, today],
-    queryFn: () => fetchGamesHub(studentId!, today),
+    queryFn: () => fetchGamesHub(studentId as string, today),
     enabled: studentId !== undefined,
   });
 
@@ -325,7 +327,10 @@ export default function GamesHubPage() {
               onAction={() => setSkill("all")}
             />
           ) : (
-            <ul aria-label="Games" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul
+              aria-label="Games"
+              className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            >
               {visible.map((card) => (
                 <GameTile
                   key={card.id}

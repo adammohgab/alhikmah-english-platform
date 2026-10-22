@@ -4,22 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context";
-import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import LeaderboardPage from "./index";
 
-const sound: SoundContextValue = {
-  play: vi.fn(),
-  volume: 0.35,
-  setVolume: vi.fn(),
-  muted: false,
-  setMuted: vi.fn(),
-  toggleMute: vi.fn(),
-};
-
-interface Result {
-  data: unknown;
-  error: { message: string } | null;
-}
+type Result = { data: unknown; error: { message: string } | null };
 
 const enrollments: { current: Result } = { current: { data: [], error: null } };
 const boards: Record<string, Result> = {};
@@ -75,13 +62,11 @@ function renderPage() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
-      <SoundContext.Provider value={sound}>
-        <AuthContext.Provider value={auth}>
-          <MemoryRouter>
-            <LeaderboardPage />
-          </MemoryRouter>
-        </AuthContext.Provider>
-      </SoundContext.Provider>
+      <AuthContext.Provider value={auth}>
+        <MemoryRouter>
+          <LeaderboardPage />
+        </MemoryRouter>
+      </AuthContext.Provider>
     </QueryClientProvider>,
   );
 }
@@ -121,8 +106,8 @@ describe("LeaderboardPage", () => {
     const list = screen.getByRole("list", { name: "Ranking" });
     const rows = within(list).getAllByRole("listitem");
     expect(rows).toHaveLength(2);
-    expect(within(rows[0]!).getByText("Karim")).toBeInTheDocument();
-    expect(within(rows[1]!).getByText("Sara")).toBeInTheDocument();
+    expect(within(rows[0] as HTMLElement).getByText("Karim")).toBeInTheDocument();
+    expect(within(rows[1] as HTMLElement).getByText("Sara")).toBeInTheDocument();
   });
 
   it("asks for this week first and pins the student's standing", async () => {

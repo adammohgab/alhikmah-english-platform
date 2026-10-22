@@ -74,7 +74,7 @@ function OverviewTab({ data, classId }: { data: ClassOverview; classId: string }
         <Tile label="Awaiting grading" value={String(stats.awaiting_grading)} />
       </dl>
       <section className={PANEL} aria-label="Assigned courses">
-        <h2 className="font-display mb-2 text-lg font-extrabold">Courses</h2>
+        <h2 className="mb-2 font-display text-lg font-extrabold">Courses</h2>
         {courses.length === 0 ? (
           <p className="text-sm text-muted">No course is assigned to this class yet.</p>
         ) : (
@@ -97,10 +97,7 @@ function OverviewTab({ data, classId }: { data: ClassOverview; classId: string }
 }
 
 function RosterTab({ classId }: { classId: string }) {
-  const query = useQuery({
-    queryKey: classDetailKey(classId, "roster"),
-    queryFn: () => fetchRoster(classId),
-  });
+  const query = useQuery({ queryKey: classDetailKey(classId, "roster"), queryFn: () => fetchRoster(classId) });
   return (
     <Loaded query={query}>
       {({ rows }) =>
@@ -112,21 +109,11 @@ function RosterTab({ classId }: { classId: string }) {
               <caption className="sr-only">Students in this class</caption>
               <thead>
                 <tr className="border-b-2 border-stroke">
-                  <th scope="col" className="py-2 pr-3">
-                    Student
-                  </th>
-                  <th scope="col" className="py-2 pr-3">
-                    Status
-                  </th>
-                  <th scope="col" className="py-2 pr-3">
-                    Progress
-                  </th>
-                  <th scope="col" className="py-2 pr-3">
-                    Average
-                  </th>
-                  <th scope="col" className="py-2">
-                    Last active
-                  </th>
+                  <th scope="col" className="py-2 pr-3">Student</th>
+                  <th scope="col" className="py-2 pr-3">Status</th>
+                  <th scope="col" className="py-2 pr-3">Progress</th>
+                  <th scope="col" className="py-2 pr-3">Average</th>
+                  <th scope="col" className="py-2">Last active</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,22 +124,14 @@ function RosterTab({ classId }: { classId: string }) {
                         to={`/teacher/students/${encodeURIComponent(row.student.id)}`}
                         className="inline-flex items-center gap-2"
                       >
-                        <Avatar
-                          size="xs"
-                          name={row.student.full_name}
-                          src={row.student.avatar_url}
-                        />
+                        <Avatar size="xs" name={row.student.full_name} src={row.student.avatar_url} />
                         {row.student.full_name}
                       </Link>
                     </th>
                     <td className="py-2 pr-3 capitalize">{row.status}</td>
                     <td className="w-40 py-2 pr-3">
                       <ProgressBar
-                        value={Math.round(
-                          (row.progress ?? 0) <= 1
-                            ? (row.progress ?? 0) * 100
-                            : (row.progress ?? 0),
-                        )}
+                        value={Math.round((row.progress ?? 0) <= 1 ? (row.progress ?? 0) * 100 : (row.progress ?? 0))}
                         aria-label={`${row.student.full_name} progress`}
                       />
                     </td>
@@ -170,25 +149,16 @@ function RosterTab({ classId }: { classId: string }) {
 }
 
 function WorkTab({ classId }: { classId: string }) {
-  const query = useQuery({
-    queryKey: classDetailKey(classId, "work"),
-    queryFn: () => fetchWork(classId),
-  });
+  const query = useQuery({ queryKey: classDetailKey(classId, "work"), queryFn: () => fetchWork(classId) });
   return (
     <Loaded query={query}>
       {({ items }) =>
         items.length === 0 ? (
-          <EmptyState
-            title="No work assigned"
-            description="Assignments and quizzes for this class appear here."
-          />
+          <EmptyState title="No work assigned" description="Assignments and quizzes for this class appear here." />
         ) : (
           <ul className="space-y-2">
             {items.map((item) => (
-              <li
-                key={`${item.kind}-${item.id}`}
-                className={`${PANEL} flex flex-wrap items-center gap-3 !p-4`}
-              >
+              <li key={`${item.kind}-${item.id}`} className={`${PANEL} flex flex-wrap items-center gap-3 !p-4`}>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-bold">{item.title}</p>
                   <p className="text-sm text-muted">
@@ -217,10 +187,7 @@ function WorkTab({ classId }: { classId: string }) {
 }
 
 function RulesTab({ classId }: { classId: string }) {
-  const query = useQuery({
-    queryKey: classDetailKey(classId, "rules"),
-    queryFn: () => fetchRules(classId),
-  });
+  const query = useQuery({ queryKey: classDetailKey(classId, "rules"), queryFn: () => fetchRules(classId) });
   return (
     <Loaded query={query}>
       {(rules) =>
@@ -233,9 +200,7 @@ function RulesTab({ classId }: { classId: string }) {
               ["AI tutor", rules.ai_tutor_enabled ? "On" : "Off"],
               [
                 "Late submissions",
-                rules.late_submission_allowed
-                  ? `Allowed, ${rules.late_penalty_percent}% penalty`
-                  : "Not allowed",
+                rules.late_submission_allowed ? `Allowed, ${rules.late_penalty_percent}% penalty` : "Not allowed",
               ],
               ["Bonus multiplier", `×${rules.bonus_multiplier}`],
             ].map(([term, value]) => (
@@ -260,10 +225,7 @@ function AnnouncementsTab({ classId }: { classId: string }) {
     <Loaded query={query}>
       {(items) =>
         items.length === 0 ? (
-          <EmptyState
-            title="No announcements"
-            description="Announcements sent to this class appear here."
-          />
+          <EmptyState title="No announcements" description="Announcements sent to this class appear here." />
         ) : (
           <ul className="space-y-3">
             {items.map((item) => (
