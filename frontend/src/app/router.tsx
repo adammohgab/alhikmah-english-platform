@@ -101,6 +101,10 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/student/ReadingPracticePage")),
         },
         {
+          path: "lessons/:lessonId",
+          ...page(() => import("@/pages/student/LessonPlayerPage")),
+        },
+        {
           path: "quizzes/:quizId/attempt/:attemptId",
           ...page(() => import("@/pages/student/QuizAttemptPage")),
         },
