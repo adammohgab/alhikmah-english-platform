@@ -34,7 +34,11 @@ const NOW = Date.parse("2026-10-22T10:00:00Z");
 
 describe("RATINGS", () => {
   it("has the three buttons in order and only Need Practice is a wrong review", () => {
-    expect(RATINGS.map((item) => item.label)).toEqual(["Need Practice", "Almost Got It", "Mastered"]);
+    expect(RATINGS.map((item) => item.label)).toEqual([
+      "Need Practice",
+      "Almost Got It",
+      "Mastered",
+    ]);
     expect(RATINGS.map((item) => item.correct)).toEqual([false, true, true]);
   });
 });
@@ -48,7 +52,9 @@ describe("filterWords", () => {
   const all = { search: "", mastery: "all", topic: null } as const;
 
   it("filters by mastery, starred and topic", () => {
-    expect(filterWords(words, { ...all, mastery: "learning" }).map((w) => w.id)).toEqual(["bridge"]);
+    expect(filterWords(words, { ...all, mastery: "learning" }).map((w) => w.id)).toEqual([
+      "bridge",
+    ]);
     expect(filterWords(words, { ...all, mastery: "starred" }).map((w) => w.id)).toEqual(["apple"]);
     expect(filterWords(words, { ...all, topic: "city" }).map((w) => w.id)).toEqual(["bridge"]);
   });
@@ -60,7 +66,11 @@ describe("filterWords", () => {
   });
 
   it("lists distinct sorted topics and counts mastery", () => {
-    expect(topicsOf([...words, word("d", { tags: ["food", "animals"] })])).toEqual(["animals", "city", "food"]);
+    expect(topicsOf([...words, word("d", { tags: ["food", "animals"] })])).toEqual([
+      "animals",
+      "city",
+      "food",
+    ]);
     expect(countByMastery(words)).toEqual({ new: 1, learning: 1, mastered: 1 });
   });
 });

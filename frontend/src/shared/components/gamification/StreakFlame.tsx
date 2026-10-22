@@ -416,6 +416,7 @@ export function StreakFlame({
         <Tooltip.Trigger asChild>
           <span
             {...rest}
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the tooltip trigger must be focusable so keyboard users can read the streak details
             tabIndex={0}
             role="img"
             aria-label={accessibleLabel}

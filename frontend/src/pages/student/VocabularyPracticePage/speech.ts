@@ -3,7 +3,11 @@
    It is a progressive enhancement: where it is missing the play buttons are not shown. */
 
 export function canSpeak(): boolean {
-  return typeof window !== "undefined" && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  return (
+    typeof window !== "undefined" &&
+    "speechSynthesis" in window &&
+    "SpeechSynthesisUtterance" in window
+  );
 }
 
 export function speakWord(text: string): void {

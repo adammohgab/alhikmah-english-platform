@@ -82,7 +82,11 @@ export function isDue(word: LibraryWord, now: number): boolean {
 export function filterWords(words: readonly LibraryWord[], filters: WordFilters): LibraryWord[] {
   const query = filters.search.trim().toLowerCase();
   return words.filter((word) => {
-    if (filters.mastery === "starred" ? !word.starred : filters.mastery !== "all" && word.mastery !== filters.mastery) {
+    if (
+      filters.mastery === "starred"
+        ? !word.starred
+        : filters.mastery !== "all" && word.mastery !== filters.mastery
+    ) {
       return false;
     }
     if (filters.topic !== null && !word.tags.includes(filters.topic)) return false;
@@ -113,9 +117,7 @@ export function buildSession(
   now: number,
   limit: number = SESSION_SIZE,
 ): LibraryWord[] {
-  const due = words
-    .filter((word) => isDue(word, now))
-    .sort((a, b) => dueTime(a) - dueTime(b));
+  const due = words.filter((word) => isDue(word, now)).sort((a, b) => dueTime(a) - dueTime(b));
   const rest = words.filter((word) => !isDue(word, now));
   return [...due, ...rest].slice(0, limit);
 }
