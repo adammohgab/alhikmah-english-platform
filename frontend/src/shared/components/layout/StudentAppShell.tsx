@@ -18,7 +18,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import gsap from "gsap";
 import Lenis from "lenis";
-import schoolLogo from "@/shared/assets/logo.png";
+import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
 import { cn } from "@/shared/lib/utils/cn";
 import { readStored, writeStored } from "@/shared/hooks/useWorld";
 import { useEffectsTier } from "@/shared/hooks/useEffectsTier";
@@ -380,13 +380,15 @@ function SidebarFooter({
         </button>
       )}
 
-      <img
-        src={schoolLogo}
-        alt="Al Hikmah Private School"
-        width={40}
-        height={40}
-        className={cn("mx-auto h-10 w-auto object-contain", compact && collapsed && "h-8")}
-      />
+      {SCHOOL_LOGO_SRC !== null && (
+        <img
+          src={SCHOOL_LOGO_SRC}
+          alt="Al Hikmah Private School"
+          width={40}
+          height={40}
+          className={cn("mx-auto h-10 w-auto object-contain", compact && collapsed && "h-8")}
+        />
+      )}
     </div>
   );
 }

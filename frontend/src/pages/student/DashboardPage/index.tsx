@@ -12,8 +12,7 @@ import { useStudentStats } from "./useStudentStats";
 
 /* Student Dashboard (STUDENT-SPEC ST-01, STU-CORE-01).
    Greeting hero with the level badge and avatar, the Continue Learning card that opens the
-   right lesson, and the daily XP goal bar, plus the side widgets of STU-CORE-02 (upcoming
-   deadlines and today's daily quests). Each block loads and fails on its own, so one slow
+   right lesson, and the daily XP goal bar. Each block loads and fails on its own, so one slow
    or failed request never blanks the page. */
 
 export default function DashboardPage() {

@@ -110,7 +110,7 @@ function matchesSearch(student: Student, term: string): boolean {
   const needle = term.trim().toLowerCase();
   if (needle === "") return true;
   return [student.name, student.username, student.code].some(
-    (field) => field?.toLowerCase().includes(needle) === true,
+    (field) => field !== null && field.toLowerCase().includes(needle),
   );
 }
 
