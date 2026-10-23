@@ -84,7 +84,7 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
           onRetry={() => void query.refetch()}
         />
       ) : daily.length === 0 ? (
-        <EmptyState size="sm" title="No quests today. Check back tomorrow." />
+        <EmptyState size="sm" title="No quests today" description="Check back tomorrow." />
       ) : (
         <ul className="flex flex-col gap-3">
           {daily.map((quest) => (
@@ -101,6 +101,7 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
                     sound="coin"
                     disabled={quest.state !== "ready"}
                     loading={busyId === quest.id}
+                    aria-label={`Claim reward: ${quest.title}`}
                     onClick={() => claim.mutate(quest)}
                   >
                     Claim
@@ -110,12 +111,12 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
               <ProgressBar
                 value={quest.progress}
                 max={quest.target}
-                label={quest.title}
+                label={`${quest.title} progress`}
                 valueText={`${quest.progress} of ${quest.target}`}
               />
               <p className="flex items-center gap-3 text-[13px] text-stroke">
                 <span>
-                  {quest.progress} / {quest.target}
+                  {quest.progress}/{quest.target}
                 </span>
                 <span className="flex items-center gap-1">
                   <Sparkles size={13} aria-hidden="true" />
@@ -133,6 +134,7 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
 
       <Link
         to="/student/quests"
+        aria-label="All quests"
         className="mt-3 inline-block text-[14px] font-bold text-stroke underline"
       >
         See all quests

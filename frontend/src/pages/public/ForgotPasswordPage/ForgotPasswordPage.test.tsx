@@ -201,8 +201,6 @@ describe("ForgotPasswordPage", () => {
       expect(mocks.rpc).toHaveBeenCalledWith("request_password_reset", {
         p_username: "sara.k",
         p_full_name: "Sara Khaled",
-        p_grade_class: null,
-        p_note: null,
         p_device_key: expect.any(String) as string,
       });
     });

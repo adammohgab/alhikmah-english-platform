@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import gradingMigrationSql from "../../../../supabase/migrations/038_ops_13_teacher_grading.sql?raw";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const gradingMigrationSql = readFileSync(
+  resolve(process.cwd(), "../supabase/migrations/038_ops_13_teacher_grading.sql"),
+  "utf8",
+);
 
 /* ========================================
    TCH-CORE-22 · Teacher core workflows integration tests

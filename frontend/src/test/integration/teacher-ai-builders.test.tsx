@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 const mocks = vi.hoisted(() => {
@@ -265,7 +265,7 @@ describe("teacher AI builders integration", () => {
   it("validates question-bank answer keys and saves tags plus answer data", async () => {
     render(<QuestionCreatorModal isOpen onClose={vi.fn()} />);
     fireEvent.change(screen.getByLabelText("Question type"), { target: { value: "fill_blank" } });
-    fireEvent.change(screen.getByLabelText("Prompt"), {
+    fireEvent.change(within(screen.getByRole("dialog")).getByLabelText("Prompt"), {
       target: { value: "The sun rises in the east." },
     });
     fireEvent.click(screen.getByRole("button", { name: /Save question/i }));

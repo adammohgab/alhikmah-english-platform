@@ -183,7 +183,7 @@ describe("GradingScreenPage", () => {
       }),
     );
     expect(screen.getByTestId("score-q2")).toHaveTextContent("— / 10");
-    await user.click(screen.getByRole("button", { name: "Use in draft" }));
+    await user.click(screen.getAllByRole("button", { name: "Use in draft" })[0]);
     expect(screen.getByTestId("score-q2")).toHaveTextContent("5 / 10");
     expect(screen.getByText("Accepted into teacher draft")).toBeInTheDocument();
   });

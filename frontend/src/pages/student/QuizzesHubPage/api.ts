@@ -25,7 +25,15 @@ const quiz = z.object({
   /** Null or missing means unlimited. */
   attempts_allowed: z.number().nullish(),
   status: z.string().nullish(),
-  lock: z.object({ reason: z.string().nullish(), opens_at: z.string().nullish() }).nullish(),
+  lock: z
+    .object({
+      locked: z.boolean().nullish(),
+      reason: z.string().nullish(),
+      opens_at: z.string().nullish(),
+    })
+    .nullish(),
+  opens_at: z.string().nullish(),
+  due_at: z.string().nullish(),
   closes_at: z.string().nullish(),
   best_score_pct: z.number().nullish(),
   // History rows

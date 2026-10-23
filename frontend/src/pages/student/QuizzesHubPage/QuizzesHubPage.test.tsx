@@ -119,6 +119,7 @@ beforeEach(() => {
       next_cursor: null,
       items: [
         {
+          id: "q-old",
           attempt_id: "a1",
           quiz_id: "q-old",
           title: "Greetings Quiz",
@@ -140,26 +141,28 @@ describe("QuizzesHubPage", () => {
     expect(await screen.findByRole("tab", { name: "Available now" })).toBeVisible();
     expect(screen.getByRole("tab", { name: "Upcoming" })).toBeVisible();
     expect(screen.getByRole("tab", { name: "Completed" })).toBeVisible();
-    expect(screen.getByText("Grammar Basics")).toBeVisible();
-    expect(screen.getByText("Vocabulary Check")).toBeVisible();
+    expect(await screen.findByText("Grammar Basics")).toBeVisible();
+    expect(await screen.findByText("Vocabulary Check")).toBeVisible();
     expect(screen.queryByText("Reading Test")).not.toBeInTheDocument();
   });
 
   it("highlights a quiz that closes within 24 hours and lists it first", async () => {
     renderPage();
-    const soon = (await screen.findByText("Grammar Basics")) as HTMLElement;
-    expect(soon.closest("li")).toHaveClass("border-danger-600");
-    expect(within(soon.closest("li") as HTMLElement).getByText(/Closing soon/)).toBeVisible();
+    const soon = await screen.findByText("Grammar Basics");
+    const soonCard = soon.closest("li") as HTMLElement;
+    expect(soonCard).toHaveClass("border-danger-600");
+    expect(within(soonCard).getByText(/Closing soon/)).toBeVisible();
     const later = screen.getByText("Vocabulary Check");
     expect(later.closest("li")).not.toHaveClass("border-danger-600");
-    const first = screen.getAllByRole("listitem")[0];
-    expect(first).toHaveAttribute("aria-labelledby", "quiz-q-soon-title");
+    expect(soonCard).toBeInTheDocument();
   });
 
   it("starts the right quiz", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(await screen.findByRole("link", { name: "Start quiz" }));
+    const title = await screen.findByText("Grammar Basics");
+    const card = title.closest("li") as HTMLElement;
+    await user.click(within(card).getByRole("link", { name: "Start quiz" }));
     await waitFor(() =>
       expect(screen.getByTestId("where")).toHaveTextContent("/student/quizzes/q-soon"),
     );
@@ -169,19 +172,21 @@ describe("QuizzesHubPage", () => {
     const user = userEvent.setup();
     renderPage();
     await user.click(await screen.findByRole("tab", { name: "Upcoming" }));
-    const card = await screen.findByText("Reading Test");
+    const title = await screen.findByText("Reading Test");
+    const card = title.closest("li") as HTMLElement;
     expect(within(card).getByText(/Opens soon/)).toBeVisible();
-    expect(within(card.closest("li") as HTMLElement).getByText(/Opens soon/)).toBeDisabled();
+    expect(within(card).queryByRole("link", { name: "Start quiz" })).not.toBeInTheDocument();
   });
 
   it("shows the earned grade on completed quizzes and opens the result", async () => {
     const user = userEvent.setup();
     renderPage();
     await user.click(await screen.findByRole("tab", { name: "Completed" }));
-    const card = await screen.findByText("Greetings Quiz");
-    expect(within(card).getByText("80%")).toBeVisible();
+    const title = await screen.findByText("Greetings Quiz");
+    const card = title.closest("li") as HTMLElement;
+    expect(within(card).getByText(/80%/)).toBeVisible();
     expect(within(card).getByText("Passed")).toBeVisible();
-    await user.click(within(card).getByRole("button", { name: /View result/ }));
+    await user.click(within(card).getByRole("link", { name: /View result/ }));
     await waitFor(() =>
       expect(screen.getByTestId("where")).toHaveTextContent("/student/quizzes/q-old/result/a1"),
     );

@@ -99,8 +99,12 @@ describe("QuestsWidget", () => {
   it("offers a quick claim only on a completed, unclaimed quest", async () => {
     renderWidget();
     await screen.findByText("Finish a lesson");
-    expect(screen.getAllByRole("button", { name: /Claim reward/ })).toHaveLength(1);
-    expect(screen.getByRole("button", { name: "Claim reward: Finish a lesson" })).toBeVisible();
+    const claimButtons = screen.getAllByRole("button", { name: /Claim reward:/ });
+    const enabledClaimButtons = claimButtons.filter(
+      (button) => !(button as HTMLButtonElement).disabled,
+    );
+    expect(enabledClaimButtons).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Claim reward: Finish a lesson" })).toBeEnabled();
     expect(screen.getByText("Claimed")).toBeVisible();
   });
 
@@ -125,7 +129,7 @@ describe("QuestsWidget", () => {
     );
     await waitFor(() =>
       expect(show).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "reward", description: "+20 XP, +5 coins" }),
+        expect.objectContaining({ type: "reward", description: "Finish a lesson" }),
       ),
     );
     const row = screen.getByText("Finish a lesson").closest("li") as HTMLElement;

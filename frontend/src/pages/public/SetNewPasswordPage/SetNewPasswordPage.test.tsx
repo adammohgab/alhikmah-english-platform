@@ -252,7 +252,7 @@ describe("SetNewPasswordPage", () => {
     await user.click(screen.getByRole("button", { name: "Set password and continue" }));
 
     expect(await screen.findByText(/Password saved/)).toBeVisible();
-    expect(await screen.findByText(/Password saved/)).toBeVisible();
+    expect(await screen.findByText("Student home", undefined, { timeout: 4000 })).toBeVisible();
     expect(mocks.updateUser).toHaveBeenCalledWith({ password: "abcdefg1!" });
     expect(mocks.rpc).toHaveBeenCalledWith("complete_password_change");
     expect(await screen.findByText("Student home", undefined, { timeout: 4000 })).toBeVisible();

@@ -192,6 +192,7 @@ export const GRAMMAR_EXERCISES: GrammarExercise[] = [
 export function normalizeAnswer(value: string): string {
   return value
     .toLowerCase()
+    .trim()
     .replace(/[.!?]+$/g, "")
     .replace(/\s+/g, " ")
     .trim();

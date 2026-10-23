@@ -33,7 +33,8 @@ const TABS: ReadonlyArray<{ id: Tab; label: string; source: QuizSource; empty: s
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const isClosed = (row: QuizRow) => row.status === "closed";
-const isUpcoming = (row: QuizRow) => row.status === "locked" || row.status === "upcoming";
+const isUpcoming = (row: QuizRow) =>
+  row.status === "locked" || row.status === "upcoming" || row.lock?.locked === true;
 
 const STATUS_LABEL: Record<string, string> = {
   ready: "Ready",
@@ -47,15 +48,22 @@ const STATUS_LABEL: Record<string, string> = {
 /** The status a row is filtered and labelled by in its tab. */
 function rowStatus(row: QuizRow, tab: Tab): string {
   if (tab === "completed") return row.passed == null ? "done" : row.passed ? "passed" : "failed";
+  if (row.lock?.locked === true) return "locked";
   return row.status ?? "ready";
 }
 const labelFor = (status: string) => STATUS_LABEL[status] ?? (status === "done" ? "Done" : status);
 
-const urgent = (row: QuizRow, now: number): boolean =>
-  !!row.closes_at &&
-  !isUpcoming(row) &&
-  Date.parse(row.closes_at) - now <= DAY_MS &&
-  Date.parse(row.closes_at) > now;
+const closingTime = (row: QuizRow) => row.closes_at ?? row.due_at;
+
+const urgent = (row: QuizRow, now: number): boolean => {
+  const closesAt = closingTime(row);
+  return (
+    !!closesAt &&
+    !isUpcoming(row) &&
+    Date.parse(closesAt) - now <= DAY_MS &&
+    Date.parse(closesAt) > now
+  );
+};
 
 function whenText(iso: string | null | undefined): string | null {
   if (!iso) return null;
@@ -78,8 +86,8 @@ function Card({ row, tab, now }: { row: QuizRow; tab: Tab; now: number }) {
       ? null
       : `${row.attempts_used} of ${row.attempts_allowed ?? "unlimited"} attempts`;
   const score = tab === "completed" ? row.score_pct : row.best_score_pct;
-  const opens = whenText(row.lock?.opens_at);
-  const closes = whenText(row.closes_at);
+  const opens = whenText(row.lock?.opens_at ?? row.opens_at);
+  const closes = whenText(closingTime(row));
 
   return (
     <li
@@ -180,8 +188,10 @@ function List({ tab, source, empty }: { tab: Tab; source: QuizSource; empty: str
       tab === "upcoming" ? open.filter(isUpcoming) : open.filter((row) => !isUpcoming(row));
     // Quizzes closing soonest come first, so the urgent ones lead the list.
     return [...rows].sort((a, b) => {
-      const aTime = a.closes_at ? Date.parse(a.closes_at) : Number.POSITIVE_INFINITY;
-      const bTime = b.closes_at ? Date.parse(b.closes_at) : Number.POSITIVE_INFINITY;
+      const aCloses = closingTime(a);
+      const bCloses = closingTime(b);
+      const aTime = aCloses ? Date.parse(aCloses) : Number.POSITIVE_INFINITY;
+      const bTime = bCloses ? Date.parse(bCloses) : Number.POSITIVE_INFINITY;
       return aTime - bTime;
     });
   }, [query.data, tab]);

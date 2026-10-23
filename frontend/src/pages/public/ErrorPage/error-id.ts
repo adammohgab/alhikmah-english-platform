@@ -1,25 +1,13 @@
 /**
- * Builds the short reference shown on the error page ("Error ID") so a person can quote it
- * to their school. It is generated per crash from the clock and a random part; it carries
- * no information about the error itself.
+ * Builds a short reference shown on the error page. It contains no error details.
+ * The sequence makes IDs distinct even when multiple errors occur in the same millisecond.
  */
+let errorIdSequence = 0;
+
 export function createErrorId(now: number = Date.now()): string {
   const time = now.toString(36).toUpperCase().slice(-5);
-  let random = "";
-  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-    const bytes = new Uint8Array(3);
-    crypto.getRandomValues(bytes);
-    random = Array.from(bytes, (b) => b.toString(36).padStart(2, "0"))
-      .join("")
-      .toUpperCase()
-      .slice(0, 4);
-  } else {
-    random = Math.floor(Math.random() * 36 ** 4)
-      .toString(36)
-      .toUpperCase()
-      .padStart(4, "0");
-  }
-  return `ERR-${time}-${random}`;
+  const sequence = (errorIdSequence++ % 36 ** 4).toString(36).toUpperCase().padStart(4, "0");
+  return `ERR-${time}-${sequence}`;
 }
 
 /** Path under the app's base URL (the router's basename), for plain links outside the router. */
