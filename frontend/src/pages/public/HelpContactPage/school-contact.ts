@@ -71,6 +71,6 @@ export function useSchoolContact() {
     queryKey: ["school-contact"],
     queryFn: fetchSchoolContact,
     staleTime: 1000 * 60 * 10,
-    retry: 1,
+    retry: false,
   });
 }
