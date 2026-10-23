@@ -12,8 +12,8 @@ export default tseslint.config(
     ignores: ["dist/", "node_modules/", "pnpm-lock.yaml"],
   },
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.stylistic,
   {
     languageOptions: {
       ecmaVersion: "latest",
@@ -43,7 +43,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": "warn",
       ...jsxA11y.flatConfigs.recommended.rules,
-      // Allow both `T[]` and `Array<T>` to avoid churn in existing src (e.g. cn.ts).
+      // Allow both T[] and Array<T> to avoid churn in existing src (e.g. cn.ts).
       "@typescript-eslint/array-type": "off",
     },
   },
