@@ -1,11 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
 const gradingMigrationSql = readFileSync(
-  fileURLToPath(
-    new URL("../../../../supabase/migrations/038_ops_13_teacher_grading.sql", import.meta.url),
-  ),
+  resolve(process.cwd(), "../supabase/migrations/038_ops_13_teacher_grading.sql"),
   "utf8",
 );
 
