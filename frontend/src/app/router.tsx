@@ -113,6 +113,14 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/teacher/RubricsPage")),
         },
         {
+          path: "courses/:courseId/publish",
+          ...page(() => import("@/pages/teacher/CoursePublishPage")),
+        },
+        {
+          path: "courses/:courseId/edit",
+          ...page(() => import("@/pages/teacher/CourseBuilderPage")),
+        },
+        {
           path: "*",
           element: <PlaceholderView title="Teacher Section" />,
         },
