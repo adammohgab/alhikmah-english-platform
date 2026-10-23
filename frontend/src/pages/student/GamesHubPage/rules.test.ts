@@ -88,7 +88,9 @@ describe("filterBySkill", () => {
   });
 
   it("keeps the games that train the chosen skill", () => {
-    expect(filterBySkill(cards, "grammar").map((card) => card.slug)).toEqual(["grammar-challenge"]);
+    expect(filterBySkill(cards, "grammar").map((card) => card.slug)).toEqual([
+      "grammar-challenge",
+    ]);
     expect(filterBySkill(cards, "speed")).toEqual([]);
   });
 });

@@ -48,7 +48,7 @@ export default function AchievementsPage() {
 
   const query = useQuery({
     queryKey: [ACHIEVEMENTS_KEY, studentId],
-    queryFn: () => fetchAchievements(studentId!),
+    queryFn: () => fetchAchievements(studentId as string),
     enabled: studentId !== undefined,
   });
 
@@ -59,7 +59,7 @@ export default function AchievementsPage() {
     mutationFn: (badge: Badge) => {
       const next = gallery ? pinnedAfterToggle(gallery.pinnedIds, badge) : null;
       if (!next) return Promise.reject(new Error("You can pin up to three badges."));
-      return pinBadges(studentId!, next).then(() => !badge.pinned);
+      return pinBadges(studentId as string, next).then(() => !badge.pinned);
     },
     onSuccess: (pinned, badge) => {
       toast.show({

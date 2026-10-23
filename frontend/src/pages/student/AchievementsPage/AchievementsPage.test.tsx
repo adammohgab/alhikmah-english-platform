@@ -8,10 +8,7 @@ import { ToastContext, type ToastContextValue } from "@/app/providers/toast-cont
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import AchievementsPage from "./index";
 
-interface Result {
-  data: unknown;
-  error: { message: string } | null;
-}
+type Result = { data: unknown; error: { message: string } | null };
 
 const tables: Record<string, Result> = {};
 const rpcCalls: { fn: string; args: Record<string, unknown> }[] = [];

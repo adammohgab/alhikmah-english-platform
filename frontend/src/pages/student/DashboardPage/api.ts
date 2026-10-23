@@ -46,10 +46,7 @@ interface LooseClient {
   from: (table: string) => { select: (columns: string) => LooseQuery };
 }
 
-// These reads intentionally use an explicit narrow signature (see the note above). The `unknown`
-// hop avoids TypeScript expanding the full generated `Database` type on the assignment.
-const rawClient: unknown = supabase;
-const client = (): LooseClient => rawClient as LooseClient;
+const client = (): LooseClient => supabase as unknown as LooseClient;
 
 function unwrap(result: LooseResult): unknown {
   if (result.error) throw new Error(normalizeApiError(result.error).message);
@@ -177,18 +174,16 @@ async function targetForCourse(
   const lessonIds = units.flatMap((unit) => unit.lessons.map((lesson) => lesson.id));
   if (lessonIds.length === 0) return { target: null, found: true };
 
-  const completed = z
-    .array(completedRow)
-    .parse(
-      unwrap(
-        await client()
-          .from("lesson_progress")
-          .select("lesson_id")
-          .eq("student_id", userId)
-          .eq("is_completed", true)
-          .in("lesson_id", lessonIds),
-      ) ?? [],
-    );
+  const completed = z.array(completedRow).parse(
+    unwrap(
+      await client()
+        .from("lesson_progress")
+        .select("lesson_id")
+        .eq("student_id", userId)
+        .eq("is_completed", true)
+        .in("lesson_id", lessonIds),
+    ) ?? [],
+  );
 
   return {
     found: true,
@@ -204,36 +199,32 @@ async function targetForCourse(
 }
 
 export async function fetchResume(userId: string): Promise<ResumeResult> {
-  const recent = z
-    .array(recentRow)
-    .parse(
-      unwrap(
-        await client()
-          .from("lesson_progress")
-          .select("lesson_id, is_completed, lessons(id, units(course_id))")
-          .eq("student_id", userId)
-          .order("last_accessed_at", { ascending: false })
-          .limit(20),
-      ) ?? [],
-    );
+  const recent = z.array(recentRow).parse(
+    unwrap(
+      await client()
+        .from("lesson_progress")
+        .select("lesson_id, is_completed, lessons(id, units(course_id))")
+        .eq("student_id", userId)
+        .order("last_accessed_at", { ascending: false })
+        .limit(20),
+    ) ?? [],
+  );
 
   const inProgress = recent.find((row) => !row.is_completed) ?? null;
   const last = recent[0] ?? null;
   const preferredCourse =
     inProgress?.lessons?.units?.course_id ?? last?.lessons?.units?.course_id ?? null;
 
-  const visible = z
-    .array(courseIdRow)
-    .parse(
-      unwrap(
-        await client()
-          .from("courses")
-          .select("id")
-          .eq("status", "published")
-          .order("position", { ascending: true })
-          .limit(COURSE_FALLBACK_LIMIT),
-      ) ?? [],
-    );
+  const visible = z.array(courseIdRow).parse(
+    unwrap(
+      await client()
+        .from("courses")
+        .select("id")
+        .eq("status", "published")
+        .order("position", { ascending: true })
+        .limit(COURSE_FALLBACK_LIMIT),
+    ) ?? [],
+  );
 
   const candidates = [
     ...(preferredCourse === null ? [] : [preferredCourse]),

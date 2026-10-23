@@ -251,7 +251,9 @@ function EnrollBody({
           />
         ) : results.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted">
-            {q === "" ? "No more students are available to enroll." : `No students match “${q}”.`}
+            {q === ""
+              ? "No more students are available to enroll."
+              : `No students match “${q}”.`}
           </p>
         ) : (
           <>

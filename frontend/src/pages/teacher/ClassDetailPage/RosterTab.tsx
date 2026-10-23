@@ -109,8 +109,8 @@ async function fetchStudents(classId: string): Promise<Student[]> {
 function matchesSearch(student: Student, term: string): boolean {
   const needle = term.trim().toLowerCase();
   if (needle === "") return true;
-  return [student.name, student.username, student.code].some((field) =>
-    field?.toLowerCase().includes(needle),
+  return [student.name, student.username, student.code].some(
+    (field) => field !== null && field.toLowerCase().includes(needle),
   );
 }
 

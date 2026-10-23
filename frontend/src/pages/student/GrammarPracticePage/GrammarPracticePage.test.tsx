@@ -11,9 +11,7 @@ describe("grammar practice rules", () => {
   });
 
   it("does not accept a grammatically different answer", () => {
-    expect(
-      isCorrectAnswer("If it will rain, we stay home", "If it rains, we will stay home."),
-    ).toBe(false);
+    expect(isCorrectAnswer("If it will rain, we stay home", "If it rains, we will stay home.")).toBe(false);
   });
 
   it("creates a date-specific key for daily progress", () => {

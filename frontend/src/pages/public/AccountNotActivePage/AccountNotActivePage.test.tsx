@@ -243,12 +243,6 @@ describe("AccountNotActivePage", () => {
   it("says so when the contact details cannot be loaded", async () => {
     mocks.rpc.mockResolvedValue({ data: null, error: { message: "down" } });
     renderPage();
-    expect(
-      await screen.findByText(
-        /We could not load the school contact details/,
-        {},
-        { timeout: 3000 },
-      ),
-    ).toBeVisible();
+    expect(await screen.findByText(/We could not load the school contact details/)).toBeVisible();
   });
 });
