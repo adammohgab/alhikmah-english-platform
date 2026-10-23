@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
@@ -19,7 +19,7 @@ export default defineConfig({
     // Integration tests import migration SQL from the repository-level supabase directory.
     // Explicitly allow the repository root while keeping Vite's filesystem checks enabled.
     fs: {
-      allow: [fileURLToPath(new URL("../", import.meta.url))],
+      allow: [searchForWorkspaceRoot(process.cwd()), fileURLToPath(new URL("../", import.meta.url))],
     },
   },
 });
