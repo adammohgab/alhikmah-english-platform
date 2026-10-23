@@ -115,7 +115,7 @@ describe("DeadlinesWidget", () => {
     const soon = (await screen.findByText("Grammar quiz")).closest("a") as HTMLElement;
     expect(soon).toHaveAttribute("data-due-soon", "true");
     const tag = within(soon).getByText(/Due in/);
-    expect(tag.className).toContain("animate-pulse");
+    expect(soon.querySelector("svg")?.getAttribute("class")).toContain("animate-pulse");
     const later = screen.getByText("Reading journal").closest("a");
     expect(later).not.toHaveAttribute("data-due-soon");
   });
