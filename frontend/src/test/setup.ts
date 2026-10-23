@@ -1,3 +1,24 @@
+import { createElement } from "react";
+import { configure } from "@testing-library/react";
+import { SoundContext } from "@/shared/hooks/useSound";
+import type { SoundContextValue } from "@/shared/hooks/useSound";
+
+const testSoundContext: SoundContextValue = {
+  play: () => undefined,
+  volume: 0.35,
+  setVolume: () => undefined,
+  muted: false,
+  setMuted: () => undefined,
+  toggleMute: () => undefined,
+};
+
+// Components such as Button require the sound context in the app. Give tests a silent
+// default provider; tests that verify sound behavior can still supply their own provider.
+configure({
+  wrapper: ({ children }) =>
+    createElement(SoundContext.Provider, { value: testSoundContext }, children),
+});
+
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
