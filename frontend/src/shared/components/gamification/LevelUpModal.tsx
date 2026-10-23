@@ -279,7 +279,7 @@ export function LevelUpModal({
           >
             {copied ? (
               <Check size={16} />
-            ) : ((navigator as { share?: () => Promise<void> }).share ? (
+            ) : "share" in navigator ? (
               <Share2 size={16} />
             ) : (
               <Copy size={16} />
