@@ -141,8 +141,8 @@ describe("QuizzesHubPage", () => {
     expect(await screen.findByRole("tab", { name: "Available now" })).toBeVisible();
     expect(screen.getByRole("tab", { name: "Upcoming" })).toBeVisible();
     expect(screen.getByRole("tab", { name: "Completed" })).toBeVisible();
-    expect(screen.getByText("Grammar Basics")).toBeVisible();
-    expect(screen.getByText("Vocabulary Check")).toBeVisible();
+    expect(await screen.findByText("Grammar Basics")).toBeVisible();
+    expect(await screen.findByText("Vocabulary Check")).toBeVisible();
     expect(screen.queryByText("Reading Test")).not.toBeInTheDocument();
   });
 
