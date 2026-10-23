@@ -149,6 +149,10 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/teacher/CourseWizardPage")),
         },
         {
+          path: "courses/:courseId/versions",
+          ...page(() => import("@/pages/teacher/CourseBuilderPage")),
+        },
+        {
           path: "rubrics",
           ...page(() => import("@/pages/teacher/RubricsPage")),
         },
