@@ -146,6 +146,8 @@ export function DeadlinesWidget({ className }: { className?: string | undefined 
                 <li key={`${item.kind}-${item.id}`}>
                   <Link
                     to={startPage(item)}
+                    data-overdue={late ? "true" : undefined}
+                    data-due-soon={soon ? "true" : undefined}
                     className="flex items-center justify-between gap-3 rounded-[12px] p-2 hover:bg-[var(--world-soft,#ffd93d)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-stroke"
                   >
                     <span className="min-w-0">
