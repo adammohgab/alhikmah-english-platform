@@ -44,11 +44,7 @@ function toEntry(row: LeaderboardEntryRow, userId: string): BoardEntry {
   return {
     rank: row.rank,
     studentId: row.student_id,
-<<<<<<< HEAD
     name: name ?? "Student",
-=======
-    name: name !== undefined && name !== "" ? name : "Student",
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
     avatarUrl: row.avatar_url ?? null,
     badge: row.equipped_badge
       ? {

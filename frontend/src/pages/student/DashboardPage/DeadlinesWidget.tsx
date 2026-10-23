@@ -92,9 +92,7 @@ export function DeadlinesWidget({ className }: { className?: string | undefined 
   }, []);
 
   const items = query.data ? chronological(query.data).slice(0, LIMIT) : [];
-  const overdueAssignments = items.filter(
-    (item) => item.kind === "assignment" && item.overdue === true,
-  ).length;
+  const overdue = items.filter((item) => item.overdue === true).length;
 
   return (
     <section
@@ -121,17 +119,16 @@ export function DeadlinesWidget({ className }: { className?: string | undefined 
           onRetry={() => void query.refetch()}
         />
       ) : items.length === 0 ? (
-        <EmptyState size="sm" title="Nothing due. Nice." />
+        <EmptyState size="sm" title="Nothing due soon. Nice work!" />
       ) : (
         <>
-          {overdueAssignments > 0 && (
+          {overdue > 0 && (
             <p
               role="status"
               className="mb-2 flex items-center gap-2 rounded-[12px] border-2 border-danger-600 bg-danger-100 px-3 py-1 text-[14px] font-bold text-danger-600"
             >
               <AlertTriangle size={16} aria-hidden="true" />
-              {overdueAssignments} {overdueAssignments === 1 ? "assignment is" : "assignments are"}{" "}
-              overdue and not submitted.
+              {overdue} {overdue === 1 ? "item is" : "items are"} overdue and not handed in
             </p>
           )}
           <ul className="flex flex-col">
@@ -143,8 +140,6 @@ export function DeadlinesWidget({ className }: { className?: string | undefined 
                 <li key={`${item.kind}-${item.id}`}>
                   <Link
                     to={startPage(item)}
-                    data-overdue={late ? "true" : undefined}
-                    data-due-soon={soon ? "true" : undefined}
                     className="flex items-center justify-between gap-3 rounded-[12px] p-2 hover:bg-[var(--world-soft,#ffd93d)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-stroke"
                   >
                     <span className="min-w-0">
@@ -168,11 +163,10 @@ export function DeadlinesWidget({ className }: { className?: string | undefined 
                         late
                           ? "border-danger-600 bg-danger-100 text-danger-600"
                           : soon
-                            ? "border-stroke bg-[var(--world-main,#ffb84d)] text-stroke motion-safe:animate-pulse"
+                            ? "border-stroke bg-[var(--world-main,#ffb84d)] text-stroke"
                             : "border-stroke text-stroke",
                       )}
                     >
-                      {soon && <span>Due soon</span>}
                       {(late || soon) && (
                         <Clock
                           size={14}

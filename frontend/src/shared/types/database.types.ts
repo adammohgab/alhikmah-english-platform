@@ -75,51 +75,6 @@ export interface Database {
         };
         Relationships: [];
       };
-      lesson_progress: {
-        Row: {
-          id: string;
-          student_id: string;
-          lesson_id: string;
-          course_id: string | null;
-          is_completed: boolean;
-          status: string;
-          completed_at: string | null;
-          first_completed_at: string | null;
-          last_accessed_at: string;
-          last_opened_at: string;
-          notes: string | null;
-          xp_awarded: boolean;
-        };
-        Insert: {
-          id?: string;
-          student_id: string;
-          lesson_id: string;
-          course_id?: string | null;
-          is_completed?: boolean;
-          status?: string;
-          completed_at?: string | null;
-          first_completed_at?: string | null;
-          last_accessed_at?: string;
-          last_opened_at?: string;
-          notes?: string | null;
-          xp_awarded?: boolean;
-        };
-        Update: {
-          id?: string;
-          student_id?: string;
-          lesson_id?: string;
-          course_id?: string | null;
-          is_completed?: boolean;
-          status?: string;
-          completed_at?: string | null;
-          first_completed_at?: string | null;
-          last_accessed_at?: string;
-          last_opened_at?: string;
-          notes?: string | null;
-          xp_awarded?: boolean;
-        };
-        Relationships: [];
-      };
     };
     Views: {
       v_public_settings: {
@@ -153,56 +108,6 @@ export interface Database {
           p_grade_class?: string | null;
           p_note?: string | null;
           p_device_key?: string | null;
-        };
-        Returns: Json;
-      };
-      request_password_reset: {
-        Args: {
-          p_username: string;
-          p_full_name: string;
-          p_grade_class?: string | null;
-          p_note?: string | null;
-          p_device_key?: string | null;
-        };
-        Returns: Json;
-      };
-      complete_password_change: {
-        Args: Record<PropertyKey, never>;
-        Returns: undefined;
-      };
-      award_xp: {
-        Args: {
-          student_id: string;
-          amount: number;
-          source: string;
-          ref_id: string | null;
-        };
-        Returns: {
-          student_id?: string;
-          requested_xp?: number;
-          awarded_xp?: number;
-          daily_xp_cap?: number;
-          xp_earned_today?: number;
-          capped?: boolean;
-          total_xp?: number;
-          level_before?: number;
-          level_after?: number;
-          level_up_bonus_coins?: number;
-          current_coins?: number;
-          xp_ledger_id?: string | null;
-        } | null;
-      };
-      add_words_to_library: {
-        Args: {
-          items: Array<{
-            word: string;
-            part_of_speech?: string | null;
-            meaning?: string | null;
-            arabic_meaning?: string | null;
-            example?: string | null;
-            vocab_item_id?: string | null;
-          }>;
-          from: string;
         };
         Returns: Json;
       };

@@ -76,21 +76,9 @@ export function resolveEffectsTier(signals: EffectsSignals): EffectsTier {
   return isBatterySaver(signals.battery) ? "balanced" : "high";
 }
 
-/** A person's saved choice, applied on top of the automatic tier. */
-export interface EffectsPreferences {
-  /** Manual reduce-motion switch. The OS setting always wins when it asks for less motion. */
-  reducedMotion: boolean;
-  /** A picked tier, or null to let the performance governor choose. */
-  tier: EffectsTier | null;
-}
-
 export interface EffectsContextValue {
   /** The active tier, mirrored on `<html data-effects-tier>`. */
   tier: EffectsTier;
-  /** The person's saved preferences (see the Settings page). */
-  preferences: EffectsPreferences;
-  /** Saves a patch of the person's preferences for this session. */
-  setPreferences: (patch: Partial<EffectsPreferences>) => void;
   /** Live value of the OS `prefers-reduced-motion` setting. When true the tier is low. */
   prefersReducedMotion: boolean;
   /** 3D scenes (WebGL canvases) may render: high tier only. */

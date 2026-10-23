@@ -23,11 +23,7 @@ const mocks = vi.hoisted(() => ({
   refreshSession: vi.fn(),
   rpc: vi.fn(),
   signOut: vi.fn(),
-<<<<<<< HEAD
   clearFlag: { current: (() => undefined) as () => void },
-=======
-  clearFlag: { current: () => undefined },
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
 }));
 
 vi.mock("@/shared/api/supabase", () => ({

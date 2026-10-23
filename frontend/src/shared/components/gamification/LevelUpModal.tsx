@@ -38,7 +38,6 @@ export interface LevelUpModalProps {
   className?: string;
 }
 
-<<<<<<< HEAD
 function defaultRewardsForLevel(level: number, rankName?: string): LevelUpReward[] {
   const rewards: LevelUpReward[] = [
     {
@@ -67,29 +66,6 @@ function defaultRewardsForLevel(level: number, rankName?: string): LevelUpReward
   }
   return rewards;
 }
-=======
-const DEFAULT_REWARDS: LevelUpReward[] = [
-  {
-    id: "level-up-coins",
-    name: "Bonus coins",
-    value: "+50 Coins",
-    kind: "coins",
-    description: "Added to your rewards",
-  },
-  {
-    id: "avatar-hat",
-    name: "New Avatar Hat",
-    kind: "cosmetic",
-    description: "Unlocked in the shop",
-  },
-  {
-    id: "student-title",
-    name: "New Title",
-    kind: "title",
-    description: "A fresh title for your profile",
-  },
-];
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
 
 const REWARD_ICONS = {
   coins: Coins,
@@ -153,7 +129,6 @@ export function LevelUpModal({
     if (!isOpen) return;
     play("fanfare");
     if (!motionAllowed || typeof confetti !== "function") return;
-<<<<<<< HEAD
     const css = getComputedStyle(document.documentElement);
     const pick = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
     const colors = [
@@ -166,48 +141,28 @@ export function LevelUpModal({
     const budget = effectsTier === "high" ? 1 : 0.5;
     void confetti({
       particleCount: Math.round(90 * budget),
-=======
-    const colors = ["#ffb84d", "#2fd6a3", "#ffd93d", "#ff6fa5", "#8b7cff"];
-    void confetti({
-      particleCount: 90,
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
       spread: 72,
       startVelocity: 42,
       origin: { x: 0.12, y: 0.68 },
       colors,
-<<<<<<< HEAD
       disableForReducedMotion: true,
       zIndex: 60,
     });
     void confetti({
       particleCount: Math.round(90 * budget),
-=======
-      zIndex: 100,
-    });
-    void confetti({
-      particleCount: 90,
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
       spread: 72,
       startVelocity: 42,
       origin: { x: 0.88, y: 0.68 },
       colors,
-<<<<<<< HEAD
       disableForReducedMotion: true,
       zIndex: 60,
     });
     void confetti({
       particleCount: Math.round(70 * budget),
-=======
-      zIndex: 100,
-    });
-    void confetti({
-      particleCount: 70,
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
       spread: 100,
       startVelocity: 32,
       origin: { x: 0.5, y: 0.45 },
       colors,
-<<<<<<< HEAD
       disableForReducedMotion: true,
       zIndex: 60,
     });
@@ -237,11 +192,6 @@ export function LevelUpModal({
       );
     }
   }, [isOpen, level, motionAllowed]);
-=======
-      zIndex: 100,
-    });
-  }, [isOpen, motionAllowed, play]);
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
 
   const setOpen = (next: boolean) => {
     if (controlledOpen === undefined) setAutoOpen(next);
@@ -278,7 +228,6 @@ export function LevelUpModal({
       className={cn("max-h-[90dvh] overflow-y-auto", className)}
     >
       <div className="flex flex-col items-center gap-5 px-1 pb-2 pt-3 text-center">
-<<<<<<< HEAD
         <div
           className="relative grid h-40 w-40 place-items-center"
           role="img"
@@ -288,33 +237,14 @@ export function LevelUpModal({
             ref={burstRef}
             aria-hidden="true"
             className="absolute inset-0 rounded-full bg-[repeating-conic-gradient(from_0deg,var(--world-main,#ffb84d)_0deg_10deg,transparent_10deg_20deg)] opacity-70"
-=======
-        <div className="relative grid h-40 w-40 place-items-center" aria-label={`Level ${level}`}>
-          <div
-            aria-hidden="true"
-            className={cn(
-              "absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,var(--world-main,#ffb84d)_12deg,transparent_24deg)] opacity-70",
-              motionAllowed && "animate-[spin_18s_linear_infinite]",
-              "motion-reduce:animate-none",
-            )}
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
           />
           <div
             aria-hidden="true"
             className="border-[var(--world-deep,#8f4300)]/50 absolute inset-3 rounded-full border-2 border-dashed"
           />
           <div
-<<<<<<< HEAD
             ref={levelRef}
             className="relative grid h-28 w-28 place-items-center rounded-full border-[3px] border-stroke bg-[var(--world-main,#ffb84d)] text-stroke shadow-retro-md"
-=======
-            className={cn(
-              "relative grid h-28 w-28 place-items-center rounded-full border-[3px] border-stroke bg-[var(--world-main,#ffb84d)] text-stroke shadow-retro-md",
-              motionAllowed &&
-                "motion-safe:animate-in motion-safe:zoom-in-50 motion-safe:duration-500",
-              "motion-reduce:animate-none",
-            )}
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
           >
             <div className="flex flex-col items-center leading-none">
               <span className="text-[11px] font-black uppercase tracking-[0.2em]">Level</span>
@@ -334,7 +264,6 @@ export function LevelUpModal({
         </div>
 
         <div className="space-y-1">
-<<<<<<< HEAD
           <p className="text-ink font-heading text-2xl font-black">Amazing work!</p>
           {rankName ? (
             <p className="inline-flex items-center gap-2 text-sm font-bold text-[var(--world-deep,#8f4300)]">
@@ -343,12 +272,6 @@ export function LevelUpModal({
           ) : (
             <p className="text-sm text-muted">Your next adventure starts now.</p>
           )}
-=======
-          <p className="text-ink font-heading text-2xl font-black">{title ?? "Amazing work!"}</p>
-          <p className="text-sm text-muted">
-            {rankName ? `Your new rank: ${rankName}` : "Your next adventure starts now."}
-          </p>
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
         </div>
 
         <section className="w-full max-w-md text-left" aria-labelledby="level-up-rewards-heading">
@@ -416,19 +339,11 @@ export function LevelUpModal({
             onClick={() => void share()}
           >
             {copied ? (
-<<<<<<< HEAD
               <Check size={16} aria-hidden="true" />
             ) : canShare ? (
               <Share2 size={16} aria-hidden="true" />
             ) : (
               <Copy size={16} aria-hidden="true" />
-=======
-              <Check size={16} />
-            ) : typeof navigator !== "undefined" && "share" in navigator ? (
-              <Share2 size={16} />
-            ) : (
-              <Copy size={16} />
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
             )}
             {copied ? "Copied!" : "Share your achievement"}
           </Button>

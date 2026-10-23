@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   EffectsContext,
   resolveEffectsTier,
   type BatteryStatus,
   type EffectsContextValue,
-  type EffectsPreferences,
 } from "@/shared/hooks/useEffectsTier";
 
 /* Browser APIs missing from lib.dom. */
@@ -95,19 +94,10 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
     };
   }, []);
 
-  const [preferences, setPreferencesState] = useState<EffectsPreferences>({
-    reducedMotion: false,
-    tier: null,
-  });
-  const setPreferences = useCallback((patch: Partial<EffectsPreferences>) => {
-    setPreferencesState((previous) => ({ ...previous, ...patch }));
-  }, []);
-
-  const tier = useMemo(() => {
-    const automatic = resolveEffectsTier({ prefersReducedMotion, battery, ...hardware });
-    if (prefersReducedMotion || preferences.reducedMotion) return "low" as const;
-    return preferences.tier ?? automatic;
-  }, [prefersReducedMotion, battery, hardware, preferences]);
+  const tier = useMemo(
+    () => resolveEffectsTier({ prefersReducedMotion, battery, ...hardware }),
+    [prefersReducedMotion, battery, hardware],
+  );
 
   // Mirror the tier on <html> so CSS can react to it.
   useLayoutEffect(() => {
@@ -131,13 +121,11 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
   const value = useMemo<EffectsContextValue>(
     () => ({
       tier,
-      preferences,
-      setPreferences,
       prefersReducedMotion,
       canRender3D: tier === "high",
       canAnimateComplex: tier !== "low",
     }),
-    [tier, preferences, setPreferences, prefersReducedMotion],
+    [tier, prefersReducedMotion],
   );
 
   return <EffectsContext.Provider value={value}>{children}</EffectsContext.Provider>;

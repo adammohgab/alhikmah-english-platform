@@ -264,7 +264,7 @@ export default function SetNewPasswordPage() {
   if (!isAuthenticated || user === null) {
     return <Navigate to={LOGIN_PATH} replace />;
   }
-  if (!user.mustChangePassword && !saved && !submitting) {
+  if (!user.mustChangePassword && !saved) {
     return <Navigate to={getRoleHomePath(user.role)} replace />;
   }
 

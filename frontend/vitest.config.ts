@@ -12,14 +12,6 @@ export default defineConfig({
       },
     ],
   },
-  server: {
-    fs: {
-      allow: [
-        fileURLToPath(new URL(".", import.meta.url)),
-        fileURLToPath(new URL("../supabase/migrations", import.meta.url)),
-      ],
-    },
-  },
   test: {
     globals: true,
     environment: "jsdom",

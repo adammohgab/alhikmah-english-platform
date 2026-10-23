@@ -158,18 +158,9 @@ function toBadge(definition: DefinitionRow, data: AchievementsData): Badge {
       ? "progress"
       : "locked";
 
-<<<<<<< HEAD
   const description = hidden
     ? "Keep exploring to discover this badge."
     : (definition.description?.trim() ?? hint ?? "Keep learning to unlock this badge.");
-=======
-  const customDescription = [definition.description?.trim(), hint].find(
-    (value) => value !== undefined && value !== null && value.length > 0,
-  );
-  const description = hidden
-    ? "Keep exploring to discover this badge."
-    : (customDescription ?? "Keep learning to unlock this badge.");
->>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
 
   return {
     id: definition.id,
