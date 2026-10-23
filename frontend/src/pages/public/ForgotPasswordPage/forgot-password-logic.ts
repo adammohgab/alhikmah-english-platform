@@ -157,8 +157,8 @@ export async function submitResetRequest(values: ResetValues): Promise<ResetOutc
     result = await supabase.rpc("request_password_reset", {
       p_username: values.username.trim().toLowerCase(),
       p_full_name: values.fullName.trim(),
-      p_grade_class: gradeClass || null,
-      p_note: note || null,
+      ...(gradeClass !== "" ? { p_grade_class: gradeClass } : {}),
+      ...(note !== "" ? { p_note: note } : {}),
       p_device_key: getDeviceKey(),
     });
   } catch {
