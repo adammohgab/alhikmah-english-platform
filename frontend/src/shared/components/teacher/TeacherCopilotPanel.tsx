@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import TeacherActionCardContainer, { type TeacherActionCardRecord } from "./TeacherActionCardContainer";
 
 export interface CopilotContext {
   type: "course" | "quiz" | "rubric";
@@ -21,6 +22,9 @@ interface Props {
     context: CopilotContext | null;
     signal: AbortSignal;
   }) => AsyncIterable<string>;
+  /** Persisted cards emitted by the Copilot stream; render them in the review area. */
+  actionCards?: TeacherActionCardRecord[];
+  onActionCardResolved?: (result: { id: string; status: "approved" | "edited" | "discarded"; result?: unknown }) => void;
 }
 
 const shortcuts = [
@@ -29,7 +33,7 @@ const shortcuts = [
   "Create a rubric for this prompt",
 ];
 
-export default function TeacherCopilotPanel({ open, onClose, context, streamReply }: Props) {
+export default function TeacherCopilotPanel({ open, onClose, context, streamReply, actionCards = [], onActionCardResolved }: Props) {
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
@@ -155,6 +159,14 @@ export default function TeacherCopilotPanel({ open, onClose, context, streamRepl
               </p>
             </article>
           ))}
+          {actionCards.length > 0 && (
+            <section className="mt-4 space-y-3" aria-label="Copilot proposed changes">
+              <h3 className="font-heading text-lg font-bold">Proposed curriculum changes</h3>
+              {actionCards.map((card) => (
+                <TeacherActionCardContainer key={card.id} card={card} onResolved={onActionCardResolved} />
+              ))}
+            </section>
+          )}
           <div ref={bottomRef} />
         </div>
 

@@ -100,7 +100,7 @@ export async function insertActionCard(
       changes: card.changes,
       sources: card.sources || {},
       notes: card.notes || [],
-      status: card.status || "pending",
+      status: "ready",
       stamps: {},
       created_at: new Date().toISOString(),
     });
@@ -484,7 +484,7 @@ Before the action card, stream your pedagogical conversational reasoning to the 
           const cardEventPayload = {
             card_id: generatedCardId,
             ...proposedCard,
-            status: "pending",
+            status: "ready",
           };
 
           controller.enqueue(
