@@ -153,10 +153,10 @@ describe("ProfilePage", () => {
     const badgeList = within(dialog).getByRole("list", { name: "Earned badges to pin" });
     await user.click(within(badgeList).getByRole("button", { name: /On a Roll/ }));
     await user.click(within(badgeList).getByRole("button", { name: /Quiz Star/ }));
-    await user.click(within(dialog).getByRole("button", { name: "Save badges (2/3)" }));
+    await user.click(within(dialog).getByRole("button", { name: "Save badges (3/3)" }));
     expect(rpcCalls).toContainEqual({
       name: "pin_badges",
-      args: { student_id: "student-1", badge_ids: ["b3", "b2"] },
+      args: { student_id: "student-1", badge_ids: ["b3", "b4", "b2"] },
     });
   });
 
