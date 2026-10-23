@@ -44,7 +44,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
           SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
           SUPERADMIN_USERNAME: ${{ inputs.username }}
           SUPERADMIN_DISPLAY_NAME: ${{ inputs.display_name }}
