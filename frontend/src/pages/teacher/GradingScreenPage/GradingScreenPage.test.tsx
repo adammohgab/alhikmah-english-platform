@@ -7,8 +7,10 @@ import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import { ToastContext, type ToastContextValue } from "@/app/providers/toast-context";
 import GradingScreenPage from "./index";
 
-const rpc = vi.fn<(fn: string, args: Record<string, unknown>) => Promise<unknown>>();
-const invoke = vi.fn();
+const { rpc, invoke } = vi.hoisted(() => ({
+  rpc: vi.fn<(fn: string, args: Record<string, unknown>) => Promise<unknown>>(),
+  invoke: vi.fn(),
+}));
 
 vi.mock("@/shared/api/supabase", () => ({
   supabase: {

@@ -98,7 +98,7 @@ create or replace function storage.foldername(name text)
 returns text[]
 language sql
 immutable
-as $ select string_to_array(name, '/') $;
+as $$ select string_to_array(name, '/') $$;
 
 grant usage on schema storage to anon, authenticated, service_role;
 grant all on storage.buckets, storage.objects to anon, authenticated, service_role;
