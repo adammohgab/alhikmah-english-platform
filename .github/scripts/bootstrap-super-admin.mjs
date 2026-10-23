@@ -29,8 +29,35 @@ if (!displayName) {
 }
 const authEmail = `${username}@accounts.invalid`;
 
+// Supabase JS expects the bare project URL. If the GitHub secret was copied
+// from an API endpoint such as /rest/v1 or /auth/v1, normalize it so the
+// client does not construct invalid URLs. Query strings and fragments are
+// rejected rather than silently discarded.
+function normalizeSupabaseUrl(rawUrl) {
+  let url;
+  try {
+    url = new URL(rawUrl.trim());
+  } catch {
+    throw new Error("SUPABASE_URL must be a valid Supabase project URL.");
+  }
+  if (url.protocol !== "https:") {
+    throw new Error("SUPABASE_URL must use HTTPS.");
+  }
+  if (url.search || url.hash) {
+    throw new Error("SUPABASE_URL must not contain a query string or fragment.");
+  }
+  const path = url.pathname.replace(/\/+$/, "");
+  if (path === "" || path === "/rest/v1" || path === "/auth/v1") {
+    url.pathname = "";
+    return url.toString().replace(/\/$/, "");
+  }
+  throw new Error("SUPABASE_URL must be the bare project URL, without /rest/v1, /auth/v1, or another path.");
+}
+
+const supabaseUrl = normalizeSupabaseUrl(process.env.SUPABASE_URL);
+
 const supabase = createClient(
-  process.env.SUPABASE_URL,
+  supabaseUrl,
   process.env.SUPABASE_SERVICE_ROLE_KEY,
   {
     auth: {
