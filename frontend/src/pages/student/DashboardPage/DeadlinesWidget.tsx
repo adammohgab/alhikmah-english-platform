@@ -22,7 +22,12 @@ const deadline = z.object({
   kind: z.enum(["assignment", "quiz"]),
   id: z.string(),
   title: z.string(),
-  course: z.string().nullish(),
+  course: z
+    .union([z.string(), z.object({ title: z.string().nullish() })])
+    .nullish()
+    .transform((value) =>
+      typeof value === "string" ? value : (value?.title ?? null),
+    ),
   due_at: z.string(),
   status: z.string().nullish(),
   action: z.string().nullish(),
