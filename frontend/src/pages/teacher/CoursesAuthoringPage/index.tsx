@@ -1,5 +1,4 @@
 import { useState } from "react";
-import VersionHistoryModal from "@/pages/teacher/CourseBuilderPage/VersionHistoryModal";
 
 export interface TeacherCourse {
   id: string;
@@ -28,7 +27,6 @@ export default function CoursesAuthoringPage({
 }: Props) {
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState("");
-  const [historyCourse, setHistoryCourse] = useState<TeacherCourse | null>(null);
 
   async function run(id: string, action: () => Promise<void>, success: string) {
     setBusy(id);
@@ -101,7 +99,6 @@ export default function CoursesAuthoringPage({
             </p>
             <small>Last edited {new Date(course.updatedAt).toLocaleString()}</small>
             <hr />
-            <button onClick={() => setHistoryCourse(course)}><span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>Version history</span></button>{" "}
             <button
               onClick={() => {
                 void run(
@@ -131,7 +128,6 @@ export default function CoursesAuthoringPage({
         <p>No courses yet. Create a course or adopt an official curriculum to get started.</p>
       )}
       <p role="status">{message}</p>
-      {historyCourse && <VersionHistoryModal courseId={historyCourse.id} open onClose={() => setHistoryCourse(null)} onRestored={() => setMessage(`Draft restored from version history for “${historyCourse.title}”.`)} />}
     </main>
   );
 }

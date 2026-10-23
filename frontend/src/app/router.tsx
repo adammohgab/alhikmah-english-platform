@@ -89,42 +89,6 @@ export const router = createBrowserRouter(
           element: <PlaceholderView title="Student Dashboard" />,
         },
         {
-          path: "ai-tutor",
-          ...page(() => import("@/pages/student/AiTutorPage")),
-        },
-        {
-          path: "practice/translation",
-          ...page(() => import("@/pages/student/TranslationPracticePage")),
-        },
-        {
-          path: "practice/reading",
-          ...page(() => import("@/pages/student/ReadingPracticePage")),
-        },
-        {
-          path: "courses/:courseId",
-          ...page(() => import("@/pages/student/CourseDetailsPage")),
-        },
-        {
-          path: "courses/:courseId/units/:unitId",
-          ...page(() => import("@/pages/student/UnitPage")),
-        },
-        {
-          path: "certificates",
-          ...page(() => import("@/pages/student/CertificatesPage")),
-        },
-        {
-          path: "quests",
-          ...page(() => import("@/pages/student/QuestsPage")),
-        },
-        {
-          path: "shop",
-          ...page(() => import("@/pages/student/ShopPage")),
-        },
-        {
-          path: "notifications",
-          ...page(() => import("@/pages/student/NotificationsPage")),
-        },
-        {
           path: "*",
           element: <PlaceholderView title="Student Section" />,
         },
@@ -141,20 +105,20 @@ export const router = createBrowserRouter(
           element: <PlaceholderView title="Teacher Dashboard" />,
         },
         {
-          path: "lessons/:lessonId/edit",
-          ...page(() => import("@/pages/teacher/LessonEditorPage")),
-        },
-        {
-          path: "courses/generate",
-          ...page(() => import("@/pages/teacher/CourseWizardPage")),
-        },
-        {
-          path: "courses/:courseId/versions",
-          ...page(() => import("@/pages/teacher/CourseBuilderPage")),
+          path: "question-bank",
+          ...page(() => import("@/pages/teacher/QuestionBankPage")),
         },
         {
           path: "rubrics",
           ...page(() => import("@/pages/teacher/RubricsPage")),
+        },
+        {
+          path: "courses/:courseId/publish",
+          ...page(() => import("@/pages/teacher/CoursePublishPage")),
+        },
+        {
+          path: "courses/:courseId/edit",
+          ...page(() => import("@/pages/teacher/CourseBuilderPage")),
         },
         {
           path: "*",

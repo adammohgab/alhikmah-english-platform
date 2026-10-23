@@ -8,12 +8,11 @@ import { ToastContext, type ToastContextValue } from "@/app/providers/toast-cont
 import GradingScreenPage from "./index";
 
 const rpc = vi.fn<(fn: string, args: Record<string, unknown>) => Promise<unknown>>();
-const invoke = vi.fn();
 
 vi.mock("@/shared/api/supabase", () => ({
   supabase: {
     rpc: (fn: string, args: Record<string, unknown>) => rpc(fn, args),
-    functions: { invoke },
+    functions: { invoke: vi.fn() },
   },
 }));
 
@@ -125,7 +124,6 @@ function renderPage() {
 describe("GradingScreenPage", () => {
   beforeEach(() => {
     rpc.mockReset();
-    invoke.mockReset();
     vi.mocked(toast.show).mockClear();
   });
 
@@ -153,34 +151,6 @@ describe("GradingScreenPage", () => {
     await user.click(within(vocab).getByRole("radio", { name: /Great/ }));
     expect(screen.getByTestId("score-q2")).toHaveTextContent("10 / 10");
     expect(screen.getByTestId("total-score")).toHaveTextContent("Total 12 / 12");
-  });
-
-  it("runs AI pre-grade and only applies its suggestions after teacher confirmation", async () => {
-    const user = userEvent.setup();
-    invoke.mockResolvedValue({
-      data: {
-        success: true,
-        draft_grade: {
-          criteria_evaluations: [
-            { criterion_name: "Grammar", score: 5, explanation: "Accurate verb forms." },
-            { criterion_name: "Vocabulary", score: 1, explanation: "Word choice is limited." },
-          ],
-          suggested_teacher_comment: "Good start. Add more descriptive vocabulary.",
-        },
-      },
-      error: null,
-    });
-    renderPage();
-    await screen.findByText("I went to the market with my family.");
-    await user.click(screen.getByRole("button", { name: "Run AI Pre-Grade" }));
-    expect(await screen.findByText("Accurate verb forms.")).toBeInTheDocument();
-    expect(invoke).toHaveBeenCalledWith("ai-grade-submission", expect.objectContaining({
-      body: expect.objectContaining({ attempt_id: "s1", question_id: "q2" }),
-    }));
-    expect(screen.getByTestId("score-q2")).toHaveTextContent("— / 10");
-    await user.click(screen.getByRole("button", { name: "Use in draft" }));
-    expect(screen.getByTestId("score-q2")).toHaveTextContent("5 / 10");
-    expect(screen.getByText("Accepted into teacher draft")).toBeInTheDocument();
   });
 
   it("refuses to save while a writing answer is unscored", async () => {

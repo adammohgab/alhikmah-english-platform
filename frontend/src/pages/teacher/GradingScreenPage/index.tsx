@@ -10,9 +10,6 @@ import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { Textarea } from "@/shared/components/ui/Textarea";
 import { AudioFeedbackRecorder } from "@/shared/components/teacher/AudioFeedbackRecorder";
-import { supabase } from "@/shared/api/supabase";
-import AiGradingAssistant from "./AiGradingAssistant";
-import type { AiCriterionSuggestion, AiPreGradeResult, DraftScores, RubricCriterion as AiRubricCriterion } from "./AiGradingAssistant";
 import {
   addInlineComment,
   fetchSubmission,
@@ -25,7 +22,6 @@ import {
   buildSavePayload,
   clamp,
   computeTotals,
-  criterionMax,
   countWords,
   scoreFromRubric,
   selectionFromPoints,
@@ -260,7 +256,6 @@ function RubricEvaluator({
   onPick,
   onScore,
   onAcceptAi,
-  aiSuggestions = {},
 }: {
   question: GradingQuestion;
   rubric: Rubric | null;
@@ -269,7 +264,6 @@ function RubricEvaluator({
   onPick: (criterionId: string, levelIndex: number) => void;
   onScore: (value: number | null) => void;
   onAcceptAi: () => void;
-  aiSuggestions?: Record<string, AiCriterionSuggestion>;
 }) {
   const ai = question.ai;
   return (
@@ -312,27 +306,23 @@ function RubricEvaluator({
               <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={criterion.name}>
                 {criterion.levels.map((level, levelIndex) => {
                   const selected = selection[criterion.id] === levelIndex;
-                  const aiSuggestion = aiSuggestions[criterion.id];
-                  const aiMatchesLevel = aiSuggestion != null && Math.abs(aiSuggestion.score - level.points) < 0.001;
                   return (
                     <button
                       key={`${criterion.id}-${levelIndex}`}
                       type="button"
                       role="radio"
                       aria-checked={selected}
-                      title={aiMatchesLevel ? `AI suggestion: ${aiSuggestion.score} points. ${aiSuggestion.rationale}` : level.description ?? undefined}
+                      title={level.description ?? undefined}
                       onClick={() => onPick(criterion.id, levelIndex)}
                       className={cn(
                         "rounded-[10px] border-2 border-stroke px-2.5 py-1 text-sm font-bold",
                         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
                         selected
                           ? "bg-[var(--world-main,#ffb84d)] shadow-retro-sm"
-                          : aiMatchesLevel
-                            ? "border-violet-600 outline outline-2 outline-violet-400 outline-offset-1 bg-violet-50 hover:bg-violet-100"
-                            : "bg-surface-0 hover:bg-surface-100",
+                          : "bg-surface-0 hover:bg-surface-100",
                       )}
                     >
-                      {level.label} · {formatPoints(level.points)}{aiMatchesLevel && <span className="ml-1 text-xs font-extrabold" aria-label="AI suggested level">AI</span>}
+                      {level.label} · {formatPoints(level.points)}
                     </button>
                   );
                 })}
@@ -379,7 +369,6 @@ function GradingWorkspace({
   const rubric: Rubric | null = data.rubric ?? null;
   const [scores, setScores] = useState<Scores>(() => initialScores(data));
   const [selections, setSelections] = useState<Selections>({});
-  const [aiSuggestions, setAiSuggestions] = useState<Record<string, Record<string, AiCriterionSuggestion>>>({});
   const [overall, setOverall] = useState(data.submission.overall_comment ?? "");
   const [voiceAssetId, setVoiceAssetId] = useState<string | null>(null);
   const [comments, setComments] = useState<InlineComment[]>(data.comments);
@@ -613,85 +602,18 @@ function GradingWorkspace({
               This submission has no writing answers. Every question was scored automatically.
             </p>
           )}
-          {writing.map((q) => {
-            const aiRubric: AiRubricCriterion[] = (rubric?.criteria ?? []).map((criterion) => ({
-              id: criterion.id,
-              label: criterion.name,
-              maxPoints: criterionMax(criterion),
-            }));
-            return (
-              <div key={q.question_id} className="space-y-3">
-                <RubricEvaluator
-                  question={q}
-                  rubric={rubric}
-                  selection={selections[q.question_id] ?? {}}
-                  score={scores[q.question_id] ?? null}
-                  onPick={(criterionId, levelIndex) => pickLevel(q, criterionId, levelIndex)}
-                  onScore={(value) => setScore(q.question_id, value)}
-                  onAcceptAi={() => acceptAi(q)}
-                  aiSuggestions={aiSuggestions[q.question_id]}
-                />
-                {rubric && rubric.criteria.length > 0 && (
-                  <AiGradingAssistant
-                    submissionId={submissionId}
-                    rubric={aiRubric}
-                    draftScores={Object.fromEntries(rubric.criteria.map((criterion) => [
-                      criterion.id,
-                      selections[q.question_id]?.[criterion.id] == null
-                        ? null
-                        : criterion.levels[selections[q.question_id][criterion.id]]?.points ?? null,
-                    ])) as DraftScores}
-                    onDraftScoresChange={(nextScores) => {
-                      const nextSelection = selectionFromPoints(
-                        rubric,
-                        Object.fromEntries(Object.entries(nextScores).filter((entry): entry is [string, number] => typeof entry[1] === "number")),
-                      );
-                      setSelections((previous) => ({ ...previous, [q.question_id]: nextSelection }));
-                      setScore(q.question_id, scoreFromRubric(rubric, nextSelection, q.max_points));
-                    }}
-                    draftComments={overall}
-                    onDraftCommentsChange={(next) => { setOverall(next); touch(); }}
-                    onSuggestionsChange={(next) => setAiSuggestions((previous) => ({ ...previous, [q.question_id]: next }))}
-                    invokeAiGradeSubmission={async ({ submissionId: attemptId, rubric: criteria }): Promise<AiPreGradeResult> => {
-                      const { data: response, error } = await supabase.functions.invoke("ai-grade-submission", {
-                        body: {
-                          attempt_id: attemptId,
-                          question_id: q.question_id,
-                          student_answer: q.student_answer ?? "",
-                          question_prompt: q.prompt,
-                          rubric_id: rubric.id ?? undefined,
-                          rubric_criteria: criteria.map((criterion) => ({
-                            id: criterion.id,
-                            name: criterion.label,
-                            description: rubric.criteria.find((item) => item.id === criterion.id)?.description ?? "Evaluate performance against this criterion.",
-                            max_score: criterion.maxPoints,
-                          })),
-                        },
-                      });
-                      if (error) throw new Error(error.message || "AI pre-grade request failed.");
-                      const payload = response as { success?: boolean; draft_grade?: { criteria_evaluations?: Array<{ criterion_id?: string; criterion_name?: string; score?: number; explanation?: string }>; suggested_teacher_comment?: string; overall_feedback?: string }; error?: { message?: string } } | null;
-                      if (!payload?.success || !payload.draft_grade) {
-                        throw new Error(payload?.error?.message ?? "The AI grading service returned an unexpected response.");
-                      }
-                      const suggestions = (payload.draft_grade.criteria_evaluations ?? []).map((item) => {
-                        const matched = criteria.find((criterion) => criterion.id === item.criterion_id)
-                          ?? criteria.find((criterion) => criterion.label.toLowerCase() === (item.criterion_name ?? "").toLowerCase());
-                        return matched && typeof item.score === "number" ? {
-                          criterionId: matched.id,
-                          score: item.score,
-                          rationale: item.explanation ?? "Review this criterion against the student's answer.",
-                        } : null;
-                      }).filter((item): item is NonNullable<typeof item> => item !== null);
-                      return {
-                        suggestions,
-                        feedback: payload.draft_grade.suggested_teacher_comment ?? payload.draft_grade.overall_feedback ?? "",
-                      };
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })}
+          {writing.map((q) => (
+            <RubricEvaluator
+              key={q.question_id}
+              question={q}
+              rubric={rubric}
+              selection={selections[q.question_id] ?? {}}
+              score={scores[q.question_id] ?? null}
+              onPick={(criterionId, levelIndex) => pickLevel(q, criterionId, levelIndex)}
+              onScore={(value) => setScore(q.question_id, value)}
+              onAcceptAi={() => acceptAi(q)}
+            />
+          ))}
 
           <section className={PANEL} aria-label="Overall comment">
             <Textarea

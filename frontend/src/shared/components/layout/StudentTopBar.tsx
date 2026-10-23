@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Flame, LogOut, Menu, Palette, Settings, User } from "lucide-react";
+import { Bell, Coins, Flame, LogOut, Menu, Palette, Settings, User } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import { useAuth } from "@/app/providers/auth-context";
 import { useToast } from "@/shared/hooks/useToast";
 import { useTheme, useWorld } from "@/shared/hooks/useWorld";
 import type { WorldId } from "@/shared/hooks/useWorld";
 import { LevelIndicator } from "@/shared/components/ui/LevelIndicator";
-import { CoinCounter } from "@/shared/components/gamification/CoinCounter";
 
 /* ========================================
    Student top bar (STUDENT-SPEC §3.1, §3.3, §3.5; TASKS UIK-23)
@@ -210,6 +209,7 @@ interface StatsGroupProps {
 
 function StatsGroup({ stats, className }: StatsGroupProps) {
   const xpGain = useGain(stats?.xpTotal);
+  const coinGain = useGain(stats?.coins);
 
   const streakText =
     stats === null
@@ -217,6 +217,7 @@ function StatsGroup({ stats, className }: StatsGroupProps) {
       : `Streak: ${stats.streakDays} ${stats.streakDays === 1 ? "day" : "days"}`;
   const announcement = [
     xpGain !== null ? `You earned ${xpGain.amount} XP.` : "",
+    coinGain !== null ? `You earned ${coinGain.amount} coins.` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -240,7 +241,22 @@ function StatsGroup({ stats, className }: StatsGroupProps) {
         value={stats === null ? null : NUMBER_FORMAT.format(stats.streakDays)}
         accessibleLabel={streakText}
       />
-      <CoinCounter balance={stats === null ? null : stats.coins} />
+      <StatChip
+        icon={
+          <Coins
+            aria-hidden="true"
+            size={20}
+            strokeWidth={2.5}
+            className="shrink-0 fill-[#ffd93d] stroke-stroke"
+          />
+        }
+        value={stats === null ? null : NUMBER_FORMAT.format(stats.coins)}
+        accessibleLabel={
+          stats === null ? "Coins: loading" : `Coins: ${NUMBER_FORMAT.format(stats.coins)}`
+        }
+        gain={coinGain}
+        gainText={coinGain === null ? undefined : `+${NUMBER_FORMAT.format(coinGain.amount)}`}
+      />
       <div
         className="relative flex shrink-0 items-center gap-2"
         title={stats?.rankTitle}
