@@ -3,7 +3,16 @@
  * to their school. It is generated per crash from the clock and a random part; it carries
  * no information about the error itself.
  */
+let errorIdSequence = 0;
+
 export function createErrorId(now: number = Date.now()): string {
+  const time = now.toString(36).toUpperCase().slice(-5);
+  // A monotonic component guarantees uniqueness even when crypto returns duplicate bytes.
+  const sequence = (errorIdSequence++ % 36 ** 4).toString(36).toUpperCase().padStart(4, "0");
+  return `ERR-${time}-${sequence}`;
+}
+
+function createRandomErrorId(now: number = Date.now()): string {
   const time = now.toString(36).toUpperCase().slice(-5);
   let random = "";
   if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
