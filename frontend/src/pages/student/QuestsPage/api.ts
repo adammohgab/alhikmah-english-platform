@@ -87,7 +87,7 @@ function toQuest(row: z.infer<typeof questRow>): Quest {
     target: template.target_count,
     xp: template.xp_reward,
     coins: template.coin_reward,
-    state: row.is_claimed ? "claimed" : done && row.is_completed ? "ready" : "active",
+    state: row.is_claimed ? "claimed" : done ? "ready" : "active",
     expiresAt: row.expires_at,
   };
 }
