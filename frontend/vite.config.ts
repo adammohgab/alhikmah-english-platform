@@ -19,7 +19,10 @@ export default defineConfig({
     // Integration tests import migration SQL from the repository-level supabase directory.
     // Explicitly allow the repository root while keeping Vite's filesystem checks enabled.
     fs: {
-      allow: [searchForWorkspaceRoot(process.cwd()), fileURLToPath(new URL("../", import.meta.url))],
+      allow: [
+        searchForWorkspaceRoot(process.cwd()),
+        fileURLToPath(new URL("../", import.meta.url)),
+      ],
     },
   },
 });
