@@ -434,6 +434,7 @@ export default function QuestionCreatorModal({ isOpen, onClose, question, onSave
           <label style={labelStyle}>
             Prompt
             <textarea
+              id="question-creator-prompt"
               style={{ ...fieldStyle, minHeight: 92, resize: "vertical" }}
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
