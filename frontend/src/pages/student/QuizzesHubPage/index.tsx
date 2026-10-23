@@ -48,6 +48,7 @@ const STATUS_LABEL: Record<string, string> = {
 /** The status a row is filtered and labelled by in its tab. */
 function rowStatus(row: QuizRow, tab: Tab): string {
   if (tab === "completed") return row.passed == null ? "done" : row.passed ? "passed" : "failed";
+  if (row.lock?.locked === true) return "locked";
   return row.status ?? "ready";
 }
 const labelFor = (status: string) => STATUS_LABEL[status] ?? (status === "done" ? "Done" : status);
