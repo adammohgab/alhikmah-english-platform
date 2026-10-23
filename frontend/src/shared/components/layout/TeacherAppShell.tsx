@@ -163,6 +163,14 @@ const NAV_GROUPS: readonly NavGroup[] = [
       },
       {
         kind: "link",
+        id: "rubrics",
+        label: "Rubrics",
+        to: "/teacher/rubrics",
+        icon: ClipboardList,
+        prefixes: ["/teacher/rubrics"],
+      },
+      {
+        kind: "link",
         id: "grading",
         label: "Grading",
         to: "/teacher/grading",

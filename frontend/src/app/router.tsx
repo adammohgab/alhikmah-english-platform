@@ -109,6 +109,10 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/teacher/QuestionBankPage")),
         },
         {
+          path: "rubrics",
+          ...page(() => import("@/pages/teacher/RubricsPage")),
+        },
+        {
           path: "*",
           element: <PlaceholderView title="Teacher Section" />,
         },
