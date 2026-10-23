@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
+import logo from "@/shared/assets/logo.png";
 import { getRoleHomePath } from "@/app/guards/guard-utils";
 import { useAuth } from "@/app/providers/auth-context";
 import { Button } from "@/shared/components/ui/Button";
@@ -143,16 +143,15 @@ export function PublicHeader({ mainId = "main-content", className }: PublicHeade
     }
   };
 
-  const logoLink =
-    SCHOOL_LOGO_SRC === null ? null : (
-      <Link
-        to="/"
-        aria-label="Al Hikmah Private School, home page"
-        className="flex shrink-0 items-center rounded-[8px] bg-surface-0"
-      >
-        <img src={SCHOOL_LOGO_SRC} alt="" width={147} height={32} className="h-8 w-auto" />
-      </Link>
-    );
+  const logoLink = (
+    <Link
+      to="/"
+      aria-label="Al Hikmah Private School, home page"
+      className="flex shrink-0 items-center rounded-[8px] bg-surface-0"
+    >
+      <img src={logo} alt="" width={147} height={32} className="h-8 w-auto" />
+    </Link>
+  );
 
   return (
     <>
@@ -243,12 +242,7 @@ export function PublicHeader({ mainId = "main-content", className }: PublicHeade
               drawerOpen ? "translate-x-0" : "translate-x-full",
             )}
           >
-            <div
-              className={cn(
-                "flex h-16 shrink-0 items-center gap-4 border-b-2 border-stroke px-4",
-                logoLink === null ? "justify-end" : "justify-between",
-              )}
-            >
+            <div className="flex h-16 shrink-0 items-center justify-between gap-4 border-b-2 border-stroke px-4">
               {logoLink}
               <IconButton
                 ref={closeButtonRef}

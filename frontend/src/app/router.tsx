@@ -34,16 +34,15 @@ export const router = createBrowserRouter(
       path: "/forgot-password",
       element: (
         <PublicOnlyRoute>
-          <Outlet />
+          <PlaceholderView title="Reset Password Request" />
         </PublicOnlyRoute>
       ),
-      children: [{ index: true, ...page(() => import("@/pages/public/ForgotPasswordPage")) }],
     },
 
     // Special System States
     {
       path: "/set-new-password",
-      ...page(() => import("@/pages/public/SetNewPasswordPage")),
+      element: <PlaceholderView title="Set a New Password" />,
     },
     {
       path: "/account-not-active",
@@ -90,22 +89,6 @@ export const router = createBrowserRouter(
           element: <PlaceholderView title="Student Dashboard" />,
         },
         {
-          path: "ai-tutor",
-          ...page(() => import("@/pages/student/AiTutorPage")),
-        },
-        {
-          path: "quests",
-          ...page(() => import("@/pages/student/QuestsPage")),
-        },
-        {
-          path: "shop",
-          ...page(() => import("@/pages/student/ShopPage")),
-        },
-        {
-          path: "notifications",
-          ...page(() => import("@/pages/student/NotificationsPage")),
-        },
-        {
           path: "*",
           element: <PlaceholderView title="Student Section" />,
         },
@@ -120,6 +103,10 @@ export const router = createBrowserRouter(
         {
           index: true,
           element: <PlaceholderView title="Teacher Dashboard" />,
+        },
+        {
+          path: "question-bank",
+          ...page(() => import("@/pages/teacher/QuestionBankPage")),
         },
         {
           path: "*",
