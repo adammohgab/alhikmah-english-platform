@@ -119,6 +119,7 @@ beforeEach(() => {
       next_cursor: null,
       items: [
         {
+          id: "q-old",
           attempt_id: "a1",
           quiz_id: "q-old",
           title: "Greetings Quiz",
