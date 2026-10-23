@@ -265,7 +265,7 @@ describe("teacher AI builders integration", () => {
   it("validates question-bank answer keys and saves tags plus answer data", async () => {
     render(<QuestionCreatorModal isOpen onClose={vi.fn()} />);
     fireEvent.change(screen.getByLabelText("Question type"), { target: { value: "fill_blank" } });
-    fireEvent.change(within(screen.getByRole("dialog")).getByLabelText("Question prompt"), {
+    fireEvent.change(within(screen.getByRole("dialog")).getByLabelText("Prompt"), {
       target: { value: "The sun rises in the east." },
     });
     fireEvent.click(screen.getByRole("button", { name: /Save question/i }));
