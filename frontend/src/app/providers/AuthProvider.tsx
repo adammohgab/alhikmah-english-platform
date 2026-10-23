@@ -27,23 +27,36 @@ export function AuthProvider({
     if (value !== undefined) return undefined;
     let active = true;
     let loadedFor: string | null = null;
+    let mustChangePassword = false;
 
     const resolve = async (session: Session | null) => {
       if (session === null) {
         loadedFor = null;
+        mustChangePassword = false;
         if (active) setState({ isLoading: false, user: null });
         return;
       }
       const profile = await fetchAuthProfile(session.user.id);
       if (!active) return;
       loadedFor = profile === null ? null : session.user.id;
+      mustChangePassword = profile?.mustChangePassword === true;
       setState({ isLoading: false, user: profile });
     };
 
     void supabase.auth.getSession().then(({ data }) => resolve(data.session));
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "TOKEN_REFRESHED" && session !== null && loadedFor === session.user.id) return;
+      // A refresh normally changes nothing. While the profile still says the password must change,
+      // it is read again, because the set-new-password page refreshes the session once the flag
+      // is cleared.
+      if (
+        event === "TOKEN_REFRESHED" &&
+        session !== null &&
+        loadedFor === session.user.id &&
+        !mustChangePassword
+      ) {
+        return;
+      }
       // The callback must not await Supabase calls, so the profile read runs on the next tick.
       setTimeout(() => {
         void resolve(session);

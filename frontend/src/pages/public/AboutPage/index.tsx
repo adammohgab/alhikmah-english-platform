@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Headphones, Mic, PenLine } from "lucide-react";
-import logo from "@/shared/assets/logo.png";
+import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
 import { PublicFooter } from "@/shared/components/layout/PublicFooter";
 import { PublicHeader } from "@/shared/components/layout/PublicHeader";
 import { Avatar } from "@/shared/components/ui/Avatar";
@@ -391,9 +391,17 @@ export default function AboutPage() {
             <h2 id="school" className="sr-only">
               The school
             </h2>
-            <div className="inline-block rounded-[16px] border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
-              <img src={logo} alt={SCHOOL_NAME} width={221} height={48} className="h-12 w-auto" />
-            </div>
+            {SCHOOL_LOGO_SRC !== null && (
+              <div className="inline-block rounded-[16px] border-2 border-stroke bg-surface-0 p-6 shadow-retro-sm">
+                <img
+                  src={SCHOOL_LOGO_SRC}
+                  alt={SCHOOL_NAME}
+                  width={221}
+                  height={48}
+                  className="h-12 w-auto"
+                />
+              </div>
+            )}
             <p className="mt-4 text-[16px] text-muted">
               The Al Hikmah English Platform is part of {SCHOOL_NAME}.
             </p>
