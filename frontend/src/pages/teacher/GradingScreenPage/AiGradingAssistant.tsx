@@ -33,6 +33,7 @@ interface Props {
     submissionId: string;
     rubric: RubricCriterion[];
   }) => Promise<AiPreGradeResult>;
+  onSuggestionsChange?: (suggestions: Record<string, AiCriterionSuggestion>) => void;
   world?: WorldName;
 }
 
@@ -48,6 +49,7 @@ export default function AiGradingAssistant({
   draftComments,
   onDraftCommentsChange,
   invokeAiGradeSubmission,
+  onSuggestionsChange,
   world = "world-violet",
 }: Props) {
   const [suggestions, setSuggestions] = useState<Record<string, SuggestionState>>({});
@@ -62,6 +64,7 @@ export default function AiGradingAssistant({
     setBusy(true);
     setError("");
     setSuggestions({});
+    onSuggestionsChange?.({});
     setSuggestedFeedback("");
     setFeedbackStatus(null);
 
@@ -82,6 +85,7 @@ export default function AiGradingAssistant({
       }
 
       setSuggestions(next);
+      onSuggestionsChange?.(Object.fromEntries(Object.entries(next).map(([id, item]) => [id, { criterionId: item.criterionId, score: item.score, rationale: item.rationale }])));
       setSuggestedFeedback(result.feedback ?? "");
       setFeedbackStatus(result.feedback?.trim() ? "pending" : null);
     } catch (cause) {
@@ -103,7 +107,7 @@ export default function AiGradingAssistant({
     setSuggestions((current) => {
       const existing = current[criterionId];
       if (!existing) return current;
-
+      onSuggestionsChange?.(Object.fromEntries(Object.entries(current).filter(([id]) => id !== criterionId).map(([id, item]) => [id, { criterionId: item.criterionId, score: item.score, rationale: item.rationale }])));
       return {
         ...current,
         [criterionId]: { ...existing, status: "accepted" },
@@ -115,7 +119,7 @@ export default function AiGradingAssistant({
     setSuggestions((current) => {
       const existing = current[criterionId];
       if (!existing) return current;
-
+      onSuggestionsChange?.(Object.fromEntries(Object.entries(current).filter(([id]) => id !== criterionId).map(([id, item]) => [id, { criterionId: item.criterionId, score: item.score, rationale: item.rationale }])));
       return {
         ...current,
         [criterionId]: { ...existing, status: "rejected" },
