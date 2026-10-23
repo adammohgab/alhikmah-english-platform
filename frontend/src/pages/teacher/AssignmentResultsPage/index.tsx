@@ -86,14 +86,12 @@ function ResultsView({ assignmentId, data }: { assignmentId: string; data: Assig
         >
           <ArrowLeft size={16} aria-hidden="true" /> Assignments
         </Link>
-        <h1 className="font-display min-w-0 flex-1 truncate text-xl font-extrabold">
+        <h1 className="min-w-0 flex-1 truncate font-display text-xl font-extrabold">
           {assignment.title}
         </h1>
         <Button
           variant="outline"
-          onClick={() =>
-            downloadCsv(csvFilename(assignment.title), buildResultsCsv(submissions, max))
-          }
+          onClick={() => downloadCsv(csvFilename(assignment.title), buildResultsCsv(submissions, max))}
           disabled={submissions.length === 0}
         >
           <Download size={16} aria-hidden="true" /> Export CSV
@@ -113,28 +111,17 @@ function ResultsView({ assignmentId, data }: { assignmentId: string; data: Assig
       </dl>
 
       {submissions.length === 0 ? (
-        <EmptyState
-          title="No students yet"
-          description="Students in the class appear here once enrolled."
-        />
+        <EmptyState title="No students yet" description="Students in the class appear here once enrolled." />
       ) : (
         <div className={`${PANEL} overflow-x-auto`}>
           <table className="w-full text-left text-sm">
             <caption className="sr-only">Student submissions for {assignment.title}</caption>
             <thead>
               <tr className="border-b-2 border-stroke">
-                <th scope="col" className="py-2 pr-3">
-                  Student
-                </th>
-                <th scope="col" className="py-2 pr-3">
-                  Status
-                </th>
-                <th scope="col" className="py-2 pr-3">
-                  Score
-                </th>
-                <th scope="col" className="py-2">
-                  Submitted
-                </th>
+                <th scope="col" className="py-2 pr-3">Student</th>
+                <th scope="col" className="py-2 pr-3">Status</th>
+                <th scope="col" className="py-2 pr-3">Score</th>
+                <th scope="col" className="py-2">Submitted</th>
               </tr>
             </thead>
             <tbody>
