@@ -98,7 +98,7 @@ describe("DeadlinesWidget", () => {
     const list = await screen.findByRole("list");
     const titles = within(list)
       .getAllByRole("link")
-      .map((link) => link.querySelector("p")?.textContent);
+      .map((link) => link.querySelector("span.font-bold")?.textContent);
     expect(titles).toEqual(["Essay draft", "Grammar quiz", "Reading journal"]);
   });
 
@@ -106,15 +106,15 @@ describe("DeadlinesWidget", () => {
     renderWidget();
     const overdue = (await screen.findByText("Essay draft")).closest("a");
     expect(overdue).toHaveAttribute("data-overdue", "true");
-    expect(within(overdue as HTMLElement).getByText("Overdue by 1 day")).toBeVisible();
-    expect(screen.getByText("1 assignment is overdue and not submitted.")).toBeVisible();
+    expect(within(overdue as HTMLElement).getByText(/Overdue by 1 day/)).toBeVisible();
+    expect(screen.getByText("1 item is overdue and not handed in")).toBeVisible();
   });
 
   it("tags items due within 24 hours with a pulsing clock", async () => {
     renderWidget();
     const soon = (await screen.findByText("Grammar quiz")).closest("a") as HTMLElement;
     expect(soon).toHaveAttribute("data-due-soon", "true");
-    const tag = within(soon).getByText("Due soon");
+    const tag = within(soon).getByText(/Due in/);
     expect(tag.className).toContain("animate-pulse");
     const later = screen.getByText("Reading journal").closest("a");
     expect(later).not.toHaveAttribute("data-due-soon");
@@ -136,7 +136,7 @@ describe("DeadlinesWidget", () => {
   it("says so when nothing is due", async () => {
     rpc.mockResolvedValue({ data: [], error: null });
     renderWidget();
-    expect(await screen.findByText("Nothing due. Nice.")).toBeVisible();
+    expect(await screen.findByText("Nothing due soon. Nice work!")).toBeVisible();
   });
 
   it("offers a retry when the deadlines cannot load", async () => {
