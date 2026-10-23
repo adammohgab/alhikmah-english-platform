@@ -16,5 +16,10 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // Integration tests import migration SQL from the repository-level supabase directory.
+    // Explicitly allow the repository root while keeping Vite's filesystem checks enabled.
+    fs: {
+      allow: [fileURLToPath(new URL("../", import.meta.url))],
+    },
   },
 });
