@@ -89,12 +89,17 @@ export interface SoundContextValue {
   toggleMute: () => void;
 }
 
-export const SoundContext = createContext<SoundContextValue | null>(null);
+const SILENT_SOUND_CONTEXT: SoundContextValue = {
+  play: () => undefined,
+  volume: DEFAULT_VOLUME,
+  setVolume: () => undefined,
+  muted: false,
+  setMuted: () => undefined,
+  toggleMute: () => undefined,
+};
+
+export const SoundContext = createContext<SoundContextValue>(SILENT_SOUND_CONTEXT);
 
 export function useSound(): SoundContextValue {
-  const value = useContext(SoundContext);
-  if (!value) {
-    throw new Error("useSound must be used inside <SoundProvider>");
-  }
-  return value;
+  return useContext(SoundContext);
 }
