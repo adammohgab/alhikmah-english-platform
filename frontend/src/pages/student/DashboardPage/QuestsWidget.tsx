@@ -111,7 +111,7 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
               <ProgressBar
                 value={quest.progress}
                 max={quest.target}
-                label={quest.title}
+                label={`${quest.title} progress`}
                 valueText={`${quest.progress} of ${quest.target}`}
               />
               <p className="flex items-center gap-3 text-[13px] text-stroke">
