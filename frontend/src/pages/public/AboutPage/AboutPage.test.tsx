@@ -3,6 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { SoundContext } from "@/shared/hooks/useSound";
 import type { SoundContextValue } from "@/shared/hooks/useSound";
+import { SHOW_SCHOOL_LOGO } from "@/shared/config/branding";
 import AboutPage from "./index";
 
 const sound: SoundContextValue = {
@@ -96,7 +97,7 @@ describe("PUB-11: AboutPage (SH-09)", () => {
     ).toBeInTheDocument();
   });
 
-  it("links to Terms and Privacy and to Help, and shows the school logo", () => {
+  it("links to Terms and Privacy and to Help, and shows the school logo only when it is enabled", () => {
     renderPage();
     expect(screen.getByRole("link", { name: "Read the Terms and Privacy notice" })).toHaveAttribute(
       "href",
@@ -107,8 +108,8 @@ describe("PUB-11: AboutPage (SH-09)", () => {
       "href",
       "/help",
     );
-    expect(screen.getAllByRole("img", { name: "Al Hikmah Private School" }).length).toBeGreaterThan(
-      0,
+    expect(screen.queryAllByRole("img", { name: "Al Hikmah Private School" }).length > 0).toBe(
+      SHOW_SCHOOL_LOGO,
     );
   });
 });
