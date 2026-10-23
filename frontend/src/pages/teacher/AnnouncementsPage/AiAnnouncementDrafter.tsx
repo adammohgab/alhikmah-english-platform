@@ -221,7 +221,7 @@ function readString(record: Record<string, unknown>, key: string): string | null
 
 function errorMessageFrom(payload: unknown, fallback: string): string {
   if (!isRecord(payload)) return fallback;
-  const error = payload["error"];
+  const error = payload.error;
   if (typeof error === "string") return error;
   if (isRecord(error)) return readString(error, "message") ?? fallback;
   return fallback;
@@ -282,7 +282,7 @@ function applySseBlock(block: string, text: string): string {
   if (!isRecord(payload)) return text;
 
   if (event === "delta") return text + (readString(payload, "delta") ?? "");
-  if (event === "safety" && payload["blocked"] === true) {
+  if (event === "safety" && payload.blocked === true) {
     throw new Error(
       readString(payload, "message") ??
         "This request cannot be drafted. Reword the keywords and try again.",

@@ -116,7 +116,7 @@ export default function FaqPage() {
       if (expandAll) return [...others, ...next];
       const previous = current.filter((id) => groupIds.includes(id));
       const added = next.filter((id) => !previous.includes(id));
-      const kept = added.length > 0 ? [added[added.length - 1]!] : next;
+      const kept = added.length > 0 ? [added[added.length - 1]] : next;
       return [...others, ...kept];
     });
   };

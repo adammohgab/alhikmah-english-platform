@@ -52,7 +52,7 @@ function shuffle<T>(items: T[]): T[] {
   const result = [...items];
   for (let index = result.length - 1; index > 0; index -= 1) {
     const otherIndex = Math.floor(Math.random() * (index + 1));
-    [result[index], result[otherIndex]] = [result[otherIndex]!, result[index]!];
+    [result[index], result[otherIndex]] = [result[otherIndex], result[index]];
   }
   return result;
 }
@@ -60,7 +60,7 @@ function shuffle<T>(items: T[]): T[] {
 function createCards(words: SpeedMatchWord[], round: number): Card[] {
   const source = words.length > 0 ? words : DEFAULT_WORDS;
   const pairs = Array.from({ length: 8 }, (_, pairId) => {
-    const word = source[(round * 8 + pairId) % source.length]!;
+    const word = source[(round * 8 + pairId) % source.length];
     return [
       {
         id: `en-${round}-${pairId}`,

@@ -14,16 +14,33 @@ import {
 } from "lucide-react";
 import { supabase } from "@/shared/api/supabase";
 
-type Course = { id: string; title: string; status?: string | null };
-type Lesson = { id: string; unit_id: string; title: string; xp_reward: number | null };
-type Unit = { id: string; title: string; lessons: Lesson[] };
-type ClassOption = {
+interface Course {
+  id: string;
+  title: string;
+  status?: string | null;
+}
+interface Lesson {
+  id: string;
+  unit_id: string;
+  title: string;
+  xp_reward: number | null;
+}
+interface Unit {
+  id: string;
+  title: string;
+  lessons: Lesson[];
+}
+interface ClassOption {
   id: string;
   name: string;
   grade_level?: string | null;
   is_archived?: boolean | null;
-};
-type CheckItem = { label: string; detail: string; passed: boolean };
+}
+interface CheckItem {
+  label: string;
+  detail: string;
+  passed: boolean;
+}
 const db = supabase as any;
 
 export default function CoursePublishPage() {

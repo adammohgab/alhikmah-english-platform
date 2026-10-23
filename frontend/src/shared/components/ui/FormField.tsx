@@ -144,10 +144,7 @@ export function FormField({
         .filter((part) => part !== undefined && part !== "")
         .join(" ") || undefined;
     control = cloneElement(children as ReactElement<Record<string, unknown>>, {
-      id:
-        typeof childProps["id"] === "string" && childProps["id"].length > 0
-          ? childProps["id"]
-          : controlId,
+      id: typeof childProps.id === "string" && childProps.id.length > 0 ? childProps.id : controlId,
       "aria-labelledby":
         typeof childProps["aria-labelledby"] === "string" ? childProps["aria-labelledby"] : labelId,
       "aria-describedby": mergedDescribedBy,

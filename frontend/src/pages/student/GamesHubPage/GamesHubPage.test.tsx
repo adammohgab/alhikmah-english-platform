@@ -7,7 +7,10 @@ import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import GamesHubPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const tables: Record<string, Result> = {};
 
@@ -77,12 +80,12 @@ function renderPage() {
 }
 
 beforeEach(() => {
-  tables["games"] = { data: games, error: null };
-  tables["game_daily_featured"] = {
+  tables.games = { data: games, error: null };
+  tables.game_daily_featured = {
     data: [{ game_id: "g2", bonus_multiplier: 1.5 }],
     error: null,
   };
-  tables["game_sessions"] = {
+  tables.game_sessions = {
     data: [
       { game_id: "g1", score: 1240, played_at: new Date().toISOString() },
       { game_id: "g1", score: 800, played_at: "2020-01-01T00:00:00Z" },
@@ -105,8 +108,8 @@ describe("GamesHubPage", () => {
     const list = await screen.findByRole("list", { name: "Games" });
     const cards = within(list).getAllByRole("listitem");
     expect(cards).toHaveLength(3);
-    expect(within(cards[0] as HTMLElement).getByText("1,240")).toBeInTheDocument();
-    expect(within(cards[1] as HTMLElement).getByText("Not played yet")).toBeInTheDocument();
+    expect(within(cards[0]).getByText("1,240")).toBeInTheDocument();
+    expect(within(cards[1]).getByText("Not played yet")).toBeInTheDocument();
     expect(screen.getByTestId("daily-play")).toHaveTextContent("1 game today");
   });
 
@@ -127,15 +130,15 @@ describe("GamesHubPage", () => {
   });
 
   it("shows a retry state when loading fails", async () => {
-    tables["games"] = { data: null, error: { message: "boom" } };
+    tables.games = { data: null, error: { message: "boom" } };
     renderPage();
     expect(await screen.findByText("The arcade could not open")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
   });
 
   it("shows an empty state when the catalog has no games", async () => {
-    tables["games"] = { data: [], error: null };
-    tables["game_daily_featured"] = { data: [], error: null };
+    tables.games = { data: [], error: null };
+    tables.game_daily_featured = { data: [], error: null };
     renderPage();
     expect(await screen.findByText("The arcade is closed for now")).toBeInTheDocument();
   });

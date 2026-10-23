@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const isCi = Boolean(process.env["CI"]);
+const isCi = Boolean(process.env.CI);
 
 export default defineConfig({
   testDir: "./e2e",

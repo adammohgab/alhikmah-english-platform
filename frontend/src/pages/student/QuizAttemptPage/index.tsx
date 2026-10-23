@@ -57,12 +57,12 @@ function asRecord(value: unknown): Record<string, unknown> {
 function asPrompt(value: unknown): QuestionPrompt {
   if (typeof value === "string") return { text: value };
   const record = asRecord(value);
-  return { text: typeof record["text"] === "string" ? record["text"] : "" };
+  return { text: typeof record.text === "string" ? record.text : "" };
 }
 
 function asChoices(value: unknown): Choice[] {
   if (Array.isArray(value)) return value as Choice[];
-  const nested = asRecord(value)["choices"];
+  const nested = asRecord(value).choices;
   return Array.isArray(nested) ? (nested as Choice[]) : [];
 }
 
@@ -89,7 +89,7 @@ function normalizeQuestion(raw: AttemptQuestion): Question | null {
       return {
         ...base,
         type: "fill_blank",
-        wordBank: asStringList(options["wordBank"]) ?? asStringList(options["word_bank"]),
+        wordBank: asStringList(options.wordBank) ?? asStringList(options.word_bank),
         answer: undefined as FillBlankQuestionData["answer"],
       };
     case "matching":
@@ -111,8 +111,8 @@ function normalizeQuestion(raw: AttemptQuestion): Question | null {
       return {
         ...base,
         type: "short_answer",
-        minWords: Number(raw["min_words"] ?? 0),
-        maxWords: raw["max_words"] ? Number(raw["max_words"]) : undefined,
+        minWords: Number(raw.min_words ?? 0),
+        maxWords: raw.max_words ? Number(raw.max_words) : undefined,
         answer: undefined as ShortAnswerQuestionData["answer"],
       };
     case "audio_spelling":

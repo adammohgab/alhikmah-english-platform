@@ -232,8 +232,8 @@ export function splitHighlights(text: string, ranges: InlineRange[]): TextSegmen
   const points = [...cuts].sort((a, b) => a - b);
   const segments: TextSegment[] = [];
   for (let i = 0; i < points.length - 1; i += 1) {
-    const from = points[i]!;
-    const to = points[i + 1]!;
+    const from = points[i];
+    const to = points[i + 1];
     if (to <= from) continue;
     segments.push({
       text: text.slice(from, to),

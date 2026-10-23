@@ -328,11 +328,11 @@ export default function CsvImportWizardPage() {
 
       // Username checks
       if (!username) {
-        errors["username"] = "Username is missing";
+        errors.username = "Username is missing";
       } else if (!/^[a-z0-9._-]{3,32}$/.test(username)) {
-        errors["username"] = "Invalid format: 3-32 chars of letters, digits, '.', '-', '_'";
+        errors.username = "Invalid format: 3-32 chars of letters, digits, '.', '-', '_'";
       } else if (seenUsernames.has(username)) {
-        errors["username"] = `Duplicate username "${username}" in CSV`;
+        errors.username = `Duplicate username "${username}" in CSV`;
       } else {
         seenUsernames.add(username);
       }
@@ -340,18 +340,18 @@ export default function CsvImportWizardPage() {
       // Grade check for students
       if (importType === "students") {
         if (!grade) {
-          warnings["grade"] = "Grade not specified (defaults to Grade 7)";
+          warnings.grade = "Grade not specified (defaults to Grade 7)";
         } else {
           const numGrade = parseInt(grade.replace(/\D/g, ""), 10);
           if (isNaN(numGrade) || numGrade < 7 || numGrade > 12) {
-            errors["grade"] = "Grade must be between 7 and 12";
+            errors.grade = "Grade must be between 7 and 12";
           }
         }
       }
 
       // Email format check if provided
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        warnings["email"] = "Invalid email format (will be skipped)";
+        warnings.email = "Invalid email format (will be skipped)";
       }
 
       return {
@@ -391,15 +391,15 @@ export default function CsvImportWizardPage() {
 
         if (field === "username") {
           const low = value.trim().toLowerCase();
-          if (!low) errors["username"] = "Username is missing";
+          if (!low) errors.username = "Username is missing";
           else if (!/^[a-z0-9._-]{3,32}$/.test(low)) {
-            errors["username"] = "Invalid format: 3-32 chars of letters, digits, '.', '-', '_'";
+            errors.username = "Invalid format: 3-32 chars of letters, digits, '.', '-', '_'";
           }
         }
         if (field === "grade" && importType === "students") {
           const num = parseInt(value.replace(/\D/g, ""), 10);
           if (isNaN(num) || num < 7 || num > 12) {
-            errors["grade"] = "Grade must be between 7 and 12";
+            errors.grade = "Grade must be between 7 and 12";
           }
         }
 
@@ -427,26 +427,26 @@ export default function CsvImportWizardPage() {
         const newErrors = { ...r.errors };
 
         // Fix grade format (e.g., "Grade 8", "G8", "8th" -> "8")
-        if (newErrors["grade"]) {
+        if (newErrors.grade) {
           const match = /\d+/.exec(r.mapped.grade);
           if (match) {
             const parsedG = parseInt(match[0], 10);
             if (parsedG >= 7 && parsedG <= 12) {
               newMapped.grade = String(parsedG);
-              delete newErrors["grade"];
+              delete newErrors.grade;
             }
           }
         }
 
         // Fix username formatting (strip invalid spaces and characters)
-        if (newErrors["username"]) {
+        if (newErrors.username) {
           const cleaned = r.mapped.username
             .toLowerCase()
             .replace(/[^a-z0-9._-]/g, "")
             .slice(0, 24);
           if (cleaned.length >= 3) {
             newMapped.username = cleaned;
-            delete newErrors["username"];
+            delete newErrors.username;
           }
         }
 
@@ -1108,7 +1108,7 @@ export default function CsvImportWizardPage() {
                               handleUpdateCell(row.rowNumber, "username", e.target.value)
                             }
                             className={`focus:ring-ink w-full rounded-md border px-2 py-1 font-mono text-xs focus:ring-1 ${
-                              row.errors["username"]
+                              row.errors.username
                                 ? "border-danger-500 text-danger-800 bg-red-50"
                                 : "border-stroke"
                             }`}
@@ -1123,7 +1123,7 @@ export default function CsvImportWizardPage() {
                               handleUpdateCell(row.rowNumber, "grade", e.target.value)
                             }
                             className={`focus:ring-ink w-full rounded-md border px-2 py-1 text-xs focus:ring-1 ${
-                              row.errors["grade"]
+                              row.errors.grade
                                 ? "border-danger-500 text-danger-800 bg-red-50"
                                 : "border-stroke"
                             }`}

@@ -533,7 +533,10 @@ export default function SettingsPage() {
       if (!settings.exists) return;
       setMuted(!settings.soundEnabled);
       if (settings.volume !== null) setVolume(settings.volume);
-      setPreferences({ tier: settings.effectsTier ?? "balanced", reducedMotion: settings.reducedMotion });
+      setPreferences({
+        tier: settings.effectsTier ?? "balanced",
+        reducedMotion: settings.reducedMotion,
+      });
     },
     [setMuted, setVolume, setPreferences],
   );

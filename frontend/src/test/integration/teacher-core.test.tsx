@@ -141,11 +141,11 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       const id = nextId("class");
       fake.classes.push({
         id,
-        name: String(args["name"]),
-        grade: String(args["grade"]),
-        termId: String(args["term_id"]),
+        name: String(args.name),
+        grade: String(args.grade),
+        termId: String(args.term_id),
         joinCode: generateJoinCode(),
-        joinCodeEnabled: args["join_code_enabled"] === true,
+        joinCodeEnabled: args.join_code_enabled === true,
       });
       fake.classTeachers.push({ classId: id, teacherId: fake.userId, primary: true });
       return ok({ class_id: id });
@@ -155,7 +155,7 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       return ok({ items: mine.map(classRow), next_cursor: null });
     }
     case "class_roster": {
-      const classId = String(args["class_id"]);
+      const classId = String(args.class_id);
       if (!isAdmin() && !teachesClass(classId)) return fail("forbidden", "42501");
       const rows = fake.enrollments
         .filter((e) => e.classId === classId && e.status === "active")
@@ -168,8 +168,8 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       return ok({ rows });
     }
     case "add_students_to_class": {
-      const classId = String(args["class_id"]);
-      const ids = args["student_ids"] as string[];
+      const classId = String(args.class_id);
+      const ids = args.student_ids as string[];
       if (!isAdmin() && !isPrimaryTeacher(classId)) return fail("forbidden", "P0001");
       if (ids.some((id) => fake.profiles.get(id)?.role !== "student")) {
         return fail("invalid_student", "P0001");
@@ -184,8 +184,8 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       return ok({ added, skipped: Math.max(ids.length - added, 0) });
     }
     case "remove_student_from_class": {
-      const classId = String(args["class_id"]);
-      const studentId = String(args["student_id"]);
+      const classId = String(args.class_id);
+      const studentId = String(args.student_id);
       if (!isAdmin() && !isPrimaryTeacher(classId)) return fail("forbidden", "P0001");
       const row = fake.enrollments.find((e) => e.classId === classId && e.studentId === studentId);
       if (!row) return fail("enrollment_not_found", "P0001");
@@ -214,7 +214,7 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       return ok({ items, next_cursor: null });
     }
     case "lock_submission_for_grading": {
-      const attempt = fake.attempts.find((a) => a.id === args["attempt_id"]);
+      const attempt = fake.attempts.find((a) => a.id === args.attempt_id);
       if (!attempt) return fail("Submission not found", "P0002");
       const classId = assessmentClass(attempt.assessmentId) ?? "";
       if (!teachesClass(classId) && !isAdmin()) {
@@ -229,9 +229,9 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       return ok({ attempt_id: attempt.id });
     }
     case "save_grade": {
-      const attempt = fake.attempts.find((a) => a.id === args["attempt_id"]);
-      const rubricScores = args["rubric_scores"] as Record<string, number> | null;
-      const finalScore = args["final_score"] as number | null;
+      const attempt = fake.attempts.find((a) => a.id === args.attempt_id);
+      const rubricScores = args.rubric_scores as Record<string, number> | null;
+      const finalScore = args.final_score as number | null;
       if (rubricScores == null || finalScore == null || finalScore < 0) {
         return fail("Invalid grade data", "22023");
       }
@@ -258,11 +258,11 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       attempt.score = finalScore;
       attempt.status = "graded";
       attempt.lockedBy = null;
-      attempt.feedback = typeof args["feedback"] === "string" ? args["feedback"] : "";
+      attempt.feedback = typeof args.feedback === "string" ? args.feedback : "";
       return ok({ attempt_id: attempt.id, score: finalScore });
     }
     case "release_grades": {
-      const assessmentId = String(args["assessment_id"]);
+      const assessmentId = String(args.assessment_id);
       const classId = assessmentClass(assessmentId);
       if (classId === undefined) return fail("Assessment not found", "P0002");
       if (!teachesClass(classId) && !isAdmin()) {
@@ -294,7 +294,7 @@ function handleRpc(fn: string, args: Record<string, unknown>): RpcResult {
       return ok({ assessment_id: assessmentId, released });
     }
     case "assignment_results": {
-      const assessmentId = String(args["assignment_id"]);
+      const assessmentId = String(args.assignment_id);
       const assessment = fake.assessments.find((a) => a.id === assessmentId);
       if (!assessment) return fail("Assessment not found", "P0002");
       if (!teachesClass(assessment.classId) && !isAdmin()) return fail("forbidden", "42501");

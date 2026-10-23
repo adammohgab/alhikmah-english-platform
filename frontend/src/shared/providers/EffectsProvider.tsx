@@ -124,13 +124,10 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
     };
   }, []);
 
-  const setPreferences = useCallback(
-    (patch: { reducedMotion?: boolean; tier?: EffectsTier }) => {
-      if (patch.reducedMotion !== undefined) setUserReducedMotion(patch.reducedMotion);
-      if (patch.tier !== undefined) setManualTier(patch.tier);
-    },
-    [],
-  );
+  const setPreferences = useCallback((patch: { reducedMotion?: boolean; tier?: EffectsTier }) => {
+    if (patch.reducedMotion !== undefined) setUserReducedMotion(patch.reducedMotion);
+    if (patch.tier !== undefined) setManualTier(patch.tier);
+  }, []);
 
   const value = useMemo<EffectsContextValue>(
     () => ({

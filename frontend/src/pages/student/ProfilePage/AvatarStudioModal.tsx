@@ -8,7 +8,13 @@ import { Dialog } from "@/shared/components/ui/Dialog";
 type Category = "Head" | "Hair" | "Eyes/Glasses" | "Accessories" | "Outfits" | "Background";
 type Slot = "head" | "hair" | "eyes" | "accessory" | "outfit" | "background";
 type AvatarConfig = Record<Slot, string>;
-type AvatarOption = { id: string; label: string; level: number; color: string; detail?: string };
+interface AvatarOption {
+  id: string;
+  label: string;
+  level: number;
+  color: string;
+  detail?: string;
+}
 
 const CATEGORIES: { label: Category; slot: Slot }[] = [
   { label: "Head", slot: "head" },
@@ -76,16 +82,16 @@ const DEFAULT_CONFIG: AvatarConfig = {
 };
 
 function optionFor(slot: Slot, id: string) {
-  return OPTIONS[slot].find((option) => option.id === id) ?? OPTIONS[slot][0]!;
+  return OPTIONS[slot].find((option) => option.id === id) ?? OPTIONS[slot][0];
 }
 
 function configFromAvatarUrl(url: string | null): AvatarConfig {
   if (!url?.startsWith("data:image/svg+xml,")) return DEFAULT_CONFIG;
   try {
     const svg = decodeURIComponent(url.slice("data:image/svg+xml,".length));
-    const match = svg.match(/data-avatar-config="([^"]+)"/);
+    const match = /data-avatar-config="([^"]+)"/.exec(svg);
     if (!match) return DEFAULT_CONFIG;
-    const parsed = JSON.parse(decodeURIComponent(match[1]!)) as Partial<AvatarConfig>;
+    const parsed = JSON.parse(decodeURIComponent(match[1])) as Partial<AvatarConfig>;
     return Object.fromEntries(
       CATEGORIES.map(({ slot }) => [
         slot,
@@ -154,7 +160,7 @@ export default function AvatarStudioModal({
   const [config, setConfig] = useState<AvatarConfig>(() => configFromAvatarUrl(avatarUrl));
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const activeCategory = CATEGORIES.find((item) => item.label === category) ?? CATEGORIES[0]!;
+  const activeCategory = CATEGORIES.find((item) => item.label === category) ?? CATEGORIES[0];
   const options = OPTIONS[activeCategory.slot];
   const previewUrl = useMemo(() => avatarDataUrl(config), [config]);
 

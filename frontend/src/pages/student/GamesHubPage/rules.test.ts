@@ -49,9 +49,9 @@ describe("buildGamesHub", () => {
 
   it("uses the highest score as the personal best, or null when never played", () => {
     const byId = Object.fromEntries(hub.cards.map((card) => [card.id, card]));
-    expect(byId["g1"]?.bestScore).toBe(1240);
-    expect(byId["g3"]?.bestScore).toBe(500);
-    expect(byId["g9"]?.bestScore).toBeNull();
+    expect(byId.g1?.bestScore).toBe(1240);
+    expect(byId.g3?.bestScore).toBe(500);
+    expect(byId.g9?.bestScore).toBeNull();
   });
 
   it("counts only today's sessions and ignores sessions without a date", () => {

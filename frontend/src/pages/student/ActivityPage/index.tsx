@@ -74,12 +74,12 @@ function asRecord(value: unknown): Record<string, unknown> {
 function asPrompt(value: unknown): QuestionPrompt {
   if (typeof value === "string") return { text: value };
   const record = asRecord(value);
-  return { text: typeof record["text"] === "string" ? record["text"] : "" };
+  return { text: typeof record.text === "string" ? record.text : "" };
 }
 
 function asChoices(value: unknown): Choice[] {
   if (Array.isArray(value)) return value as Choice[];
-  const nested = asRecord(value)["choices"];
+  const nested = asRecord(value).choices;
   return Array.isArray(nested) ? (nested as Choice[]) : [];
 }
 
@@ -100,7 +100,7 @@ function normalizeQuestion(raw: RawQuestion): Question | null {
     .replace(/-/g, "_");
   const base = { id: raw.id, prompt: asPrompt(raw.prompt), explanation: raw.explanation };
   const options = asRecord(raw.options);
-  const answer = raw["answer"];
+  const answer = raw.answer;
   switch (type) {
     case "multiple_choice":
     case "mcq":
@@ -114,7 +114,7 @@ function normalizeQuestion(raw: RawQuestion): Question | null {
       return {
         ...base,
         type: "fill_blank",
-        wordBank: asStringList(options["wordBank"]) ?? asStringList(options["word_bank"]),
+        wordBank: asStringList(options.wordBank) ?? asStringList(options.word_bank),
         answer: answer as FillBlankQuestionData["answer"],
       };
     case "matching":
@@ -136,8 +136,8 @@ function normalizeQuestion(raw: RawQuestion): Question | null {
       return {
         ...base,
         type: "short_answer",
-        minWords: Number(raw["min_words"] ?? 0),
-        maxWords: raw["max_words"] ? Number(raw["max_words"]) : undefined,
+        minWords: Number(raw.min_words ?? 0),
+        maxWords: raw.max_words ? Number(raw.max_words) : undefined,
         answer: answer as ShortAnswerQuestionData["answer"],
       };
     case "audio_spelling":
@@ -202,7 +202,7 @@ function rewardNumber(value: unknown): number {
   if (typeof value === "number") return value;
   if (value && typeof value === "object") {
     const data = value as Record<string, unknown>;
-    return Number(data["awarded"] ?? data["amount"] ?? data["xp"] ?? 0) || 0;
+    return Number(data.awarded ?? data.amount ?? data.xp ?? 0) || 0;
   }
   return 0;
 }
@@ -247,7 +247,7 @@ export default function ActivityPage() {
             "Work through each question, then check your answers.",
         );
         setQuestions(normalized);
-        const saved = payload.state?.["answers"];
+        const saved = payload.state?.answers;
         if (saved && typeof saved === "object") setAnswers(saved as Record<string, Answer>);
       } catch (cause) {
         if (!cancelled)

@@ -25,20 +25,20 @@ import { supabase } from "@/shared/api/supabase";
 import { TeacherAppShell } from "@/shared/components/layout/TeacherAppShell";
 
 type BlockType = "text" | "vocabulary" | "dialogue" | "audio" | "image" | "quiz";
-type LessonBlock = {
+interface LessonBlock {
   id: string;
   lesson_id: string;
   block_type: BlockType;
   content: Record<string, any>;
   order_index: number;
-};
-type Lesson = {
+}
+interface Lesson {
   id: string;
   title: string;
   description: string | null;
   unit_id: string;
   xp_reward: number;
-};
+}
 const BLOCKS: { type: BlockType; label: string; description: string; icon: typeof Sparkles }[] = [
   {
     type: "text",
@@ -526,10 +526,12 @@ function BlockCard({
         )}
         {block.block_type === "dialogue" && (
           <DialogueEditor
-            turns={(block.content.turns ?? []).map((t: { speaker?: string | null; text?: string | null }) => ({
-              speaker: t.speaker ?? "",
-              text: t.text ?? "",
-            }))}
+            turns={(block.content.turns ?? []).map(
+              (t: { speaker?: string | null; text?: string | null }) => ({
+                speaker: t.speaker ?? "",
+                text: t.text ?? "",
+              }),
+            )}
             onChange={(turns) => patch({ turns })}
           />
         )}

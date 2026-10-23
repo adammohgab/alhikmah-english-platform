@@ -8,7 +8,10 @@ import { ToastContext, type ToastContextValue } from "@/app/providers/toast-cont
 import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import AchievementsPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const tables: Record<string, Result> = {};
 const rpcCalls: { fn: string; args: Record<string, unknown> }[] = [];
@@ -24,7 +27,7 @@ vi.mock("@/shared/api/supabase", () => ({
     }),
     rpc: (fn: string, args: Record<string, unknown>) => {
       rpcCalls.push({ fn, args });
-      return Promise.resolve({ data: { pinned: args["badge_ids"] }, error: null });
+      return Promise.resolve({ data: { pinned: args.badge_ids }, error: null });
     },
   },
 }));
@@ -114,13 +117,13 @@ function renderPage() {
 
 beforeEach(() => {
   rpcCalls.length = 0;
-  tables["badge_definitions"] = { data: definitions, error: null };
-  tables["user_badges"] = {
+  tables.badge_definitions = { data: definitions, error: null };
+  tables.user_badges = {
     data: [{ badge_id: "b1", awarded_at: "2026-10-01T10:00:00Z", is_pinned: false }],
     error: null,
   };
-  tables["student_stats"] = { data: [{ total_xp: 500, current_streak: 5 }], error: null };
-  tables["lesson_progress"] = { data: [], error: null };
+  tables.student_stats = { data: [{ total_xp: 500, current_streak: 5 }], error: null };
+  tables.lesson_progress = { data: [], error: null };
 });
 
 describe("AchievementsPage", () => {
@@ -183,7 +186,7 @@ describe("AchievementsPage", () => {
   });
 
   it("blocks a fourth pin", async () => {
-    tables["badge_definitions"] = {
+    tables.badge_definitions = {
       data: [
         ...definitions,
         {
@@ -197,7 +200,7 @@ describe("AchievementsPage", () => {
       ],
       error: null,
     };
-    tables["user_badges"] = {
+    tables.user_badges = {
       data: [
         { badge_id: "b1", awarded_at: "2026-10-01T10:00:00Z", is_pinned: true },
         { badge_id: "b2", awarded_at: "2026-10-02T10:00:00Z", is_pinned: true },
@@ -216,7 +219,7 @@ describe("AchievementsPage", () => {
   });
 
   it("shows a retry state when loading fails", async () => {
-    tables["badge_definitions"] = { data: null, error: { message: "boom" } };
+    tables.badge_definitions = { data: null, error: { message: "boom" } };
     renderPage();
     expect(await screen.findByRole("button", { name: "Try again" })).toBeInTheDocument();
   });

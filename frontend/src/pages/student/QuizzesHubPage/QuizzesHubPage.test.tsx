@@ -97,7 +97,7 @@ function availableRow(overrides: Record<string, unknown>) {
 
 beforeEach(() => {
   for (const key of Object.keys(replies)) delete replies[key];
-  replies["available"] = () => ({
+  replies.available = () => ({
     error: null,
     data: {
       next_cursor: null,
@@ -113,7 +113,7 @@ beforeEach(() => {
       ],
     },
   });
-  replies["history"] = () => ({
+  replies.history = () => ({
     error: null,
     data: {
       next_cursor: null,
@@ -196,7 +196,7 @@ describe("QuizzesHubPage", () => {
   });
 
   it("says so when no quizzes have been taken", async () => {
-    replies["history"] = () => ({ error: null, data: { items: [], next_cursor: null } });
+    replies.history = () => ({ error: null, data: { items: [], next_cursor: null } });
     const user = userEvent.setup();
     renderPage();
     await user.click(await screen.findByRole("tab", { name: /Completed/ }));
@@ -204,7 +204,7 @@ describe("QuizzesHubPage", () => {
   });
 
   it("offers a retry when the quizzes cannot load", async () => {
-    replies["available"] = () => ({ data: null, error: { message: "boom" } });
+    replies.available = () => ({ data: null, error: { message: "boom" } });
     renderPage();
     expect(await screen.findByRole("button", { name: "Try again" })).toBeVisible();
   });

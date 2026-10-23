@@ -83,7 +83,7 @@ const TAB_BY_CATEGORY: Record<string, ShopTab> = {
 const RARITIES: readonly string[] = ["common", "rare", "epic", "legendary"];
 
 function rarityOf(metadata: Record<string, unknown> | null): Rarity | null {
-  const value = metadata?.["rarity"];
+  const value = metadata?.rarity;
   return typeof value === "string" && RARITIES.includes(value) ? (value as Rarity) : null;
 }
 

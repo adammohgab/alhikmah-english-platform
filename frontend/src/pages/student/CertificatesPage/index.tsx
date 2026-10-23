@@ -19,17 +19,29 @@ import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { Skeleton } from "@/shared/components/ui/Skeleton";
 import { normalizeApiError } from "@/shared/api/error-normalizer";
 
-type LooseResult = { data: unknown; error: { message: string; code?: string } | null };
-type LooseClient = {
+interface LooseResult {
+  data: unknown;
+  error: { message: string; code?: string } | null;
+}
+interface LooseClient {
   rpc(name: string, args: Record<string, unknown>): PromiseLike<LooseResult>;
   from(table: string): {
     select(columns: string): { eq(column: string, value: string): PromiseLike<LooseResult> };
   };
-};
+}
 const db = () => supabase as unknown as LooseClient;
 
-type Certificate = { id: string; courseTitle: string; completedAt: string; hash: string };
-type CertificateData = { studentName: string; certificates: Certificate[]; totalCourses: number };
+interface Certificate {
+  id: string;
+  courseTitle: string;
+  completedAt: string;
+  hash: string;
+}
+interface CertificateData {
+  studentName: string;
+  certificates: Certificate[];
+  totalCourses: number;
+}
 
 function safeDate(value: string | null | undefined): string {
   if (!value) return "Completion date unavailable";

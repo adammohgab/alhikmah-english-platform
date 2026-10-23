@@ -126,12 +126,9 @@ async function startAssignment(
   const payload = record(data);
   if (!payload) throw new SolveError("REQUEST_FAILED", "start_assignment returned no data");
 
-  const nested = record(payload["data"]);
+  const nested = record(payload.data);
   const rawQuestions =
-    payload["questions"] ??
-    nested?.["questions"] ??
-    record(payload["assignment"])?.["questions"] ??
-    [];
+    payload.questions ?? nested?.questions ?? record(payload.assignment)?.questions ?? [];
   const normalized = normalizeQuestions(rawQuestions, {
     ...(brief.wordCount.min !== undefined ? { min: brief.wordCount.min } : {}),
     ...(brief.wordCount.max !== undefined ? { max: brief.wordCount.max } : {}),
@@ -144,13 +141,13 @@ async function startAssignment(
     );
   }
 
-  const draft = payload["draft"] ?? payload["draft_data"] ?? nested?.["draft"] ?? null;
+  const draft = payload.draft ?? payload.draft_data ?? nested?.draft ?? null;
   const submissionId =
     firstText(
-      payload["submission_id"],
-      payload["submissionId"],
-      nested?.["submission_id"],
-      nested?.["submissionId"],
+      payload.submission_id,
+      payload.submissionId,
+      nested?.submission_id,
+      nested?.submissionId,
     ) ?? "";
 
   return {
@@ -210,8 +207,8 @@ export async function saveAssignmentDraft(
   }
 
   const payload = record(data);
-  const draftVersion = firstNumber(payload?.["draft_version"], payload?.["draftVersion"]);
-  const savedAt = firstText(payload?.["saved_at"], payload?.["savedAt"]);
+  const draftVersion = firstNumber(payload?.draft_version, payload?.draftVersion);
+  const savedAt = firstText(payload?.saved_at, payload?.savedAt);
 
   return {
     ...(draftVersion !== undefined ? { draftVersion } : {}),
@@ -237,14 +234,14 @@ export async function submitAssignment(
   const payload = record(data);
   if (!payload) throw new SolveError("REQUEST_FAILED", "submit_assignment returned no data");
 
-  const status = firstText(payload["status"]) ?? "submitted";
-  const isLate = payload["is_late"] === true || payload["isLate"] === true;
-  const latePenaltyPct = firstNumber(payload["late_penalty_pct"], payload["latePenaltyPct"]);
-  const submittedAt = firstText(payload["submitted_at"], payload["submittedAt"]);
+  const status = firstText(payload.status) ?? "submitted";
+  const isLate = payload.is_late === true || payload.isLate === true;
+  const latePenaltyPct = firstNumber(payload.late_penalty_pct, payload.latePenaltyPct);
+  const submittedAt = firstText(payload.submitted_at, payload.submittedAt);
 
   return {
     status,
-    alreadySubmitted: payload["already_submitted"] === true,
+    alreadySubmitted: payload.already_submitted === true,
     isLate,
     ...(latePenaltyPct !== undefined ? { latePenaltyPct } : {}),
     ...(submittedAt ? { submittedAt } : {}),

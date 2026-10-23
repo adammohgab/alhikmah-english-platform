@@ -66,11 +66,11 @@ describe("tabs", () => {
   ];
 
   it("puts every course in exactly one tab", () => {
-    expect(tabOf(items[0]!)).toBe("enrolled");
-    expect(tabOf(items[1]!)).toBe("completed");
-    expect(tabOf(items[2]!)).toBe("self-paced");
-    expect(tabOf(items[3]!)).toBe("completed");
-    expect(tabOf(items[4]!)).toBe("self-paced");
+    expect(tabOf(items[0])).toBe("enrolled");
+    expect(tabOf(items[1])).toBe("completed");
+    expect(tabOf(items[2])).toBe("self-paced");
+    expect(tabOf(items[3])).toBe("completed");
+    expect(tabOf(items[4])).toBe("self-paced");
   });
 
   it("counts add up to the number of courses", () => {

@@ -7,8 +7,11 @@ import { Button } from "@/shared/components/ui/Button";
 import { useToast } from "@/shared/hooks/useToast";
 
 type Direction = "en_ar" | "ar_en";
-type Example = { source: string; target: string };
-type Translation = {
+interface Example {
+  source: string;
+  target: string;
+}
+interface Translation {
   translation: string;
   translation_harakat?: string | null;
   pos?: string | null;
@@ -16,7 +19,7 @@ type Translation = {
   examples: Example[];
   related?: string[];
   direction?: Direction;
-};
+}
 
 export default function TranslationPracticePage() {
   const toast = useToast();

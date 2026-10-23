@@ -6,7 +6,10 @@ import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context
 import { ToastContext, type ToastContextValue } from "@/app/providers/toast-context";
 import ProfilePage from "./index";
 
-type Result = { data: unknown; error: { message: string; code?: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string; code?: string } | null;
+}
 const tables: Record<string, Result> = {};
 const rpcCalls: { name: string; args: Record<string, unknown> }[] = [];
 
@@ -60,27 +63,27 @@ function renderPage() {
 
 beforeEach(() => {
   rpcCalls.length = 0;
-  tables["profiles"] = {
+  tables.profiles = {
     data: [{ id: "student-1", username: "sara", display_name: "Sara Ali", avatar_url: null }],
     error: null,
   };
-  tables["student_stats"] = {
+  tables.student_stats = {
     data: [{ total_xp: 700, current_level: 5, current_streak: 4, longest_streak: 12 }],
     error: null,
   };
-  tables["lesson_progress"] = {
+  tables.lesson_progress = {
     data: [{ lesson_id: "l1" }, { lesson_id: "l2" }, { lesson_id: "l2" }],
     error: null,
   };
-  tables["quiz_attempts"] = {
+  tables.quiz_attempts = {
     data: [{ score_pct: 80 }, { score_pct: 90 }, { score_pct: null }],
     error: null,
   };
-  tables["class_enrollments"] = {
+  tables.class_enrollments = {
     data: [{ classes: { name: "Grade 8A", grade_level: "8", is_archived: false } }],
     error: null,
   };
-  tables["badge_definitions"] = {
+  tables.badge_definitions = {
     data: [
       {
         id: "b1",
@@ -107,7 +110,7 @@ beforeEach(() => {
     ],
     error: null,
   };
-  tables["user_badges"] = {
+  tables.user_badges = {
     data: [
       { badge_id: "b1", awarded_at: "2026-10-01T10:00:00Z", is_pinned: true },
       { badge_id: "b2", awarded_at: "2026-10-02T10:00:00Z", is_pinned: false },
@@ -158,7 +161,7 @@ describe("ProfilePage", () => {
   });
 
   it("shows a clear empty quiz state instead of inventing an average", async () => {
-    tables["quiz_attempts"] = { data: [{ score_pct: null }], error: null };
+    tables.quiz_attempts = { data: [{ score_pct: null }], error: null };
     renderPage();
     expect(await screen.findByTestId("stat-quiz-average")).toHaveTextContent("—");
     expect(screen.getByTestId("stat-quiz-average")).toHaveTextContent(
@@ -167,7 +170,7 @@ describe("ProfilePage", () => {
   });
 
   it("shows a retryable error when profile records fail to load", async () => {
-    tables["profiles"] = { data: null, error: { message: "profile query failed" } };
+    tables.profiles = { data: null, error: { message: "profile query failed" } };
     renderPage();
     expect(await screen.findByText("Your profile could not load")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /try again/i })).toBeInTheDocument();

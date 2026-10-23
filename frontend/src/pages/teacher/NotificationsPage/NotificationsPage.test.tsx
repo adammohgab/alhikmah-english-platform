@@ -24,7 +24,7 @@ vi.mock("@/shared/api/supabase", () => {
       then: (resolve: (value: unknown) => unknown) =>
         resolve(
           head
-            ? { data: null, error: null, count: rows.filter((row) => !row["is_read"]).length }
+            ? { data: null, error: null, count: rows.filter((row) => !row.is_read).length }
             : { data: rows, error: null },
         ),
     };

@@ -173,7 +173,7 @@ describe("UIK-18: DataTable", () => {
 
     const checkboxes = screen.getAllByRole("checkbox");
     // Click first item checkbox (index 1, as index 0 is select all)
-    await user.click(checkboxes[1]!);
+    await user.click(checkboxes[1]);
 
     const bulkButton = await screen.findByRole("button", { name: /Delete Selected/i });
     expect(bulkButton).toBeInTheDocument();

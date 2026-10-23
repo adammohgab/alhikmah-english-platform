@@ -62,12 +62,12 @@ function readSession(): StoredViewAsSession | null {
     const parsed: unknown = JSON.parse(raw);
     if (typeof parsed !== "object" || parsed === null) return null;
     const s = parsed as Record<string, unknown>;
-    if (typeof s["targetId"] !== "string" || typeof s["targetName"] !== "string") return null;
-    if (s["targetRole"] !== "student" && s["targetRole"] !== "teacher") return null;
+    if (typeof s.targetId !== "string" || typeof s.targetName !== "string") return null;
+    if (s.targetRole !== "student" && s.targetRole !== "teacher") return null;
 
     // Enforce expiry when the server-provided expiresAt has passed.
-    if (typeof s["expiresAt"] === "string") {
-      const expiry = new Date(s["expiresAt"]).getTime();
+    if (typeof s.expiresAt === "string") {
+      const expiry = new Date(s.expiresAt).getTime();
       if (Number.isFinite(expiry) && Date.now() > expiry) {
         clearSession();
         return null;
@@ -75,12 +75,12 @@ function readSession(): StoredViewAsSession | null {
     }
 
     return {
-      targetId: s["targetId"],
-      targetName: s["targetName"],
-      targetRole: s["targetRole"],
-      expiresAt: typeof s["expiresAt"] === "string" ? s["expiresAt"] : undefined,
-      sessionId: typeof s["sessionId"] === "string" ? s["sessionId"] : undefined,
-      startedAt: typeof s["startedAt"] === "number" ? s["startedAt"] : Date.now(),
+      targetId: s.targetId,
+      targetName: s.targetName,
+      targetRole: s.targetRole,
+      expiresAt: typeof s.expiresAt === "string" ? s.expiresAt : undefined,
+      sessionId: typeof s.sessionId === "string" ? s.sessionId : undefined,
+      startedAt: typeof s.startedAt === "number" ? s.startedAt : Date.now(),
     };
   } catch {
     // sessionStorage blocked or corrupt value — treat as no session.

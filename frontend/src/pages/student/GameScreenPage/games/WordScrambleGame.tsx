@@ -56,12 +56,12 @@ function shuffleLetters(word: string): string[] {
   for (let attempt = 0; attempt < 8; attempt += 1) {
     for (let index = letters.length - 1; index > 0; index -= 1) {
       const otherIndex = Math.floor(Math.random() * (index + 1));
-      [letters[index], letters[otherIndex]] = [letters[otherIndex]!, letters[index]!];
+      [letters[index], letters[otherIndex]] = [letters[otherIndex], letters[index]];
     }
     if (letters.join("") !== original) return letters;
   }
 
-  return [...letters.slice(1), letters[0]!];
+  return [...letters.slice(1), letters[0]];
 }
 
 function playCorrectSound(): void {
@@ -134,7 +134,7 @@ export default function WordScrambleGame({
   );
   const [wordIndex, setWordIndex] = useState(0);
   const [tileLetters, setTileLetters] = useState(() =>
-    shuffleLetters((safeWords[0]?.word ?? DEFAULT_WORDS[0]!.word).trim()),
+    shuffleLetters((safeWords[0]?.word ?? DEFAULT_WORDS[0].word).trim()),
   );
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [score, setScore] = useState(0);
@@ -151,7 +151,7 @@ export default function WordScrambleGame({
   const completedRef = useRef(false);
   const remainingRef = useRef(duration);
   const currentWord = safeWords.length ? safeWords[wordIndex % safeWords.length] : DEFAULT_WORDS[0];
-  const answer = currentWord!.word.trim().toUpperCase();
+  const answer = currentWord.word.trim().toUpperCase();
   const chosenWord = selectedIds.map((id) => tileLetters[id] ?? "").join("");
   const accuracy = attempted === 0 ? 0 : Math.round((correct / attempted) * 100);
 
@@ -214,7 +214,7 @@ export default function WordScrambleGame({
           const nextIndex = (wordIndex + 1) % safeWords.length;
           const nextWord = safeWords[nextIndex];
           setWordIndex(nextIndex);
-          setTileLetters(shuffleLetters((nextWord?.word ?? DEFAULT_WORDS[0]!.word).trim()));
+          setTileLetters(shuffleLetters((nextWord?.word ?? DEFAULT_WORDS[0].word).trim()));
           setSelectedIds([]);
         }
         setFeedback(null);
@@ -336,7 +336,7 @@ export default function WordScrambleGame({
           </div>
           <button
             type="button"
-            onClick={() => speakWord(currentWord!.pronunciation ?? currentWord!.word)}
+            onClick={() => speakWord(currentWord.pronunciation ?? currentWord.word)}
             disabled={roundFinished || !isActive || !canPlayPronunciation()}
             className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-stroke bg-world-violet-100 px-3 font-heading font-bold shadow-retro-sm hover:bg-world-violet-200 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-stroke disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Hear word pronunciation"
@@ -345,9 +345,9 @@ export default function WordScrambleGame({
           </button>
         </div>
 
-        {currentWord!.hint && (
+        {currentWord.hint && (
           <p className="mb-5 rounded-[14px] border-2 border-stroke bg-world-amber-100 p-3 text-sm">
-            <strong>Hint:</strong> {currentWord!.hint}
+            <strong>Hint:</strong> {currentWord.hint}
           </p>
         )}
 

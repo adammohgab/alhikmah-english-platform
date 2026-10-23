@@ -39,11 +39,11 @@ export function normalizeApiError(error: unknown): AppError {
   // Supabase PostgREST or object error
   if (typeof error === "object" && error !== null) {
     const errObj = error as Record<string, unknown>;
-    const rawCode = errObj["code"];
+    const rawCode = errObj.code;
     const code = typeof rawCode === "string" ? rawCode : "POSTGREST_ERROR";
 
-    const rawStatus = errObj["status"];
-    const rawStatusCode = errObj["statusCode"];
+    const rawStatus = errObj.status;
+    const rawStatusCode = errObj.statusCode;
     const statusCode =
       typeof rawStatus === "number"
         ? rawStatus
@@ -52,13 +52,13 @@ export function normalizeApiError(error: unknown): AppError {
           : undefined;
 
     // Use mapped user-friendly message if available, otherwise raw message
-    const rawMessage = errObj["message"];
+    const rawMessage = errObj.message;
     const message =
       FRIENDLY_ERROR_MESSAGES[code] ??
       (typeof rawMessage === "string" && rawMessage ? rawMessage : "A database error occurred.");
 
-    const rawDetails = errObj["details"];
-    const rawHint = errObj["hint"];
+    const rawDetails = errObj.details;
+    const rawHint = errObj.hint;
     const details =
       typeof rawDetails === "string"
         ? rawDetails
@@ -102,9 +102,9 @@ export function isAuthError(error: unknown): boolean {
   if (!error) return false;
   if (typeof error === "object" && error !== null) {
     const err = error as Record<string, unknown>;
-    const code = err["code"];
-    const statusCode = err["statusCode"];
-    const status = err["status"];
+    const code = err.code;
+    const statusCode = err.statusCode;
+    const status = err.status;
     return (
       code === "401" ||
       code === "PGRST301" ||

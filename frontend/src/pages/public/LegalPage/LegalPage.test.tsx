@@ -117,7 +117,7 @@ describe("PUB-10: LegalPage (SH-08)", () => {
     await user.click(
       within(screen.getByRole("navigation", { name: "Terms of use: sections" })).getAllByRole(
         "link",
-      )[0]!,
+      )[0],
     );
     expect(toggle).toHaveAttribute("aria-expanded", "false");
   });

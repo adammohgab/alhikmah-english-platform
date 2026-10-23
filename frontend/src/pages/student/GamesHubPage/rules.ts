@@ -48,7 +48,7 @@ export function presentationFor(slug: string): GamePresentation {
 }
 
 export const skillById = (id: SkillId): Skill =>
-  SKILLS.find((skill) => skill.id === id) ?? (SKILLS[0] as Skill);
+  SKILLS.find((skill) => skill.id === id) ?? SKILLS[0];
 
 /** The day key the server uses for the featured game: the UTC calendar day. */
 export const utcDayKey = (date: Date): string => date.toISOString().slice(0, 10);

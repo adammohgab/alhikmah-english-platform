@@ -6,13 +6,13 @@ import type { GeneratedRubric, RubricCriterion } from "./AiRubricGeneratorModal"
 
 const PANEL = "rounded-2xl border-2 border-stroke bg-surface-0 p-4 shadow-retro-sm";
 const inputClass = "w-full rounded-lg border-2 border-stroke bg-surface-0 p-2 text-sm";
-type SavedRubric = {
+interface SavedRubric {
   id: string;
   title: string;
   criteria: RubricCriterion[];
   max_score: number;
   updated_at?: string;
-};
+}
 
 function normalizeCriteria(value: unknown): RubricCriterion[] {
   if (!Array.isArray(value)) return [];

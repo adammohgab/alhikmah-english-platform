@@ -40,14 +40,14 @@ const isInternal = (link: string) => link.startsWith("/") && !link.startsWith("/
 export function destinationFor(row: NotificationRow): string | null {
   if (row.link && isInternal(row.link)) return row.link;
   const payload = row.payload ?? {};
-  const submissionId = text(payload["submission_id"]);
+  const submissionId = text(payload.submission_id);
   if (submissionId) return `/teacher/grading/${enc(submissionId)}`;
-  const classId = text(payload["class_id"]);
+  const classId = text(payload.class_id);
   if (classId && categorize(row.kind) === "class_requests")
     return `/teacher/classes/${enc(classId)}/students`;
-  const quizId = text(payload["quiz_id"]);
+  const quizId = text(payload.quiz_id);
   if (quizId) return `/teacher/quizzes/${enc(quizId)}`;
-  const assignmentId = text(payload["assignment_id"]);
+  const assignmentId = text(payload.assignment_id);
   if (assignmentId) return `/teacher/assignments/${enc(assignmentId)}`;
   return null;
 }

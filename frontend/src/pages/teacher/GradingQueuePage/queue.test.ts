@@ -61,7 +61,7 @@ describe("grading queue logic", () => {
     ];
     expect(nextToGrade(rows)?.submission_id).toBe("free");
     expect(nextToGrade(rows.slice(0, 2))?.submission_id).toBe("busy");
-    expect(nextToGrade([rows[0]!])).toBeUndefined();
+    expect(nextToGrade([rows[0]])).toBeUndefined();
   });
 
   it("groups rows by assignment in order of first appearance", () => {

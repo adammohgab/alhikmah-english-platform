@@ -321,8 +321,8 @@ export function DataTable<TData>({
       return;
     }
 
-    const row = Number(target.dataset["gridRow"]);
-    const col = Number(target.dataset["gridCol"]);
+    const row = Number(target.dataset.gridRow);
+    const col = Number(target.dataset.gridCol);
     const forward = getComputedStyle(target).direction === "rtl" ? -1 : 1;
     const lastRow = gridRowCount - 1;
     const lastCol = colCount - 1;

@@ -112,7 +112,7 @@ export function trendPoints(timeline: TimelineEntry[], limit = 10): TrendPoint[]
 /** Change between the first and last point, rounded; null with fewer than two points. */
 export function trendDelta(points: TrendPoint[]): number | null {
   if (points.length < 2) return null;
-  const first = points[0]!.scorePct;
-  const last = points[points.length - 1]!.scorePct;
+  const first = points[0].scorePct;
+  const last = points[points.length - 1].scorePct;
   return Math.round(last - first);
 }

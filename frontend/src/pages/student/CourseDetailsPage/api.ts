@@ -115,10 +115,13 @@ export type CourseLesson = z.infer<typeof lessonSchema>;
 export type CourseUnit = z.infer<typeof unitSchema>;
 export type CourseDetails = z.infer<typeof responseSchema>;
 
-type LooseResult = { data: unknown; error: { message: string; code?: string } | null };
-type LooseClient = {
+interface LooseResult {
+  data: unknown;
+  error: { message: string; code?: string } | null;
+}
+interface LooseClient {
   rpc: (name: string, args: Record<string, unknown>) => PromiseLike<LooseResult>;
-};
+}
 
 /** Uses the canonical get_course snapshot so completion and class unlock rules stay server-owned. */
 export async function fetchCourseDetails(courseId: string): Promise<CourseDetails> {
@@ -135,7 +138,7 @@ export async function fetchCourseDetails(courseId: string): Promise<CourseDetail
 }
 
 export function isQuizLocked(quiz: CourseUnit["quiz"]): boolean {
-  if (!quiz || quiz.lock == null) return false;
+  if (quiz?.lock == null) return false;
   if (typeof quiz.lock === "boolean") return quiz.lock;
   if (typeof quiz.lock === "string")
     return quiz.lock.toLowerCase() !== "unlocked" && quiz.lock.toLowerCase() !== "none";

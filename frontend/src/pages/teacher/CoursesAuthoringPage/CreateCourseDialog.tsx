@@ -27,7 +27,7 @@ export function CreateCourseDialog({
   const toast = useToast();
   const [title, setTitle] = useState("");
   const [grade, setGrade] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]!);
+  const [category, setCategory] = useState(CATEGORIES[0]);
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
 

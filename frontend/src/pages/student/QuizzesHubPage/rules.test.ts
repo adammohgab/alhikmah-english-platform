@@ -189,7 +189,7 @@ describe("filters", () => {
     expect(ids("passed")).toEqual(["new"]);
     expect(ids("not_passed")).toEqual(["old"]);
     expect(ids("pending")).toEqual(["wait"]);
-    expect(historyStatusOf(items[2] as HistoryAttempt)).toBe("pending");
+    expect(historyStatusOf(items[2])).toBe("pending");
   });
 
   it("lists each course once, sorted", () => {

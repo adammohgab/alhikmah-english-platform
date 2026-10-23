@@ -5,7 +5,7 @@ import { supabase } from "@/shared/api/supabase";
 import { env } from "@/shared/config/env";
 
 type QuestionType = "multiple_choice" | "fill_blank" | "matching" | "short_answer";
-type GeneratedQuestion = {
+interface GeneratedQuestion {
   prompt: string;
   question_type: QuestionType;
   options: Record<string, unknown> | null;
@@ -13,13 +13,13 @@ type GeneratedQuestion = {
   explanation: string;
   points: number;
   difficulty: "Easy" | "Medium" | "Hard";
-};
+}
 
-type Props = {
+interface Props {
   open: boolean;
   onClose: () => void;
   onSaved: (count: number) => void;
-};
+}
 
 const TYPE_OPTIONS: { value: QuestionType; label: string }[] = [
   { value: "multiple_choice", label: "Multiple choice" },
@@ -85,7 +85,7 @@ function parseGeneratedQuestions(text: string): GeneratedQuestion[] {
       const choices = Array.isArray(row.options)
         ? row.options
         : row.options && typeof row.options === "object"
-          ? (row.options as Record<string, unknown>)["choices"]
+          ? (row.options as Record<string, unknown>).choices
           : undefined;
       const options =
         type === "multiple_choice"
@@ -100,7 +100,7 @@ function parseGeneratedQuestions(text: string): GeneratedQuestion[] {
           : row.options && typeof row.options === "object" && !Array.isArray(row.options)
             ? (row.options as Record<string, unknown>)
             : null;
-      if (type === "multiple_choice" && (options?.["choices"] as string[]).length < 3) return null;
+      if (type === "multiple_choice" && (options?.choices as string[]).length < 3) return null;
       const difficulty =
         row.difficulty === "Easy" || row.difficulty === "Hard" ? row.difficulty : "Medium";
       const points =
@@ -552,7 +552,7 @@ export default function AiQuestionGeneratorModal({ open, onClose, onSaved }: Pro
                       </h4>
                       {question.question_type === "multiple_choice" && (
                         <ul className="mt-2 grid gap-1 text-sm text-slate-700 sm:grid-cols-2">
-                          {((question.options?.["choices"] as string[]) ?? []).map(
+                          {((question.options?.choices as string[]) ?? []).map(
                             (choice, choiceIndex) => (
                               <li
                                 key={`${choice}-${choiceIndex}`}

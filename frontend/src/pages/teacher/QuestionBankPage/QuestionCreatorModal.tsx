@@ -5,8 +5,15 @@ import { supabase } from "@/shared/api/supabase";
 export type CreatorQuestionType =
   "multiple_choice" | "fill_blank" | "matching" | "reorder" | "short_answer" | "audio_spelling";
 
-type PairRow = { id: string; term: string; definition: string };
-type OptionRow = { id: string; text: string };
+interface PairRow {
+  id: string;
+  term: string;
+  definition: string;
+}
+interface OptionRow {
+  id: string;
+  text: string;
+}
 export interface EditableQuestion {
   id: string;
   question_type: string;

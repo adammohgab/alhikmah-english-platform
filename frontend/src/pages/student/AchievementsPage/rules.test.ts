@@ -67,33 +67,33 @@ describe("buildAchievements", () => {
   });
 
   it("marks earned badges with their date and XP reward from rarity", () => {
-    expect(byId["b1"]?.status).toBe("earned");
-    expect(byId["b1"]?.earnedAt).toBe("2026-10-01T10:00:00Z");
-    expect(byId["b1"]?.xpReward).toBe(20);
-    expect(byId["b2"]?.xpReward).toBe(50);
+    expect(byId.b1?.status).toBe("earned");
+    expect(byId.b1?.earnedAt).toBe("2026-10-01T10:00:00Z");
+    expect(byId.b1?.xpReward).toBe(20);
+    expect(byId.b2?.xpReward).toBe(50);
   });
 
   it("measures progress toward locked badges with the stat the engine checks", () => {
-    expect(byId["b2"]?.status).toBe("progress");
-    expect(byId["b2"]?.progress).toEqual({ value: 5, target: 7, percent: 71 });
+    expect(byId.b2?.status).toBe("progress");
+    expect(byId.b2?.progress).toEqual({ value: 5, target: 7, percent: 71 });
   });
 
   it("keeps a badge locked when nothing is measured or nothing is done yet", () => {
-    expect(byId["b3"]?.status).toBe("locked");
-    expect(byId["b3"]?.progress).toBeNull();
-    expect(byId["b5"]?.status).toBe("locked");
-    expect(byId["b5"]?.progress).toEqual({ value: 0, target: 10, percent: 0 });
+    expect(byId.b3?.status).toBe("locked");
+    expect(byId.b3?.progress).toBeNull();
+    expect(byId.b5?.status).toBe("locked");
+    expect(byId.b5?.progress).toEqual({ value: 0, target: 10, percent: 0 });
   });
 
   it("uses an explicit XP reward and falls back to the hint for the description", () => {
-    expect(byId["b5"]?.xpReward).toBe(35);
-    expect(byId["b5"]?.description).toBe("Finish ten lessons.");
+    expect(byId.b5?.xpReward).toBe(35);
+    expect(byId.b5?.description).toBe("Finish ten lessons.");
   });
 
   it("hides a locked secret badge", () => {
-    expect(byId["b4"]?.hidden).toBe(true);
-    expect(byId["b4"]?.name).toBe("Secret badge");
-    expect(byId["b4"]?.description).not.toContain("21:00");
+    expect(byId.b4?.hidden).toBe(true);
+    expect(byId.b4?.name).toBe("Secret badge");
+    expect(byId.b4?.description).not.toContain("21:00");
   });
 
   it("reveals a secret badge once it is earned", () => {

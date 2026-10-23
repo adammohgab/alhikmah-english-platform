@@ -1,4 +1,8 @@
-import { useInfiniteQuery, type InfiniteData, type UseInfiniteQueryResult } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  type InfiniteData,
+  type UseInfiniteQueryResult,
+} from "@tanstack/react-query";
 import { useAuth } from "@/app/providers/auth-context";
 import { fetchQuizzes, type QuizPage } from "./api";
 

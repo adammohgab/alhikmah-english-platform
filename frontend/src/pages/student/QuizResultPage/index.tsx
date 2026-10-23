@@ -117,7 +117,7 @@ export default function QuizResultPage() {
   const score = numberFrom(result, "score_pct", "percentage", "score_percent");
   const points = numberFrom(result, "points", "points_earned");
   const maxPoints = numberFrom(result, "max_points", "points_possible", "total_points");
-  const passedValue = result?.["passed"];
+  const passedValue = result?.passed;
   const passed =
     typeof passedValue === "boolean"
       ? passedValue
@@ -173,7 +173,7 @@ export default function QuizResultPage() {
           <div>
             <p className="text-sm font-semibold text-indigo-600">Quiz results</p>
             <h1 className="mt-1 text-3xl font-extrabold">
-              {firstText(payload.quiz?.["title"], result?.["quiz_title"]) ?? "Quiz complete"}
+              {firstText(payload.quiz?.title, result?.quiz_title) ?? "Quiz complete"}
             </h1>
             <p className="mt-2 text-slate-600">Here’s your score and what you can learn from it.</p>
           </div>

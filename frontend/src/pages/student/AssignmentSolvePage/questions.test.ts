@@ -184,9 +184,9 @@ describe("writing helpers", () => {
       f: { blanks: ["walk"] },
     };
 
-    expect(isAnswerEmpty(questions[0]!, answers["w"])).toBe(true);
-    expect(isAnswerEmpty(questions[1]!, answers["m"])).toBe(true);
-    expect(isAnswerEmpty(questions[2]!, answers["f"])).toBe(false);
+    expect(isAnswerEmpty(questions[0], answers.w)).toBe(true);
+    expect(isAnswerEmpty(questions[1], answers.m)).toBe(true);
+    expect(isAnswerEmpty(questions[2], answers.f)).toBe(false);
     expect(countAnswered(questions, answers)).toBe(1);
   });
 });

@@ -128,9 +128,9 @@ const course = {
 beforeEach(() => {
   for (const key of Object.keys(handlers)) delete handlers[key];
   for (const key of Object.keys(rpcs)) delete rpcs[key];
-  rpcs["my_deadlines"] = () => ok([]);
-  handlers["profiles"] = () => ok({ display_name: "Sara Ahmed", avatar_url: null });
-  handlers["student_stats"] = () =>
+  rpcs.my_deadlines = () => ok([]);
+  handlers.profiles = () => ok({ display_name: "Sara Ahmed", avatar_url: null });
+  handlers.student_stats = () =>
     ok({
       total_xp: 450,
       current_level: 3,
@@ -138,10 +138,10 @@ beforeEach(() => {
       current_streak: 4,
       streak_freeze_count: 1,
     });
-  handlers["user_settings"] = () => ok({ user_id: "me", daily_goal: "regular" });
-  handlers["xp_ledger"] = () => ok([{ amount: 50 }, { amount: 40 }]);
-  handlers["courses"] = (columns) => (columns === "id" ? ok([{ id: "c1" }]) : ok(course));
-  handlers["lesson_progress"] = (columns) =>
+  handlers.user_settings = () => ok({ user_id: "me", daily_goal: "regular" });
+  handlers.xp_ledger = () => ok([{ amount: 50 }, { amount: 40 }]);
+  handlers.courses = (columns) => (columns === "id" ? ok([{ id: "c1" }]) : ok(course));
+  handlers.lesson_progress = (columns) =>
     columns.includes("lessons(")
       ? ok([
           {
@@ -185,7 +185,7 @@ describe("DashboardPage", () => {
   });
 
   it("uses the goal chosen in settings", async () => {
-    handlers["user_settings"] = () => ok({ user_id: "me", daily_goal: "serious" });
+    handlers.user_settings = () => ok({ user_id: "me", daily_goal: "serious" });
     renderPage();
     const bar = await screen.findByRole("progressbar", { name: "Daily XP goal" });
     expect(bar).toHaveAttribute("aria-valuemax", "240");
@@ -198,7 +198,7 @@ describe("DashboardPage", () => {
       "section",
     );
     expect(card).not.toBeNull();
-    const scope = within(card as HTMLElement);
+    const scope = within(card!);
     expect(await scope.findByText("Introductions")).toBeVisible();
     expect(scope.getByText("1 of 3 lessons done")).toBeVisible();
     await user.click(scope.getByRole("button", { name: "Resume" }));
@@ -210,7 +210,7 @@ describe("DashboardPage", () => {
   });
 
   it("offers the first lesson to a student with no progress", async () => {
-    handlers["lesson_progress"] = () => ok([]);
+    handlers.lesson_progress = () => ok([]);
     const user = userEvent.setup();
     renderPage();
     await user.click(await screen.findByRole("button", { name: "Start your first lesson" }));
@@ -222,14 +222,14 @@ describe("DashboardPage", () => {
   });
 
   it("shows a retry when the lesson cannot load, without hiding the rest", async () => {
-    handlers["courses"] = () => ({ data: null, error: { message: "boom" } });
+    handlers.courses = () => ({ data: null, error: { message: "boom" } });
     renderPage();
     expect(await screen.findByRole("button", { name: "Try again" })).toBeVisible();
     expect(await screen.findByRole("progressbar", { name: "Daily XP goal" })).toBeVisible();
   });
 
   it("shows the quests and deadlines widgets beside the main cards", async () => {
-    rpcs["my_deadlines"] = () =>
+    rpcs.my_deadlines = () =>
       ok([
         {
           kind: "quiz",
@@ -242,7 +242,7 @@ describe("DashboardPage", () => {
           overdue: false,
         },
       ]);
-    handlers["quest_instances"] = () =>
+    handlers.quest_instances = () =>
       ok([
         {
           id: "qi1",
@@ -268,8 +268,8 @@ describe("DashboardPage", () => {
   });
 
   it("explains when no course is assigned", async () => {
-    handlers["courses"] = () => ok([]);
-    handlers["lesson_progress"] = () => ok([]);
+    handlers.courses = () => ok([]);
+    handlers.lesson_progress = () => ok([]);
     renderPage();
     expect(await screen.findByText(/No courses are assigned to you yet/)).toBeVisible();
   });

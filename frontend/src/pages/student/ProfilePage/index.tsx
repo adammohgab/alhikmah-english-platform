@@ -214,12 +214,12 @@ export default function ProfilePage() {
 
   const query = useQuery({
     queryKey: [STUDENT_PROFILE_KEY, studentId],
-    queryFn: () => fetchStudentProfile(studentId as string),
+    queryFn: () => fetchStudentProfile(studentId!),
     enabled: Boolean(studentId),
   });
 
   const pinMutation = useMutation({
-    mutationFn: (badgeIds: string[]) => updatePinnedBadges(studentId as string, badgeIds),
+    mutationFn: (badgeIds: string[]) => updatePinnedBadges(studentId!, badgeIds),
     onSuccess: () => {
       setPinDialogOpen(false);
       toast.show({ title: "Pinned badges updated", type: "success" });

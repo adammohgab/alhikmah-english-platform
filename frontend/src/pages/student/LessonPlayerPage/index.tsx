@@ -137,7 +137,7 @@ export default function LessonPlayerPage() {
     setError("");
     try {
       const args: Record<string, unknown> = { lesson_id: lessonId };
-      if (courseId) args["course_id"] = courseId;
+      if (courseId) args.course_id = courseId;
       const result = await rpc("get_lesson", args);
       if (result.error) throw new Error(result.error.message);
       const data = result.data as LessonPayload | null;

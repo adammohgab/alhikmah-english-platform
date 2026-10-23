@@ -24,7 +24,7 @@ type QuestionType =
   | "drag_drop"
   | "reorder";
 type Difficulty = "Easy" | "Medium" | "Hard";
-type Question = {
+interface Question {
   id: string;
   prompt: string;
   question_type: QuestionType;
@@ -41,7 +41,7 @@ type Question = {
   times_used?: number;
   skill?: string;
   grade?: string;
-};
+}
 const db = supabase as any;
 const TYPE_LABELS: Record<QuestionType, string> = {
   multiple_choice: "Multiple choice",
@@ -119,7 +119,7 @@ export default function QuestionBankPage() {
       if (queryError) throw queryError;
       setCurrentUser(authData.user?.id ?? null);
       const rows = (data ?? []) as Question[];
-      let usage: Record<string, number> = {};
+      const usage: Record<string, number> = {};
       if (rows.length) {
         const { data: links } = await db.from("assessment_questions").select("question_id");
         for (const link of links ?? [])

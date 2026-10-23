@@ -9,11 +9,11 @@ interface ExtractedErrorStatus {
 function extractErrorCodeOrStatus(error: unknown): ExtractedErrorStatus {
   if (typeof error === "object" && error !== null) {
     const err = error as Record<string, unknown>;
-    const rawCode = err["code"];
+    const rawCode = err.code;
     const code = typeof rawCode === "string" ? rawCode : undefined;
 
-    const rawStatus = err["status"];
-    const rawStatusCode = err["statusCode"];
+    const rawStatus = err.status;
+    const rawStatusCode = err.statusCode;
     const status =
       typeof rawStatus === "number"
         ? rawStatus

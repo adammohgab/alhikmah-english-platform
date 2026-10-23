@@ -71,14 +71,14 @@ function positiveInt(value: unknown): number | null {
 /** The threshold the award engine compares against: `threshold`, `days` or `count`. */
 export function targetOf(requirement: Record<string, unknown>): number | null {
   return (
-    positiveInt(requirement["threshold"]) ??
-    positiveInt(requirement["days"]) ??
-    positiveInt(requirement["count"])
+    positiveInt(requirement.threshold) ??
+    positiveInt(requirement.days) ??
+    positiveInt(requirement.count)
   );
 }
 
 function rarityOf(requirement: Record<string, unknown>): Rarity | null {
-  const value = requirement["rarity"];
+  const value = requirement.rarity;
   return value === "common" || value === "rare" || value === "epic" || value === "legendary"
     ? value
     : null;
@@ -139,10 +139,10 @@ function toBadge(definition: DefinitionRow, data: AchievementsData): Badge {
   const requirement = asRecord(definition.requirement_json);
   const earned = data.earned.find((row) => row.badge_id === definition.id);
   const rarity = rarityOf(requirement);
-  const explicitXp = positiveInt(requirement["xp_reward"]) ?? positiveInt(requirement["xp"]);
-  const secret = requirement["secret"] === true;
+  const explicitXp = positiveInt(requirement.xp_reward) ?? positiveInt(requirement.xp);
+  const secret = requirement.secret === true;
   const hidden = secret && !earned;
-  const hint = typeof requirement["hint"] === "string" ? requirement["hint"] : null;
+  const hint = typeof requirement.hint === "string" ? requirement.hint : null;
 
   const target = targetOf(requirement);
   const current = measure(definition.category, data);

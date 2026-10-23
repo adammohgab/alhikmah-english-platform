@@ -31,7 +31,10 @@ const PANEL = "rounded-[20px] border-2 border-stroke bg-surface-0 shadow-retro-s
 const XP_PER_DRILL = 5;
 const DAILY_GOAL = 5;
 
-type SavedDailyProgress = { completedIds: string[]; xp: number };
+interface SavedDailyProgress {
+  completedIds: string[];
+  xp: number;
+}
 
 function readDailyProgress(): SavedDailyProgress {
   if (typeof window === "undefined") return { completedIds: [], xp: 0 };
@@ -63,7 +66,7 @@ function shuffleWords(sentence: string): string[] {
   const words = sentence.replace(/[.!?]$/, "").split(" ");
   // Deterministic but non-answer order, so the exercise remains stable between renders.
   if (words.length < 3) return words;
-  const shuffled = [...words.slice(1), words[0]!];
+  const shuffled = [...words.slice(1), words[0]];
   if (shuffled.every((word, index) => word === words[index])) return [...words].reverse();
   return shuffled;
 }

@@ -362,13 +362,13 @@ function parseCefr(value: string | null): CefrLevel | null {
 
 function parseJobScope(job: CurriculumJobRow): ParsedScope {
   const top = asRecord(job.input_params);
-  const nestedScope = top === null ? null : asRecord(top["scope"]);
+  const nestedScope = top === null ? null : asRecord(top.scope);
   const source: Record<string, unknown> = nestedScope ?? top ?? {};
   return {
     grade: readNumber(source, "grade"),
     weeks: readNumber(source, "weeks"),
     cefr: parseCefr(readString(source, "cefr_target") ?? readString(source, "cefr")),
-    themes: parseThemes(source["themes"]),
+    themes: parseThemes(source.themes),
   };
 }
 

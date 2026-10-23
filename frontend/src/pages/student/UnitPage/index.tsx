@@ -120,12 +120,12 @@ function WindingMap({
   const lessonPath = points
     .slice(0, -1)
     .map((point, index) => {
-      const next = points[index + 1]!;
+      const next = points[index + 1];
       const midY = (point.y + next.y) / 2;
       return `${index === 0 ? "M" : "L"} ${point.x * 10} ${point.y} C ${point.x * 10} ${midY}, ${next.x * 10} ${midY}, ${next.x * 10} ${next.y}`;
     })
     .join(" ");
-  const lastPoint = points[points.length - 1]!;
+  const lastPoint = points[points.length - 1];
   const path = lastPoint
     ? `${lessonPath ? `${lessonPath} L` : "M"} ${lastPoint.x * 10} ${lastPoint.y} C ${lastPoint.x * 10} ${lastPoint.y + 48}, 500 ${mapHeight - 118}, 500 ${mapHeight - 80}`
     : lessonPath;

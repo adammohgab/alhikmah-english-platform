@@ -42,7 +42,7 @@ function renderPage() {
       student("s1", "Amal Hassan", "8A"),
       student("s2", "Bilal Omar", "8B", ["Avg 41%"]),
     ];
-    const items = args["flag"] === "needs_attention" ? all.filter((row) => row.flags.length) : all;
+    const items = args.flag === "needs_attention" ? all.filter((row) => row.flags.length) : all;
     return Promise.resolve({ data: { items, next_cursor: null }, error: null });
   });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });

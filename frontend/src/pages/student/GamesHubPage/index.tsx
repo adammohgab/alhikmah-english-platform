@@ -245,7 +245,7 @@ export default function GamesHubPage() {
 
   const query = useQuery({
     queryKey: [GAMES_HUB_KEY, studentId, today],
-    queryFn: () => fetchGamesHub(studentId as string, today),
+    queryFn: () => fetchGamesHub(studentId!, today),
     enabled: studentId !== undefined,
   });
 

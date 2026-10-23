@@ -15,8 +15,13 @@ import type { StudentShellStats } from "@/shared/components/layout/StudentTopBar
 import { Button } from "@/shared/components/ui/Button";
 import { useToast } from "@/shared/hooks/useToast";
 
-type Question = { question: string; options: string[]; answer: number; explanation: string };
-type Passage = {
+interface Question {
+  question: string;
+  options: string[];
+  answer: number;
+  explanation: string;
+}
+interface Passage {
   id: string;
   level: "A1" | "A2" | "B1" | "B2";
   title: string;
@@ -24,7 +29,7 @@ type Passage = {
   minutes: number;
   sentences: string[];
   questions: Question[];
-};
+}
 
 const passages: Passage[] = [
   {
@@ -216,7 +221,7 @@ export default function ReadingPracticePage() {
   const [earnedXp, setEarnedXp] = useState<number | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const passage = useMemo(
-    () => passages.find((p) => p.id === passageId) ?? passages[0]!,
+    () => passages.find((p) => p.id === passageId) ?? passages[0],
     [passageId],
   );
   const score = passage.questions.reduce(

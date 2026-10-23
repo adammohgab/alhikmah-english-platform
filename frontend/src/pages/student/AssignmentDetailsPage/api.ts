@@ -90,7 +90,7 @@ function textArray(...sources: unknown[]): string[] {
         continue;
       }
       const raw = record(item);
-      const nested = firstText(raw?.["text"], raw?.["label"], raw?.["title"]);
+      const nested = firstText(raw?.text, raw?.label, raw?.title);
       if (nested) result.push(nested);
     }
   }
@@ -99,26 +99,15 @@ function textArray(...sources: unknown[]): string[] {
 
 function courseName(value: unknown): string | undefined {
   const raw = record(value);
-  return firstText(value, raw?.["title"], raw?.["name"]);
+  return firstText(value, raw?.title, raw?.name);
 }
 
 function attachmentType(raw: Record<string, unknown>): AssignmentAttachment["type"] {
-  const type = firstText(
-    raw["type"],
-    raw["kind"],
-    raw["mime_type"],
-    raw["mimeType"],
-    raw["mime"],
-  )?.toLowerCase();
+  const type = firstText(raw.type, raw.kind, raw.mime_type, raw.mimeType, raw.mime)?.toLowerCase();
   if (type?.includes("pdf")) return "pdf";
   if (type?.startsWith("audio/") || type?.includes("audio")) return "audio";
 
-  const name = firstText(
-    raw["name"],
-    raw["title"],
-    raw["file_name"],
-    raw["fileName"],
-  )?.toLowerCase();
+  const name = firstText(raw.name, raw.title, raw.file_name, raw.fileName)?.toLowerCase();
   if (name?.endsWith(".pdf")) return "pdf";
   if (name && /\.(mp3|wav|ogg|m4a|aac)$/.test(name)) return "audio";
   return "link";
@@ -133,29 +122,17 @@ function mapAttachments(...sources: unknown[]): AssignmentAttachment[] {
       const raw = record(item);
       if (!raw) continue;
 
-      const url = firstText(
-        raw["url"],
-        raw["href"],
-        raw["download_url"],
-        raw["downloadUrl"],
-        raw["src"],
-      );
+      const url = firstText(raw.url, raw.href, raw.download_url, raw.downloadUrl, raw.src);
       if (!url) continue;
 
       const name =
-        firstText(raw["name"], raw["title"], raw["file_name"], raw["fileName"]) ??
-        `Resource ${index + 1}`;
-      const id =
-        firstText(raw["id"], raw["asset_id"], raw["assetId"], raw["key"]) ?? `${name}-${index}`;
+        firstText(raw.name, raw.title, raw.file_name, raw.fileName) ?? `Resource ${index + 1}`;
+      const id = firstText(raw.id, raw.asset_id, raw.assetId, raw.key) ?? `${name}-${index}`;
       if (seen.has(id)) continue;
       seen.add(id);
 
-      const sizeBytes = firstNumber(raw["size_bytes"], raw["sizeBytes"], raw["size"]);
-      const durationSeconds = firstNumber(
-        raw["duration_seconds"],
-        raw["durationSeconds"],
-        raw["duration"],
-      );
+      const sizeBytes = firstNumber(raw.size_bytes, raw.sizeBytes, raw.size);
+      const durationSeconds = firstNumber(raw.duration_seconds, raw.durationSeconds, raw.duration);
 
       result.push({
         id,
@@ -227,23 +204,21 @@ function mapRubric(...sources: unknown[]): RubricCriterion[] {
       const raw = record(item);
       if (!raw) continue;
 
-      const name = firstText(raw["name"], raw["title"], raw["criterion"]);
+      const name = firstText(raw.name, raw.title, raw.criterion);
       if (!name) continue;
 
-      const descriptor = descriptorText(raw["descriptors"]);
-      const description =
-        firstText(raw["description"], raw["summary"], raw["detail"], descriptor) ?? "";
+      const descriptor = descriptorText(raw.descriptors);
+      const description = firstText(raw.description, raw.summary, raw.detail, descriptor) ?? "";
       const fullCreditExpectation =
         firstText(
-          raw["full_credit_expectation"],
-          raw["fullCreditExpectation"],
-          raw["full_credit"],
-          raw["fullCredit"],
+          raw.full_credit_expectation,
+          raw.fullCreditExpectation,
+          raw.full_credit,
+          raw.fullCredit,
           descriptor,
         ) ?? description;
-      const maxPoints =
-        firstNumber(raw["max_points"], raw["maxPoints"], raw["points"], raw["score"]) ?? 0;
-      const id = firstText(raw["id"], raw["key"]) ?? `criterion-${position}`;
+      const maxPoints = firstNumber(raw.max_points, raw.maxPoints, raw.points, raw.score) ?? 0;
+      const id = firstText(raw.id, raw.key) ?? `criterion-${position}`;
 
       result.push({
         id,
@@ -272,14 +247,8 @@ function mapQuestionTypes(...sources: unknown[]): AssignmentQuestionType[] {
       } else {
         const raw = record(item);
         if (!raw) continue;
-        type = firstText(
-          raw["type"],
-          raw["kind"],
-          raw["question_type"],
-          raw["questionType"],
-          raw["name"],
-        );
-        count = firstNumber(raw["count"], raw["question_count"], raw["questionCount"]);
+        type = firstText(raw.type, raw.kind, raw.question_type, raw.questionType, raw.name);
+        count = firstNumber(raw.count, raw.question_count, raw.questionCount);
       }
 
       if (!type) continue;
@@ -355,71 +324,71 @@ function mapBrief(assignmentId: string, data: unknown): AssignmentDetails {
   const assignment = record(brief.assignment);
   if (!assignment) throw new Error("NOT_FOUND");
 
-  const title = firstText(assignment["title"], brief["title"]);
+  const title = firstText(assignment.title, brief.title);
   if (!title) throw new Error("REQUEST_FAILED");
 
-  const id = firstText(assignment["id"], brief["assignment_id"], brief["id"]) ?? assignmentId;
-  const wordCountSource = record(assignment["word_count"] ?? assignment["wordCount"]);
+  const id = firstText(assignment.id, brief.assignment_id, brief.id) ?? assignmentId;
+  const wordCountSource = record(assignment.word_count ?? assignment.wordCount);
   const minWords = firstNumber(
-    wordCountSource?.["min"],
-    assignment["min_words"],
-    assignment["minWords"],
-    brief["min_words"],
-    brief["minWords"],
+    wordCountSource?.min,
+    assignment.min_words,
+    assignment.minWords,
+    brief.min_words,
+    brief.minWords,
   );
   const maxWords = firstNumber(
-    wordCountSource?.["max"],
-    assignment["max_words"],
-    assignment["maxWords"],
-    brief["max_words"],
-    brief["maxWords"],
+    wordCountSource?.max,
+    assignment.max_words,
+    assignment.maxWords,
+    brief.max_words,
+    brief.maxWords,
   );
 
   const questionTypes = mapQuestionTypes(
-    brief["question_types"],
-    brief["questionTypes"],
-    assignment["question_types"],
-    assignment["questionTypes"],
-    array(assignment["questions"]).map((question) => record(question)?.["type"]),
+    brief.question_types,
+    brief.questionTypes,
+    assignment.question_types,
+    assignment.questionTypes,
+    array(assignment.questions).map((question) => record(question)?.type),
   );
 
   const explicitQuestionCount = firstNumber(
-    brief["question_count"],
-    brief["questionCount"],
-    assignment["question_count"],
-    assignment["questionCount"],
+    brief.question_count,
+    brief.questionCount,
+    assignment.question_count,
+    assignment.questionCount,
   );
   const countedQuestions = questionTypes.reduce((total, item) => total + (item.count ?? 0), 0);
   const questionCount =
     explicitQuestionCount ??
     (countedQuestions > 0
       ? countedQuestions
-      : array(assignment["questions"]).length > 0
-        ? array(assignment["questions"]).length
+      : array(assignment.questions).length > 0
+        ? array(assignment.questions).length
         : undefined);
 
   const hasWriting =
-    firstBoolean(brief["has_writing"], brief["hasWriting"], assignment["has_writing"]) ??
+    firstBoolean(brief.has_writing, brief.hasWriting, assignment.has_writing) ??
     questionTypes.some((item) => item.type.trim().toLowerCase() === "writing");
 
   const status = normalizeStatus(
-    firstText(brief["status"], assignment["status"], brief["submission_status"]),
+    firstText(brief.status, assignment.status, brief.submission_status),
   );
 
-  const attemptsSource = record(brief["attempts"] ?? assignment["attempts"]);
+  const attemptsSource = record(brief.attempts ?? assignment.attempts);
   const attemptsUsed = firstNumber(
-    attemptsSource?.["used"],
-    brief["attempts_used"],
-    brief["attemptsUsed"],
-    assignment["attempts_used"],
-    assignment["attemptsUsed"],
+    attemptsSource?.used,
+    brief.attempts_used,
+    brief.attemptsUsed,
+    assignment.attempts_used,
+    assignment.attemptsUsed,
   );
   const attemptsAllowed = firstNumber(
-    attemptsSource?.["allowed"],
-    brief["attempts_allowed"],
-    brief["attemptsAllowed"],
-    assignment["attempts_allowed"],
-    assignment["attemptsAllowed"],
+    attemptsSource?.allowed,
+    brief.attempts_allowed,
+    brief.attemptsAllowed,
+    assignment.attempts_allowed,
+    assignment.attemptsAllowed,
   );
   const attempts =
     attemptsUsed !== undefined || attemptsAllowed !== undefined
@@ -429,26 +398,22 @@ function mapBrief(assignmentId: string, data: unknown): AssignmentDetails {
         }
       : undefined;
 
-  const draftSource = record(brief["draft"] ?? assignment["draft"]);
-  const draftId = firstText(
-    draftSource?.["id"],
-    draftSource?.["submission_id"],
-    brief["submission_id"],
-  );
+  const draftSource = record(brief.draft ?? assignment.draft);
+  const draftId = firstText(draftSource?.id, draftSource?.submission_id, brief.submission_id);
   const lastSavedAt = firstText(
-    draftSource?.["updated_at"],
-    draftSource?.["updatedAt"],
-    draftSource?.["saved_at"],
-    brief["last_saved_at"],
-    brief["lastSavedAt"],
-    assignment["last_saved_at"],
-    assignment["lastSavedAt"],
+    draftSource?.updated_at,
+    draftSource?.updatedAt,
+    draftSource?.saved_at,
+    brief.last_saved_at,
+    brief.lastSavedAt,
+    assignment.last_saved_at,
+    assignment.lastSavedAt,
   );
   const draftWordCount = firstNumber(
-    draftSource?.["word_count"],
-    draftSource?.["wordCount"],
-    brief["draft_word_count"],
-    brief["draftWordCount"],
+    draftSource?.word_count,
+    draftSource?.wordCount,
+    brief.draft_word_count,
+    brief.draftWordCount,
   );
   const hasDraft = status === "in_progress" || Boolean(draftSource) || Boolean(lastSavedAt);
   const draft = hasDraft
@@ -461,37 +426,34 @@ function mapBrief(assignmentId: string, data: unknown): AssignmentDetails {
 
   const course =
     firstText(
-      assignment["course_name"],
-      assignment["courseName"],
-      courseName(assignment["course"]),
-      brief["course_name"],
-      brief["courseName"],
-      courseName(brief["course"]),
+      assignment.course_name,
+      assignment.courseName,
+      courseName(assignment.course),
+      brief.course_name,
+      brief.courseName,
+      courseName(brief.course),
     ) ?? undefined;
   const teacher =
     firstText(
-      assignment["teacher_name"],
-      assignment["teacherName"],
-      courseName(assignment["teacher"]),
-      brief["teacher_name"],
-      brief["teacherName"],
-      courseName(brief["teacher"]),
+      assignment.teacher_name,
+      assignment.teacherName,
+      courseName(assignment.teacher),
+      brief.teacher_name,
+      brief.teacherName,
+      courseName(brief.teacher),
     ) ?? undefined;
   const dueAt =
-    firstText(brief["due_at"], brief["dueAt"], assignment["due_at"], assignment["dueAt"]) ??
-    undefined;
+    firstText(brief.due_at, brief.dueAt, assignment.due_at, assignment.dueAt) ?? undefined;
   const closeAt =
-    firstText(brief["close_at"], brief["closeAt"], assignment["close_at"], assignment["closeAt"]) ??
-    undefined;
+    firstText(brief.close_at, brief.closeAt, assignment.close_at, assignment.closeAt) ?? undefined;
   const latePolicyText =
     firstText(
-      brief["late_policy_text"],
-      brief["latePolicyText"],
-      assignment["late_policy_text"],
-      assignment["latePolicyText"],
+      brief.late_policy_text,
+      brief.latePolicyText,
+      assignment.late_policy_text,
+      assignment.latePolicyText,
     ) ?? undefined;
-  const points =
-    firstNumber(brief["points"], assignment["points"], assignment["total_points"]) ?? undefined;
+  const points = firstNumber(brief.points, assignment.points, assignment.total_points) ?? undefined;
 
   return {
     id,
@@ -503,37 +465,37 @@ function mapBrief(assignmentId: string, data: unknown): AssignmentDetails {
     ...(latePolicyText ? { latePolicyText } : {}),
     prompt:
       firstText(
-        assignment["instructions"],
-        assignment["prompt"],
-        assignment["description"],
-        brief["instructions"],
-        brief["prompt"],
+        assignment.instructions,
+        assignment.prompt,
+        assignment.description,
+        brief.instructions,
+        brief.prompt,
       ) ?? "Your teacher has not added instructions yet.",
     formattingGuidelines: textArray(
-      assignment["formatting_guidelines"],
-      assignment["formattingGuidelines"],
-      assignment["guidelines"],
-      brief["formatting_guidelines"],
-      brief["formattingGuidelines"],
-      brief["guidelines"],
+      assignment.formatting_guidelines,
+      assignment.formattingGuidelines,
+      assignment.guidelines,
+      brief.formatting_guidelines,
+      brief.formattingGuidelines,
+      brief.guidelines,
     ),
     wordCount: {
       ...(minWords !== undefined ? { min: minWords } : {}),
       ...(maxWords !== undefined ? { max: maxWords } : {}),
     },
     attachments: mapAttachments(
-      brief["resources"],
-      assignment["resources"],
-      brief["attachments"],
-      assignment["attachments"],
+      brief.resources,
+      assignment.resources,
+      brief.attachments,
+      assignment.attachments,
     ),
     rubric: mapRubric(
-      assignment["rubric"],
-      assignment["rubric_criteria"],
-      assignment["rubricCriteria"],
-      brief["rubric"],
-      brief["rubric_criteria"],
-      brief["rubricCriteria"],
+      assignment.rubric,
+      assignment.rubric_criteria,
+      assignment.rubricCriteria,
+      brief.rubric,
+      brief.rubric_criteria,
+      brief.rubricCriteria,
     ),
     questionTypes,
     hasWriting,

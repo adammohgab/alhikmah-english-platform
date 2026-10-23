@@ -22,9 +22,9 @@ import {
 const PANEL = "rounded-[20px] border-2 border-stroke bg-surface-0 p-4 shadow-[2px_2px_0px_#000]";
 
 function reportLink(report: RecentReport): string | null {
-  const classId = report.params?.["class_id"];
+  const classId = report.params?.class_id;
   if (report.kind !== "class" || typeof classId !== "string") return null;
-  const preset = report.params?.["preset"];
+  const preset = report.params?.preset;
   const query = typeof preset === "string" ? `?period=${encodeURIComponent(preset)}` : "";
   return `/teacher/reports/class/${encodeURIComponent(classId)}${query}`;
 }

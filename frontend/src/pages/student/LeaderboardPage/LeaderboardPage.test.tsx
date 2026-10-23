@@ -6,7 +6,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context";
 import LeaderboardPage from "./index";
 
-type Result = { data: unknown; error: { message: string } | null };
+interface Result {
+  data: unknown;
+  error: { message: string } | null;
+}
 
 const enrollments: { current: Result } = { current: { data: [], error: null } };
 const boards: Record<string, Result> = {};
@@ -22,7 +25,7 @@ vi.mock("@/shared/api/supabase", () => ({
     from: () => ({ select: () => chain(enrollments.current) }),
     rpc: (fn: string, args: Record<string, unknown>) => {
       rpcCalls.push({ fn, args });
-      const key = `${String(args["class_id"])}:${String(args["timeframe"])}`;
+      const key = `${String(args.class_id)}:${String(args.timeframe)}`;
       return Promise.resolve(boards[key] ?? { data: null, error: { message: "no board" } });
     },
   },
@@ -106,8 +109,8 @@ describe("LeaderboardPage", () => {
     const list = screen.getByRole("list", { name: "Ranking" });
     const rows = within(list).getAllByRole("listitem");
     expect(rows).toHaveLength(2);
-    expect(within(rows[0] as HTMLElement).getByText("Karim")).toBeInTheDocument();
-    expect(within(rows[1] as HTMLElement).getByText("Sara")).toBeInTheDocument();
+    expect(within(rows[0]).getByText("Karim")).toBeInTheDocument();
+    expect(within(rows[1]).getByText("Sara")).toBeInTheDocument();
   });
 
   it("asks for this week first and pins the student's standing", async () => {
@@ -130,7 +133,7 @@ describe("LeaderboardPage", () => {
     await user.click(screen.getByRole("tab", { name: "This Month" }));
     expect(await screen.findByText("You are 1st with 2,000 XP")).toBeInTheDocument();
     expect(screen.getByTestId("rank-message")).toHaveTextContent("You lead by 200 XP");
-    expect(rpcCalls[rpcCalls.length - 1]?.args["timeframe"]).toBe("month");
+    expect(rpcCalls[rpcCalls.length - 1]?.args.timeframe).toBe("month");
   });
 
   it("tells the student when names are hidden", async () => {

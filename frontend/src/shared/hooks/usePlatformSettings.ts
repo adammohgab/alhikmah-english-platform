@@ -71,9 +71,9 @@ export async function fetchPlatformSettings(): Promise<PlatformSettingsState> {
       settingsMap[item.key] = item.value;
     }
 
-    const maintenanceRaw = settingsMap["maintenance"] as Partial<MaintenanceSettings> | undefined;
-    const featuresRaw = settingsMap["features"] as FeaturesSettings | undefined;
-    const preferencesRaw = settingsMap["preferences"] as Record<string, unknown> | undefined;
+    const maintenanceRaw = settingsMap.maintenance as Partial<MaintenanceSettings> | undefined;
+    const featuresRaw = settingsMap.features as FeaturesSettings | undefined;
+    const preferencesRaw = settingsMap.preferences as Record<string, unknown> | undefined;
 
     return {
       maintenance: {
@@ -81,14 +81,14 @@ export async function fetchPlatformSettings(): Promise<PlatformSettingsState> {
         message: maintenanceRaw?.message ?? DEFAULT_PLATFORM_SETTINGS.maintenance.message,
         expected_back_at: maintenanceRaw?.expected_back_at ?? null,
       },
-      registration_enabled: Boolean(preferencesRaw?.["registration_enabled"] ?? false),
+      registration_enabled: Boolean(preferencesRaw?.registration_enabled ?? false),
       ai_features_enabled:
         typeof featuresRaw?.ai_tutor?.enabled === "boolean"
           ? featuresRaw.ai_tutor.enabled
           : DEFAULT_PLATFORM_SETTINGS.ai_features_enabled,
       sound_enabled_default:
-        typeof preferencesRaw?.["sound_enabled_default"] === "boolean"
-          ? preferencesRaw["sound_enabled_default"]
+        typeof preferencesRaw?.sound_enabled_default === "boolean"
+          ? preferencesRaw.sound_enabled_default
           : DEFAULT_PLATFORM_SETTINGS.sound_enabled_default,
       features: {
         ...DEFAULT_PLATFORM_SETTINGS.features,

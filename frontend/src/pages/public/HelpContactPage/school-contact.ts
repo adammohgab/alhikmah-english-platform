@@ -44,17 +44,15 @@ export function safeHttpUrl(value: string | undefined): string | undefined {
 
 export function parseSchoolContact(state: unknown): SchoolContact {
   if (!isRecord(state)) return {};
-  const school = isRecord(state["school"]) ? state["school"] : {};
-  const contact = isRecord(school["contact"]) ? school["contact"] : {};
+  const school = isRecord(state.school) ? state.school : {};
+  const contact = isRecord(school.contact) ? school.contact : {};
   return {
-    schoolName: text(school["name"], school["school_name"], state["school_name"]),
-    officeHours: text(contact["office_hours"], contact["officeHours"], school["office_hours"]),
-    phone: text(contact["phone"], contact["contact_phone"], school["contact_phone"]),
-    location: text(contact["location"], school["location"]),
-    contactEmail: text(contact["email"], contact["contact_email"], school["contact_email"]),
-    supportLink: safeHttpUrl(
-      text(contact["support_link"], contact["supportLink"], school["support_link"]),
-    ),
+    schoolName: text(school.name, school.school_name, state.school_name),
+    officeHours: text(contact.office_hours, contact.officeHours, school.office_hours),
+    phone: text(contact.phone, contact.contact_phone, school.contact_phone),
+    location: text(contact.location, school.location),
+    contactEmail: text(contact.email, contact.contact_email, school.contact_email),
+    supportLink: safeHttpUrl(text(contact.support_link, contact.supportLink, school.support_link)),
   };
 }
 

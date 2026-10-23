@@ -120,9 +120,9 @@ function choicesFrom(value: unknown, prefix: string): Choice[] {
   const source = record(value);
   const list = Array.isArray(value)
     ? value
-    : array(source?.["items"]).length > 0
-      ? array(source?.["items"])
-      : array(source?.["choices"]);
+    : array(source?.items).length > 0
+      ? array(source?.items)
+      : array(source?.choices);
 
   const choices: Choice[] = [];
   for (const [index, item] of list.entries()) {
@@ -134,42 +134,35 @@ function choicesFrom(value: unknown, prefix: string): Choice[] {
 
     const raw = record(item);
     if (!raw) continue;
-    const choiceText = firstText(
-      raw["text"],
-      raw["label"],
-      raw["value"],
-      raw["name"],
-      raw["meaning"],
-    );
+    const choiceText = firstText(raw.text, raw.label, raw.value, raw.name, raw.meaning);
     if (!choiceText) continue;
-    const id =
-      firstText(raw["id"], raw["key"], raw["value"], raw["slug"]) ?? `${prefix}-${index + 1}`;
+    const id = firstText(raw.id, raw.key, raw.value, raw.slug) ?? `${prefix}-${index + 1}`;
     choices.push({ id, text: choiceText });
   }
   return choices;
 }
 
 function promptFrom(raw: RawRecord, nested: RawRecord | undefined): QuestionPrompt {
-  const value = raw["prompt"] ?? nested?.["prompt"];
+  const value = raw.prompt ?? nested?.prompt;
   const prompt = record(value);
   const promptText =
     firstText(
-      prompt?.["text"],
-      prompt?.["content"],
+      prompt?.text,
+      prompt?.content,
       typeof value === "string" ? value : undefined,
-      raw["prompt_text"],
-      raw["promptText"],
-      nested?.["prompt_text"],
-      nested?.["promptText"],
-      raw["question"],
-      raw["text"],
+      raw.prompt_text,
+      raw.promptText,
+      nested?.prompt_text,
+      nested?.promptText,
+      raw.question,
+      raw.text,
     ) ?? "";
   const promptHtml = firstText(
-    prompt?.["html"],
-    prompt?.["rich_text"],
-    prompt?.["richText"],
-    raw["prompt_html"],
-    raw["promptHtml"],
+    prompt?.html,
+    prompt?.rich_text,
+    prompt?.richText,
+    raw.prompt_html,
+    raw.promptHtml,
   );
 
   return {
@@ -186,14 +179,10 @@ function buildRendererQuestion(
   nested: RawRecord | undefined,
   meta: RawRecord,
 ): Question | undefined {
-  const options = raw["options"] ?? nested?.["options"];
+  const options = raw.options ?? nested?.options;
   const optionsRecord = record(options);
   const wordBankSource =
-    raw["word_bank"] ??
-    raw["wordBank"] ??
-    nested?.["word_bank"] ??
-    meta["word_bank"] ??
-    meta["wordBank"];
+    raw.word_bank ?? raw.wordBank ?? nested?.word_bank ?? meta.word_bank ?? meta.wordBank;
   const wordBank = array(wordBankSource)
     .map((item) => text(item))
     .filter((item): item is string => Boolean(item));
@@ -201,15 +190,10 @@ function buildRendererQuestion(
   switch (type) {
     case "multiple_choice": {
       const choices = choicesFrom(
-        optionsRecord?.["choices"] ?? optionsRecord?.["items"] ?? options,
+        optionsRecord?.choices ?? optionsRecord?.items ?? options,
         `${id}-option`,
       );
-      const multi = firstBoolean(
-        raw["multi"],
-        nested?.["multi"],
-        meta["multi"],
-        optionsRecord?.["multi"],
-      );
+      const multi = firstBoolean(raw.multi, nested?.multi, meta.multi, optionsRecord?.multi);
       return {
         id,
         type,
@@ -231,16 +215,13 @@ function buildRendererQuestion(
         type,
         prompt,
         options: {
-          left: choicesFrom(optionsRecord?.["left"] ?? raw["left"] ?? meta["left"], `${id}-left`),
-          right: choicesFrom(
-            optionsRecord?.["right"] ?? raw["right"] ?? meta["right"],
-            `${id}-right`,
-          ),
+          left: choicesFrom(optionsRecord?.left ?? raw.left ?? meta.left, `${id}-left`),
+          right: choicesFrom(optionsRecord?.right ?? raw.right ?? meta.right, `${id}-right`),
         },
       };
     case "reorder": {
       const items = choicesFrom(
-        optionsRecord?.["items"] ?? options ?? raw["items"] ?? meta["items"],
+        optionsRecord?.items ?? options ?? raw.items ?? meta.items,
         `${id}-item`,
       );
       return {
@@ -252,21 +233,17 @@ function buildRendererQuestion(
     }
     case "audio_spelling": {
       const tiles = choicesFrom(
-        optionsRecord?.["tiles"] ??
-          optionsRecord?.["choices"] ??
-          raw["tiles"] ??
-          options ??
-          meta["tiles"],
+        optionsRecord?.tiles ?? optionsRecord?.choices ?? raw.tiles ?? options ?? meta.tiles,
         `${id}-tile`,
       );
       const audioUrl = firstText(
-        raw["audio_url"],
-        raw["audioUrl"],
-        nested?.["audio_url"],
-        nested?.["audioUrl"],
-        record(raw["audio"])?.["url"],
-        record(nested?.["audio"])?.["url"],
-        record(meta["audio"])?.["url"],
+        raw.audio_url,
+        raw.audioUrl,
+        nested?.audio_url,
+        nested?.audioUrl,
+        record(raw.audio)?.url,
+        record(nested?.audio)?.url,
+        record(meta.audio)?.url,
       );
       return {
         id,
@@ -278,18 +255,18 @@ function buildRendererQuestion(
     }
     case "short_answer": {
       const minWords = firstNumber(
-        raw["min_words"],
-        raw["minWords"],
-        nested?.["min_words"],
-        meta["min_words"],
-        meta["minWords"],
+        raw.min_words,
+        raw.minWords,
+        nested?.min_words,
+        meta.min_words,
+        meta.minWords,
       );
       const maxWords = firstNumber(
-        raw["max_words"],
-        raw["maxWords"],
-        nested?.["max_words"],
-        meta["max_words"],
-        meta["maxWords"],
+        raw.max_words,
+        raw.maxWords,
+        nested?.max_words,
+        meta.max_words,
+        meta.maxWords,
       );
       return {
         id,
@@ -324,15 +301,15 @@ export function normalizeQuestions(
       continue;
     }
 
-    const nested = record(raw["question"]);
-    const meta = record(raw["meta"] ?? nested?.["meta"]) ?? {};
+    const nested = record(raw.question);
+    const meta = record(raw.meta ?? nested?.meta) ?? {};
     const rawType = firstText(
-      raw["type"],
-      raw["question_type"],
-      raw["questionType"],
-      nested?.["type"],
-      nested?.["question_type"],
-      meta["type"],
+      raw.type,
+      raw.question_type,
+      raw.questionType,
+      nested?.type,
+      nested?.question_type,
+      meta.type,
     );
     const type = normalizeType(rawType);
     if (!type) {
@@ -341,7 +318,7 @@ export function normalizeQuestions(
     }
 
     const baseId =
-      firstText(raw["key"], raw["id"], raw["question_id"], raw["questionId"], nested?.["id"]) ??
+      firstText(raw.key, raw.id, raw.question_id, raw.questionId, nested?.id) ??
       `question-${index + 1}`;
     let id = baseId;
     let duplicate = 1;
@@ -353,31 +330,31 @@ export function normalizeQuestions(
 
     const prompt = promptFrom(raw, nested);
     const points = firstNumber(
-      raw["points"],
-      raw["points_override"],
-      raw["pointsOverride"],
-      nested?.["points"],
-      meta["points"],
+      raw.points,
+      raw.points_override,
+      raw.pointsOverride,
+      nested?.points,
+      meta.points,
     );
 
     if (type === "writing") {
       const minWords =
         firstNumber(
-          raw["min_words"],
-          raw["minWords"],
-          nested?.["min_words"],
-          nested?.["minWords"],
-          meta["min_words"],
-          meta["minWords"],
+          raw.min_words,
+          raw.minWords,
+          nested?.min_words,
+          nested?.minWords,
+          meta.min_words,
+          meta.minWords,
         ) ?? fallbackWordTarget?.min;
       const maxWords =
         firstNumber(
-          raw["max_words"],
-          raw["maxWords"],
-          nested?.["max_words"],
-          nested?.["maxWords"],
-          meta["max_words"],
-          meta["maxWords"],
+          raw.max_words,
+          raw.maxWords,
+          nested?.max_words,
+          nested?.maxWords,
+          meta.max_words,
+          meta.maxWords,
         ) ?? fallbackWordTarget?.max;
 
       const writingQuestion: WritingSolveQuestion = {
@@ -485,9 +462,9 @@ function rowsToAnswers(rows: unknown[]): RawRecord {
   for (const item of rows) {
     const row = record(item);
     if (!row) continue;
-    const id = firstText(row["question_id"], row["questionId"], row["key"], row["id"]);
+    const id = firstText(row.question_id, row.questionId, row.key, row.id);
     if (!id) continue;
-    answers[id] = row["answer"] ?? row["value"] ?? row["response"] ?? row;
+    answers[id] = row.answer ?? row.value ?? row.response ?? row;
   }
   return answers;
 }
@@ -504,13 +481,13 @@ function extractDraftSource(draft: unknown): RawRecord {
     if (nested) return nested;
   }
 
-  const nestedDraft = root["draft"];
+  const nestedDraft = root.draft;
   if (nestedDraft !== undefined && nestedDraft !== draft) {
     const nested = extractDraftSource(nestedDraft);
     if (Object.keys(nested).length > 0) return nested;
   }
 
-  const data = root["data"];
+  const data = root.data;
   if (data !== undefined && data !== draft) {
     const nested = extractDraftSource(data);
     if (Object.keys(nested).length > 0) return nested;
@@ -528,20 +505,14 @@ function hydrateWriting(raw: unknown): WritingAnswer | undefined {
   const value = record(raw);
   if (!value) return undefined;
 
-  const nested = record(value["answer"]);
+  const nested = record(value.answer);
   if (nested && nested !== value) {
     const answer = hydrateWriting(nested);
     if (answer) return answer;
   }
 
-  const html = firstText(
-    value["html"],
-    value["content"],
-    value["rich_text"],
-    value["richText"],
-    value["body"],
-  );
-  const plain = firstText(value["text"], value["plain_text"], value["plainText"], value["value"]);
+  const html = firstText(value.html, value.content, value.rich_text, value.richText, value.body);
+  const plain = firstText(value.text, value.plain_text, value.plainText, value.value);
 
   if (html) return writingAnswerFromHtml(html, plain);
   if (plain) return createWritingAnswer(plain);
@@ -563,21 +534,21 @@ function hydrateRenderer(question: Question, raw: unknown): QuestionValue | unde
 
   const value = record(raw);
   if (!value) return undefined;
-  const nestedAnswer = record(value["answer"]);
+  const nestedAnswer = record(value.answer);
   const source = nestedAnswer ?? value;
 
   switch (question.type) {
     case "multiple_choice": {
-      const selected = stringList(source["selected"] ?? source["value"] ?? raw);
+      const selected = stringList(source.selected ?? source.value ?? raw);
       return selected ? { selected } : undefined;
     }
     case "fill_blank": {
-      const blanks = stringList(source["blanks"] ?? source["value"] ?? raw);
+      const blanks = stringList(source.blanks ?? source.value ?? raw);
       return blanks ? { blanks } : undefined;
     }
     case "matching": {
       const pairs: Array<[string, string]> = [];
-      for (const pair of array(source["pairs"] ?? raw)) {
+      for (const pair of array(source.pairs ?? raw)) {
         if (!Array.isArray(pair)) continue;
         const left = text(pair[0]);
         const right = text(pair[1]);
@@ -586,15 +557,15 @@ function hydrateRenderer(question: Question, raw: unknown): QuestionValue | unde
       return { pairs };
     }
     case "reorder": {
-      const order = stringList(source["order"] ?? source["value"] ?? raw);
+      const order = stringList(source.order ?? source.value ?? raw);
       return order ? { order } : undefined;
     }
     case "short_answer": {
-      const answerText = firstText(source["text"], source["value"]);
+      const answerText = firstText(source.text, source.value);
       return answerText ? { text: answerText } : undefined;
     }
     case "audio_spelling": {
-      const tiles = stringList(source["tiles"] ?? source["value"] ?? raw);
+      const tiles = stringList(source.tiles ?? source.value ?? raw);
       return tiles ? { tiles } : undefined;
     }
     default:
@@ -627,10 +598,10 @@ export function isWritingAnswer(value: unknown): value is WritingAnswer {
   const raw = record(value);
   return (
     raw !== undefined &&
-    typeof raw["html"] === "string" &&
-    typeof raw["text"] === "string" &&
-    typeof raw["wordCount"] === "number" &&
-    typeof raw["characterCount"] === "number"
+    typeof raw.html === "string" &&
+    typeof raw.text === "string" &&
+    typeof raw.wordCount === "number" &&
+    typeof raw.characterCount === "number"
   );
 }
 
@@ -663,20 +634,20 @@ export function isAnswerEmpty(question: SolveQuestion, answer: SolveAnswer | und
 
   switch (question.question.type) {
     case "multiple_choice":
-      return stringList(value["selected"])?.length === 0 || !value["selected"];
+      return stringList(value.selected)?.length === 0 || !value.selected;
     case "fill_blank":
       return (
-        !Array.isArray(value["blanks"]) ||
-        value["blanks"].every((blank) => typeof blank === "string" && blank.trim() === "")
+        !Array.isArray(value.blanks) ||
+        value.blanks.every((blank) => typeof blank === "string" && blank.trim() === "")
       );
     case "matching":
-      return !Array.isArray(value["pairs"]) || value["pairs"].length === 0;
+      return !Array.isArray(value.pairs) || value.pairs.length === 0;
     case "reorder":
-      return !Array.isArray(value["order"]) || value["order"].length === 0;
+      return !Array.isArray(value.order) || value.order.length === 0;
     case "short_answer":
-      return typeof value["text"] !== "string" || value["text"].trim() === "";
+      return typeof value.text !== "string" || value.text.trim() === "";
     case "audio_spelling":
-      return !Array.isArray(value["tiles"]) || value["tiles"].length === 0;
+      return !Array.isArray(value.tiles) || value.tiles.length === 0;
     default:
       return true;
   }

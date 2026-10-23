@@ -2,15 +2,26 @@ import { useState } from "react";
 import { LoaderCircle, Sparkles, X } from "lucide-react";
 import { supabase } from "@/shared/api/supabase";
 
-export type RubricLevel = { label: string; points: number; description: string };
-export type RubricCriterion = {
+export interface RubricLevel {
+  label: string;
+  points: number;
+  description: string;
+}
+export interface RubricCriterion {
   id: string;
   name: string;
   description: string;
   levels: RubricLevel[];
-};
-export type GeneratedRubric = { title: string; criteria: RubricCriterion[] };
-type Props = { open: boolean; onClose: () => void; onGenerated: (rubric: GeneratedRubric) => void };
+}
+export interface GeneratedRubric {
+  title: string;
+  criteria: RubricCriterion[];
+}
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  onGenerated: (rubric: GeneratedRubric) => void;
+}
 const GENRES = ["Argumentative", "Narrative", "Expository"] as const;
 const LEVELS = ["Beginning", "Developing", "Proficient", "Advanced"] as const;
 

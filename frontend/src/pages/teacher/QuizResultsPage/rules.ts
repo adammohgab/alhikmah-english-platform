@@ -27,7 +27,7 @@ export function histogramBins(scores: number[]): Bin[] {
     if (!Number.isFinite(score)) continue;
     const clamped = Math.min(100, Math.max(0, score));
     const index = Math.min(bins.length - 1, Math.floor(clamped / BIN_SIZE));
-    bins[index]!.count += 1;
+    bins[index].count += 1;
   }
   return bins;
 }

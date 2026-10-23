@@ -11,8 +11,12 @@ import {
   X,
 } from "lucide-react";
 
-type AgendaItem = { title: string; minutes: number; detail: string };
-type Lesson = {
+interface AgendaItem {
+  title: string;
+  minutes: number;
+  detail: string;
+}
+interface Lesson {
   day: string;
   dateLabel: string;
   title: string;
@@ -22,7 +26,7 @@ type Lesson = {
   homework: string;
   materials: string;
   approved: boolean;
-};
+}
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const AGENDA = [
@@ -82,7 +86,7 @@ const ACTIVITIES = [
 
 function makePlan(unit: string): Lesson[] {
   return DAYS.map((day, index) => {
-    const activity = ACTIVITIES[index]!;
+    const activity = ACTIVITIES[index];
     return {
       day,
       dateLabel: `Day ${index + 1}`,

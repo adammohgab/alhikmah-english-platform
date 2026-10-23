@@ -114,7 +114,7 @@ describe("AssignmentsHubPage (TC-13)", () => {
   it("duplicates an assignment through the contract RPC", async () => {
     renderPage();
     await screen.findByText("Essay 1");
-    await userEvent.click(screen.getAllByRole("button", { name: "Duplicate" })[0]!);
+    await userEvent.click(screen.getAllByRole("button", { name: "Duplicate" })[0]);
     await waitFor(() =>
       expect(rpc).toHaveBeenCalledWith("duplicate_assessment", { kind: "assignment", id: "a1" }),
     );
