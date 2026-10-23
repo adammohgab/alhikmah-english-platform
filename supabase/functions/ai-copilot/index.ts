@@ -100,7 +100,7 @@ export async function insertActionCard(
       changes: card.changes,
       sources: card.sources || {},
       notes: card.notes || [],
-      status: card.status || "pending",
+      status: "ready",
       stamps: {},
       created_at: new Date().toISOString(),
     });
@@ -379,19 +379,7 @@ Whenever you propose a concrete database modification (such as generating questi
 \`\`\`
 Before the action card, stream your pedagogical conversational reasoning to the teacher clearly and concisely.`;
 
-  const workspaceContext = [
-    "CURRENT TEACHER WORKSPACE (treat this as trusted context about where the teacher is working):",
-    `Page: ${ws.page || "unknown"}`,
-    `Selected class ID: ${ws.class_id || "none"}`,
-    `Course ID: ${ws.course_id || "none"}`,
-    `Lesson ID: ${ws.lesson_id || "none"}`,
-    `Quiz ID: ${ws.quiz_id || "none"}`,
-    `Assignment ID: ${ws.assignment_id || "none"}`,
-    `Grade level: ${ws.grade_level || "not specified"}`,
-    `Subject: ${ws.subject || "English Curriculum"}`,
-    "Use these details to tailor suggestions. Do not claim to have read page content unless it is included in the teacher's message.",
-  ].join("\n");
-  const fullSystemInstruction = `${baseNova}\n\n${context}\n\n${workspaceContext}\n\n${toolInstructions}`;
+  const fullSystemInstruction = `${baseNova}\n\n${context}\n\n${toolInstructions}`;
 
   // Log user message
   getSupabaseServiceClient().then((supa) => {
@@ -496,7 +484,7 @@ Before the action card, stream your pedagogical conversational reasoning to the 
           const cardEventPayload = {
             card_id: generatedCardId,
             ...proposedCard,
-            status: "pending",
+            status: "ready",
           };
 
           controller.enqueue(

@@ -25,7 +25,6 @@ import schoolLogo from "@/shared/assets/logo.png";
 import { cn } from "@/shared/lib/utils/cn";
 import { readStored, writeStored } from "@/shared/hooks/useWorld";
 import { TeacherTopBar, type TeacherShellClass } from "./TeacherTopBar";
-import TeacherCopilotPanel, { type CopilotContext } from "@/shared/components/teacher/TeacherCopilotPanel";
 
 /* ========================================
    Teacher app shell (TEACHER-SPEC §3 "Global shell"; TASKS UIK-24)
@@ -160,14 +159,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
         to: "/teacher/question-bank",
         icon: Database,
         prefixes: ["/teacher/question-bank"],
-      },
-      {
-        kind: "link",
-        id: "rubrics",
-        label: "Rubrics",
-        to: "/teacher/rubrics",
-        icon: ClipboardList,
-        prefixes: ["/teacher/rubrics"],
       },
       {
         kind: "link",
@@ -837,67 +828,6 @@ export interface TeacherAppShellProps {
   children?: ReactNode;
 }
 
-function buildCopilotContext(
-  pathname: string,
-  activeClassId: string | null,
-  classes: readonly TeacherShellClass[],
-): CopilotContext {
-  const routeId = (pattern: RegExp) => {
-    const value = pathname.match(pattern)?.[1];
-    return value && value !== "new" && value !== "create" ? value : undefined;
-  };
-  const courseId = routeId(/\/teacher\/courses\/([^/]+)/);
-  const lessonId = routeId(/\/lessons\/([^/]+)/);
-  const quizId = routeId(/\/teacher\/quizzes\/([^/]+)/);
-  const assignmentId = routeId(/\/teacher\/assignments\/([^/]+)/);
-  const isQuestionBank = pathname.startsWith("/teacher/question-bank");
-  const isGrading = pathname.startsWith("/teacher/grading");
-  const isCourse = Boolean(courseId);
-  const isQuiz = Boolean(quizId) || pathname.startsWith("/teacher/quizzes");
-  const isAssignment = Boolean(assignmentId) || pathname.startsWith("/teacher/assignments");
-  const activeClass = classes.find((item) => item.id === activeClassId);
-  const type: CopilotContext["type"] = isCourse
-    ? "course"
-    : isQuiz
-      ? "quiz"
-      : isAssignment
-        ? "assignment"
-        : pathname.includes("rubric")
-          ? "rubric"
-          : activeClassId
-            ? "class"
-            : "page";
-  const title = isCourse
-    ? "Course workspace"
-    : isQuiz
-      ? "Quiz workspace"
-      : isAssignment
-        ? "Assignment workspace"
-        : isQuestionBank
-          ? "Question Bank"
-          : isGrading
-            ? "Grading workspace"
-            : activeClass?.name
-              ? `Class ${activeClass.name}`
-              : pathname === "/teacher" ? "Teacher dashboard" : pathname.split("/").filter(Boolean).slice(-1)[0]?.replace(/-/g, " ") || "Teacher workspace";
-
-  const contextId = courseId || quizId || assignmentId || lessonId || activeClassId;
-  return {
-    type,
-    ...(contextId ? { id: contextId } : {}),
-    title,
-    workspaceState: {
-      page: pathname,
-      ...(activeClassId ? { class_id: activeClassId } : {}),
-      ...(courseId ? { course_id: courseId } : {}),
-      ...(lessonId ? { lesson_id: lessonId } : {}),
-      ...(quizId ? { quiz_id: quizId } : {}),
-      ...(assignmentId ? { assignment_id: assignmentId } : {}),
-      subject: "English Curriculum",
-    },
-  };
-}
-
 export function TeacherAppShell({
   classes,
   classesLoading = false,
@@ -1114,7 +1044,7 @@ export function TeacherAppShell({
 
           {isCopilotOpen && (
             <CopilotPanel id={copilotId} desktop={desktop} onClose={closeCopilot}>
-              {copilot ?? <TeacherCopilotPanel context={buildCopilotContext(pathname, activeClassId, classes)} />}
+              {copilot}
             </CopilotPanel>
           )}
         </div>

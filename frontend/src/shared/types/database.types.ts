@@ -97,6 +97,10 @@ export interface Database {
         Args: Record<PropertyKey, never>;
         Returns: Json;
       };
+      save_student_avatar: {
+        Args: { p_avatar_url: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       user_role: DbUserRole;

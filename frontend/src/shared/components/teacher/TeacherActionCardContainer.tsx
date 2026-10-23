@@ -84,6 +84,7 @@ export default function TeacherActionCardContainer({ card, onResolved, className
   const [jsonErrors, setJsonErrors] = useState<Record<number, string>>({});
   const [applying, setApplying] = useState(false);
   const [discarding, setDiscarding] = useState(false);
+  const [undoing, setUndoing] = useState(false);
   const [resolvedStatus, setResolvedStatus] = useState<ActionCardStatus>(normalizeStatus(card.status));
 
   const viewCard = useMemo<ActionCardData>(() => {
@@ -175,6 +176,21 @@ export default function TeacherActionCardContainer({ card, onResolved, className
     }
   }
 
+  async function undo() {
+    if ((resolvedStatus !== "approved" && resolvedStatus !== "edited") || undoing) return;
+    setUndoing(true);
+    try {
+      const { error } = await (supabase as any).rpc("undo_action_card", { card_id: card.id });
+      if (error) throw error;
+      setResolvedStatus("ready");
+      toast.show({ title: "Changes undone", description: "The action card changes were reverted.", type: "success" });
+    } catch (error) {
+      toast.show({ title: "Could not undo changes", description: error instanceof Error ? error.message : "Please try again.", type: "error" });
+    } finally {
+      setUndoing(false);
+    }
+  }
+
   async function discard() {
     if (resolvedStatus !== "ready" || applying || discarding) return;
     setDiscarding(true);
@@ -228,6 +244,7 @@ export default function TeacherActionCardContainer({ card, onResolved, className
         discarding={discarding}
         onApply={() => void apply()}
         onDiscard={() => void discard()}
+        onUndo={() => void undo()}
         className="shadow-none"
       />
       {resolvedStatus === "ready" && !editing && rawChanges.length > 0 && (
