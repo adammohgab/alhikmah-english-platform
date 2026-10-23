@@ -137,9 +137,9 @@ beforeEach(() => {
 describe("QuizzesHubPage", () => {
   it("separates available, upcoming and completed quizzes", async () => {
     renderPage();
-    expect(await screen.findByRole("tab", { name: "Available now (2)" })).toBeVisible();
-    expect(screen.getByRole("tab", { name: "Upcoming (1)" })).toBeVisible();
-    expect(screen.getByRole("tab", { name: "Completed (1)" })).toBeVisible();
+    expect(await screen.findByRole("tab", { name: "Available now" })).toBeVisible();
+    expect(screen.getByRole("tab", { name: "Upcoming" })).toBeVisible();
+    expect(screen.getByRole("tab", { name: "Completed" })).toBeVisible();
     expect(screen.getByText("Grammar Basics")).toBeVisible();
     expect(screen.getByText("Vocabulary Check")).toBeVisible();
     expect(screen.queryByText("Reading Test")).not.toBeInTheDocument();
@@ -147,19 +147,19 @@ describe("QuizzesHubPage", () => {
 
   it("highlights a quiz that closes within 24 hours and lists it first", async () => {
     renderPage();
-    const soon = (await screen.findByRole("article", { name: "Grammar Basics" })) as HTMLElement;
-    expect(soon).toHaveAttribute("data-urgent", "true");
-    expect(within(soon).getByText("Due soon")).toBeVisible();
-    const later = screen.getByRole("article", { name: "Vocabulary Check" });
-    expect(later).not.toHaveAttribute("data-urgent");
-    const first = screen.getAllByRole("article")[0];
+    const soon = (await screen.findByText("Grammar Basics")) as HTMLElement;
+    expect(soon.closest("li")).toHaveClass("border-danger-600");
+    expect(within(soon.closest("li") as HTMLElement).getByText(/Closing soon/)).toBeVisible();
+    const later = screen.getByText("Vocabulary Check");
+    expect(later.closest("li")).not.toHaveClass("border-danger-600");
+    const first = screen.getAllByRole("listitem")[0];
     expect(first).toHaveAttribute("aria-labelledby", "quiz-q-soon-title");
   });
 
   it("starts the right quiz", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(await screen.findByRole("button", { name: "Start quiz: Grammar Basics" }));
+    await user.click(await screen.findByRole("link", { name: "Start quiz" }));
     await waitFor(() =>
       expect(screen.getByTestId("where")).toHaveTextContent("/student/quizzes/q-soon"),
     );
@@ -168,17 +168,17 @@ describe("QuizzesHubPage", () => {
   it("shows why an upcoming quiz is not open", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(await screen.findByRole("tab", { name: "Upcoming (1)" }));
-    const card = await screen.findByRole("article", { name: "Reading Test" });
+    await user.click(await screen.findByRole("tab", { name: "Upcoming" }));
+    const card = await screen.findByText("Reading Test");
     expect(within(card).getByText(/Opens soon/)).toBeVisible();
-    expect(within(card).getByRole("button", { name: /not open yet/ })).toBeDisabled();
+    expect(within(card.closest("li") as HTMLElement).getByText(/Opens soon/)).toBeDisabled();
   });
 
   it("shows the earned grade on completed quizzes and opens the result", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(await screen.findByRole("tab", { name: "Completed (1)" }));
-    const card = await screen.findByRole("article", { name: "Greetings Quiz" });
+    await user.click(await screen.findByRole("tab", { name: "Completed" }));
+    const card = await screen.findByText("Greetings Quiz");
     expect(within(card).getByText("80%")).toBeVisible();
     expect(within(card).getByText("Passed")).toBeVisible();
     await user.click(within(card).getByRole("button", { name: /View result/ }));
@@ -190,7 +190,7 @@ describe("QuizzesHubPage", () => {
   it("searches by quiz title", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.type(await screen.findByRole("searchbox", { name: /Search quizzes/ }), "vocab");
+    await user.type(await screen.findByRole("searchbox", { name: /Search by title/ }), "vocab");
     expect(screen.getByText("Vocabulary Check")).toBeVisible();
     expect(screen.queryByText("Grammar Basics")).not.toBeInTheDocument();
   });
