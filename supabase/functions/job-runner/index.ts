@@ -18,10 +18,11 @@ import { createSupabaseServerClient } from "@supabase/ssr-edge";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { corsMiddleware } from "../_shared/cors";
-import { verifyJWT, requireRole, extractUserId } from "../_shared/auth";
+import { verifyJWT } from "../_shared/auth";
 import { checkRateLimit } from "../_shared/ratelimit";
 import { AppError, unauthenticated, forbidden, validationFailed } from "../_shared/errors";
 import { supabase } from "@supabase/supabase-js";
+import { handleAiCourse } from "./handlers/ai-course";
 
 // -------------------------------------------------------------------
 // Type helpers (mirroring 016 migration + 07 §9 job_status)
@@ -204,15 +205,12 @@ type HandlerResult = {
 function createHandlerRegistry() {
   const handlers = new Map<JobKind, (job: Job, supa: any) => Promise<HandlerResult>>();
 
-  // --- Registered kinds (stubs; real handlers live in BE-EDGE-12/13/14) ---
-  handlers.set("ai_course", async (_job, _supa) => {
-    // Placeholder: return progress and signal that the real BE-EDGE-12 handler
-    // will finish this job. Never throw – if we throw the runner marks the job failed.
-    return {
-      progress_percent: 25,
-      finishAfterStep: false,
-    };
-  });
+  // AI course generation has a real resumable handler. It owns its detailed
+  // job_steps and final status writes, so the generic runner must not add a
+  // conflicting step-1 row or overwrite a handler-reported failure.
+  handlers.set("ai_course", async (job, supa) =>
+    handleAiCourse(job as any, supa as any)
+  );
 
   handlers.set("ai_curriculum", async () => {
     return { progress_percent: 33, finishAfterStep: false };
@@ -291,8 +289,22 @@ app.post(
       // Manual invocation: verify JWT and require admin role.
       const verifyRes = await verifyJWT(authHeader.replace("Bearer ", ""));
       payload = { role: verifyRes.role, userId: verifyRes.userId };
-      const roleCheck = await requireRole(c.req, ["admin"]);
-      payload = roleCheck.payload;
+      if (payload.role !== "admin") {
+        const requestedKind = c.req.query("kind");
+        const requestedJobId = c.req.query("job_id");
+        if (payload.role !== "teacher" || requestedKind !== "ai_course" || !requestedJobId) {
+          return c.json({ error: "forbidden", message: "Only admins may run this job type." }, 403);
+        }
+        const ownershipClient = createSupabaseServerClient(
+          Deno.env.get("SUPABASE_URL") || "",
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+        );
+        const { data: ownedJob, error: ownershipError } = await ownershipClient
+          .from("jobs").select("id,kind,initiator_id").eq("id", requestedJobId).single();
+        if (ownershipError || !ownedJob || ownedJob.kind !== "ai_course" || ownedJob.initiator_id !== payload.userId) {
+          return c.json({ error: "forbidden", message: "You may only run your own AI course generation job." }, 403);
+        }
+      }
     }
 
     // Rate limit per function invocation (optional but recommended)
@@ -318,19 +330,41 @@ app.post(
       // 1) Claim next queued job (or use the supplied job_id)
       // -------------------------------------------------
       let jobId: string | null = c.req.query("job_id") as string | null;
+      let claimed: Job | null = null;
 
+      const workerClient = createSupabaseServerClient(
+        Deno.env.get("SUPABASE_URL") || "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
+      );
       if (!jobId) {
         // No explicit job_id – claim the next available queued job.
-        const supa = createSupabaseServerClient(
-          Deno.env.get("SUPABASE_URL") || "",
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
-        );
-        const claimed = await claimNextJob(supa, payload.userId);
+        claimed = await claimNextJob(workerClient, payload.userId);
         if (!claimed) {
-          // No queued jobs available – return promptly.
           return c.json({ queued: false, message: "no queued jobs available" });
         }
         jobId = claimed.id;
+      } else {
+        // Explicit job dispatch is used by the teacher wizard. Fetch and claim
+        // the exact row instead of accidentally running an unrelated queued job.
+        const { data: requestedJob, error: requestedJobError } = await workerClient
+          .from<Job>("jobs").select("*").eq("id", jobId).single();
+        if (requestedJobError || !requestedJob) {
+          return c.json({ error: "job_not_found", message: "The requested job was not found." }, 404);
+        }
+        if (requestedJob.kind !== kind) {
+          return c.json({ error: "job_kind_mismatch", message: "The requested job kind does not match." }, 400);
+        }
+        if (requestedJob.status === "completed") {
+          return c.json({ queued: false, job_id: jobId, kind, progress_percent: 100, message: "Job already completed." });
+        }
+        if (requestedJob.status === "failed" || requestedJob.status === "cancelled") {
+          return c.json({ error: "job_not_runnable", message: `Job is ${requestedJob.status}.` }, 409);
+        }
+        if (requestedJob.status === "queued") {
+          await workerClient.from<Job>("jobs").update({ status: "running", started_at: new Date().toISOString(), locked_by: payload.userId, locked_at: new Date().toISOString() }).eq("id", jobId);
+          requestedJob.status = "running";
+        }
+        claimed = requestedJob;
       }
 
       // -------------------------------------------------
@@ -344,19 +378,25 @@ app.post(
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
       );
 
-      const result: HandlerResult = await handler(claimed || { id: jobId, kind, ...(await supa.from("jobs").select("*").eq("id", jobId).single()) }, supa);
+      const result: HandlerResult = await handler(claimed as Job, supa);
 
       // -------------------------------------------------
       // 3) Progress handling
       // -------------------------------------------------
-      if (result.finishAfterStep) {
-        // Mark the job completed (or failed) after this step's logic.
-        // In a full implementation each step would write its own progress;
-        // here we just signal completion.
+      if (kind === "ai_course") {
+        // handleAiCourse writes detailed steps and persists completed/failed
+        // state itself. Do not duplicate step indexes or overwrite failures.
+        const { data: latestJob } = await supa.from<Job>("jobs").select("*").eq("id", jobId).single();
+        if (result.finishAfterStep && latestJob?.status === "running") {
+          if (result.result_payload) {
+            await finishJob(supa, jobId, "completed", result.result_payload);
+          } else {
+            await finishJob(supa, jobId, "failed", undefined, latestJob.error_message || "AI course generation did not complete.");
+          }
+        }
+      } else if (result.finishAfterStep) {
         await finishJob(supa, jobId, "completed", result.result_payload);
       } else {
-        // Write a progress step and keep the job running.
-        // The real BE-EDGE-12/13/14 handlers will write their own steps.
         await supabase.from("job_steps").insert({
           job_id: jobId,
           step_index: 1,
