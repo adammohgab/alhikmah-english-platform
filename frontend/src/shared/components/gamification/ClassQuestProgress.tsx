@@ -63,9 +63,7 @@ export function ClassQuestProgress({
     safeTarget > 0 ? Math.min(100, Math.round((safeProgress / safeTarget) * 100)) : 0;
   const isComplete = safeTarget > 0 && safeProgress >= safeTarget;
   const visibleContributors = [...contributors]
-    .filter(
-      (contributor) => Number.isFinite(contributor.contribution) && contributor.contribution > 0,
-    )
+    .filter((contributor) => Number.isFinite(contributor.contribution) && contributor.contribution > 0)
     .sort((a, b) => b.contribution - a.contribution)
     .slice(0, Math.max(0, maxContributors));
 
@@ -82,7 +80,7 @@ export function ClassQuestProgress({
         <header className="flex items-start gap-3">
           <div
             aria-hidden="true"
-            className="bg-world-soft flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-stroke text-stroke shadow-[2px_2px_0px_var(--color-stroke)]"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 border-stroke bg-world-soft text-stroke shadow-[2px_2px_0px_var(--color-stroke)]"
           >
             {isComplete ? <CheckCircle2 size={25} /> : <Users size={25} />}
           </div>
@@ -109,9 +107,7 @@ export function ClassQuestProgress({
           <div className="mb-2 flex items-end justify-between gap-3">
             <p className="text-sm font-bold text-stroke">
               {numberFormat.format(Math.min(safeProgress, safeTarget || safeProgress))}{" "}
-              <span className="font-medium text-muted">
-                of {numberFormat.format(safeTarget)} {unit}
-              </span>
+              <span className="font-medium text-muted">of {numberFormat.format(safeTarget)} {unit}</span>
             </p>
             <p className="shrink-0 text-sm font-extrabold text-stroke">{percentage}%</p>
           </div>
@@ -122,16 +118,16 @@ export function ClassQuestProgress({
             aria-valuemax={safeTarget}
             aria-valuenow={Math.min(safeProgress, safeTarget)}
             aria-valuetext={`${numberFormat.format(safeProgress)} of ${numberFormat.format(safeTarget)} ${unit}`}
-            className="bg-surface-2 h-4 overflow-hidden rounded-full border-2 border-stroke"
+            className="h-4 overflow-hidden rounded-full border-2 border-stroke bg-surface-2"
           >
             <div
-              className="bg-world-main h-full rounded-full border-r-2 border-stroke transition-[width] duration-500 motion-reduce:transition-none"
+              className="h-full rounded-full border-r-2 border-stroke bg-world-main transition-[width] duration-500 motion-reduce:transition-none"
               style={{ width: `${percentage}%` }}
             />
           </div>
           <div className="mt-3 flex items-center justify-between gap-3 text-sm">
             <span className="text-muted">Your contribution</span>
-            <strong className="bg-world-soft rounded-lg border-2 border-stroke px-2 py-1 text-stroke">
+            <strong className="rounded-lg border-2 border-stroke bg-world-soft px-2 py-1 text-stroke">
               {numberFormat.format(safePersonalContribution)} {unit}
             </strong>
           </div>
