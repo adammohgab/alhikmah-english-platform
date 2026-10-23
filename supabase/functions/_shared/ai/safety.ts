@@ -28,8 +28,7 @@
  *   - No staff alert for sensitive personal topics (owner decision); remain Low
  */
 
-import { supabase } from "@supabase/supabase-js";
-import { AppError, validationFailed } from "../errors";
+declare const supabase: any;
 
 // -------------------------------------------------------------------
 // Config helpers — read from platform_settings.ai_safety (published config)
@@ -104,17 +103,6 @@ type PostCheckResult = {
   repairCount: number;
 };
 
-/** Log a safety violation to the moderation system */
-type LogSafetyViolation = (
-  messageId: string,
-  category: ModerationCategory,
-  severity: ModerationSeverity,
-  originalText: string,
-  redactedText: string,
-  conversationId: string,
-  source?: "ai_message"
-) => Promise<{ error?: any; success: boolean }>;
-
 // -------------------------------------------------------------------
 // PII Redaction
 // -------------------------------------------------------------------
@@ -176,7 +164,7 @@ function detectPromptInjection(text: string): {
 } {
   for (let i = 0; i < INJECTION_PATTERNS.length; i++) {
     const pattern = INJECTION_PATTERNS[i];
-    const match = text.match(pattern);
+    const match = text.match(pattern!);
     if (match) {
       // Simple confidence: higher if multiple patterns match or pattern is strong
       const confidence = i < 3 ? 0.9 : 0.7;
@@ -313,7 +301,6 @@ function preCheck(
   // Determine status
   let status: "ok" | "blocked" | "redirect" = "ok";
   let safety: PreCheckResult["safety"] = { blocked: false, redirected: false };
-  let redirect = false;
 
   if (injectionResult.isInjection) {
     status = "blocked";
@@ -339,7 +326,6 @@ function preCheck(
   if (isThirdBlock && status === "blocked") {
     status = "redirect";
     safety = { blocked: true, redirected: true };
-    redirect = true;
   }
 
   return {
@@ -347,7 +333,7 @@ function preCheck(
     safety,
     redactedMessage,
     hadPII,
-    promptInjection: promptInjectionDetail,
+    ...(promptInjectionDetail !== undefined ? { promptInjection: promptInjectionDetail } : {}),
   };
 }
 
@@ -474,8 +460,12 @@ async function runSafetyPipeline(
         status: "blocked",
         safety: {
           blocked: true,
-          category: preCheckResult.safety.category,
-          severity: preCheckResult.safety.severity,
+          ...(preCheckResult.safety.category !== undefined
+            ? { category: preCheckResult.safety.category }
+            : {}),
+          ...(preCheckResult.safety.severity !== undefined
+            ? { severity: preCheckResult.safety.severity }
+            : {}),
           repaired: false,
         },
         finalText: preCheckResult.status === "redirect" ? getRedirectMessage() : getNeutralMessage(),
@@ -516,7 +506,7 @@ async function runSafetyPipeline(
 
 /** Log a safety violation to the moderation system. */
 async function logSafetyViolation(
-  messageId: string,
+  _messageId: string,
   category: ModerationCategory,
   severity: ModerationSeverity,
   originalText: string,

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import QuestionCreatorModal, { type EditableQuestion } from "@/pages/teacher/QuestionBankPage/QuestionCreatorModal";
+import QuestionCreatorModal, {
+  type EditableQuestion,
+} from "@/pages/teacher/QuestionBankPage/QuestionCreatorModal";
 
 export interface QuizQuestion {
   id: string;
@@ -224,11 +226,7 @@ export default function QuizBuilderPage({
         >
           Add from Question Bank
         </button>{" "}
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => setQuestionCreatorOpen(true)}
-        >
+        <button type="button" disabled={busy} onClick={() => setQuestionCreatorOpen(true)}>
           Create New Question
         </button>{" "}
         <button
@@ -289,11 +287,14 @@ export default function QuizBuilderPage({
         isOpen={questionCreatorOpen}
         onClose={() => setQuestionCreatorOpen(false)}
         onSaved={(saved: EditableQuestion) => {
-          setQuestions((current) => [...current, {
-            id: saved.id,
-            title: saved.prompt,
-            points: Number(saved.points ?? 1),
-          }]);
+          setQuestions((current) => [
+            ...current,
+            {
+              id: saved.id,
+              title: saved.prompt,
+              points: Number(saved.points ?? 1),
+            },
+          ]);
           setMessage("Question saved and added to this quiz.");
         }}
       />

@@ -101,7 +101,11 @@ export default function CoursesAuthoringPage({
             </p>
             <small>Last edited {new Date(course.updatedAt).toLocaleString()}</small>
             <hr />
-            <button onClick={() => setHistoryCourse(course)}><span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>Version history</span></button>{" "}
+            <button onClick={() => setHistoryCourse(course)}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                Version history
+              </span>
+            </button>{" "}
             <button
               onClick={() => {
                 void run(
@@ -131,7 +135,16 @@ export default function CoursesAuthoringPage({
         <p>No courses yet. Create a course or adopt an official curriculum to get started.</p>
       )}
       <p role="status">{message}</p>
-      {historyCourse && <VersionHistoryModal courseId={historyCourse.id} open onClose={() => setHistoryCourse(null)} onRestored={() => setMessage(`Draft restored from version history for “${historyCourse.title}”.`)} />}
+      {historyCourse && (
+        <VersionHistoryModal
+          courseId={historyCourse.id}
+          open
+          onClose={() => setHistoryCourse(null)}
+          onRestored={() =>
+            setMessage(`Draft restored from version history for “${historyCourse.title}”.`)
+          }
+        />
+      )}
     </main>
   );
 }

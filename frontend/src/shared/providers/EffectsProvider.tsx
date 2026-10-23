@@ -1,10 +1,11 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   EffectsContext,
   resolveEffectsTier,
   type BatteryStatus,
   type EffectsContextValue,
+  type EffectsTier,
 } from "@/shared/hooks/useEffectsTier";
 
 /* Browser APIs missing from lib.dom. */
@@ -49,6 +50,9 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
     const nav = navigator as HintedNavigator;
     return { hardwareConcurrency: nav.hardwareConcurrency, deviceMemory: nav.deviceMemory };
   });
+
+  const [userReducedMotion, setUserReducedMotion] = useState(readReducedMotion);
+  const [manualTier, setManualTier] = useState<EffectsTier | undefined>(undefined);
 
   // OS reduced-motion toggle: applies the moment it changes, no reload.
   useEffect(() => {
@@ -99,13 +103,15 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
     [prefersReducedMotion, battery, hardware],
   );
 
+  const effectiveTier = manualTier ?? tier;
+
   // Mirror the tier on <html> so CSS can react to it.
   useLayoutEffect(() => {
-    document.documentElement.setAttribute(TIER_ATTRIBUTE, tier);
+    document.documentElement.setAttribute(TIER_ATTRIBUTE, effectiveTier);
     return () => {
       document.documentElement.removeAttribute(TIER_ATTRIBUTE);
     };
-  }, [tier]);
+  }, [effectiveTier]);
 
   // The stylesheet that implements "minimal CSS transitions" on the low tier.
   useLayoutEffect(() => {
@@ -118,14 +124,24 @@ export function EffectsProvider({ children }: EffectsProviderProps) {
     };
   }, []);
 
+  const setPreferences = useCallback(
+    (patch: { reducedMotion?: boolean; tier?: EffectsTier }) => {
+      if (patch.reducedMotion !== undefined) setUserReducedMotion(patch.reducedMotion);
+      if (patch.tier !== undefined) setManualTier(patch.tier);
+    },
+    [],
+  );
+
   const value = useMemo<EffectsContextValue>(
     () => ({
-      tier,
+      tier: effectiveTier,
       prefersReducedMotion,
-      canRender3D: tier === "high",
-      canAnimateComplex: tier !== "low",
+      canRender3D: effectiveTier === "high",
+      canAnimateComplex: effectiveTier !== "low",
+      preferences: { reducedMotion: userReducedMotion },
+      setPreferences,
     }),
-    [tier, prefersReducedMotion],
+    [effectiveTier, prefersReducedMotion, userReducedMotion, setPreferences],
   );
 
   return <EffectsContext.Provider value={value}>{children}</EffectsContext.Provider>;

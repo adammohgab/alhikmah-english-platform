@@ -52,7 +52,7 @@ export function CoinCounter({ balance, className, compact = false }: CoinCounter
   return (
     <div
       className={cn(
-        "relative inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-stroke bg-surface-0 px-3 font-heading text-[15px] font-semibold leading-none tabular-nums text-stroke shadow-retro-sm",
+        "relative inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-stroke bg-surface-0 px-3 font-heading text-[15px] font-semibold tabular-nums leading-none text-stroke shadow-retro-sm",
         compact && "h-8 gap-1 px-2 text-[13px]",
         className,
       )}
@@ -76,13 +76,15 @@ export function CoinCounter({ balance, className, compact = false }: CoinCounter
         <span
           key={gain.id}
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-1 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full border-2 border-stroke bg-[#ffd93d] px-2 py-1 font-heading text-[12px] font-bold leading-none text-stroke shadow-retro-sm animate-[coin-float_1700ms_ease-out_forwards] motion-reduce:animate-none motion-reduce:opacity-100"
+          className="pointer-events-none absolute -bottom-1 left-1/2 z-10 inline-flex -translate-x-1/2 animate-[coin-float_1700ms_ease-out_forwards] items-center gap-1 whitespace-nowrap rounded-full border-2 border-stroke bg-[#ffd93d] px-2 py-1 font-heading text-[12px] font-bold leading-none text-stroke shadow-retro-sm motion-reduce:animate-none motion-reduce:opacity-100"
         >
           <Coins size={13} aria-hidden="true" />+{NUMBER_FORMAT.format(gain.amount)}
         </span>
       )}
       <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-        {gain !== null ? `You earned ${NUMBER_FORMAT.format(gain.amount)} coins. New balance: ${NUMBER_FORMAT.format(balance ?? 0)} coins.` : ""}
+        {gain !== null
+          ? `You earned ${NUMBER_FORMAT.format(gain.amount)} coins. New balance: ${NUMBER_FORMAT.format(balance ?? 0)} coins.`
+          : ""}
       </span>
       <style>{`
         @keyframes coin-roll {

@@ -122,12 +122,12 @@ describe("splitQuizzes", () => {
 
 describe("copy", () => {
   it("explains a lesson lock and falls back to the server reason", () => {
-    expect(
-      lockMessage({ locked: true, reason: null, lessonsRemaining: 2, unlocksOn: null }),
-    ).toBe("Finish 2 more lessons in this unit");
-    expect(
-      lockMessage({ locked: true, reason: null, lessonsRemaining: 1, unlocksOn: null }),
-    ).toBe("Finish 1 more lesson in this unit");
+    expect(lockMessage({ locked: true, reason: null, lessonsRemaining: 2, unlocksOn: null })).toBe(
+      "Finish 2 more lessons in this unit",
+    );
+    expect(lockMessage({ locked: true, reason: null, lessonsRemaining: 1, unlocksOn: null })).toBe(
+      "Finish 1 more lesson in this unit",
+    );
     expect(
       lockMessage({
         locked: true,

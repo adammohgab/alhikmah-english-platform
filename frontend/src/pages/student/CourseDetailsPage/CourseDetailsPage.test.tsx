@@ -21,7 +21,12 @@ const unit = (overrides: Partial<CourseUnit> = {}): CourseUnit => ({
 
 describe("course roadmap calculations", () => {
   it("calculates course completion from the server progress snapshot", () => {
-    expect(courseProgress([unit(), unit({ id: "unit-2", progress: { done: 3, total: 3 }, lessons: [] })])).toBe(80);
+    expect(
+      courseProgress([
+        unit(),
+        unit({ id: "unit-2", progress: { done: 3, total: 3 }, lessons: [] }),
+      ]),
+    ).toBe(80);
   });
 
   it("falls back to lesson completion when unit progress is absent", () => {
@@ -33,7 +38,17 @@ describe("course roadmap calculations", () => {
   });
 
   it("estimates total lesson time and uses a ten-minute fallback", () => {
-    expect(estimateMinutes([unit(), unit({ id: "unit-2", lessons: [{ id: "l3", title: "Lesson three", minutes: null, done: false, activities: [] }] })])).toBe(30);
+    expect(
+      estimateMinutes([
+        unit(),
+        unit({
+          id: "unit-2",
+          lessons: [
+            { id: "l3", title: "Lesson three", minutes: null, done: false, activities: [] },
+          ],
+        }),
+      ]),
+    ).toBe(30);
   });
 
   it("interprets the server's different quiz lock representations", () => {

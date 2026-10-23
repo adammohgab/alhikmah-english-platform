@@ -85,7 +85,14 @@ export default function AiGradingAssistant({
       }
 
       setSuggestions(next);
-      onSuggestionsChange?.(Object.fromEntries(Object.entries(next).map(([id, item]) => [id, { criterionId: item.criterionId, score: item.score, rationale: item.rationale }])));
+      onSuggestionsChange?.(
+        Object.fromEntries(
+          Object.entries(next).map(([id, item]) => [
+            id,
+            { criterionId: item.criterionId, score: item.score, rationale: item.rationale },
+          ]),
+        ),
+      );
       setSuggestedFeedback(result.feedback ?? "");
       setFeedbackStatus(result.feedback?.trim() ? "pending" : null);
     } catch (cause) {
@@ -107,7 +114,16 @@ export default function AiGradingAssistant({
     setSuggestions((current) => {
       const existing = current[criterionId];
       if (!existing) return current;
-      onSuggestionsChange?.(Object.fromEntries(Object.entries(current).filter(([id]) => id !== criterionId).map(([id, item]) => [id, { criterionId: item.criterionId, score: item.score, rationale: item.rationale }])));
+      onSuggestionsChange?.(
+        Object.fromEntries(
+          Object.entries(current)
+            .filter(([id]) => id !== criterionId)
+            .map(([id, item]) => [
+              id,
+              { criterionId: item.criterionId, score: item.score, rationale: item.rationale },
+            ]),
+        ),
+      );
       return {
         ...current,
         [criterionId]: { ...existing, status: "accepted" },
@@ -119,7 +135,16 @@ export default function AiGradingAssistant({
     setSuggestions((current) => {
       const existing = current[criterionId];
       if (!existing) return current;
-      onSuggestionsChange?.(Object.fromEntries(Object.entries(current).filter(([id]) => id !== criterionId).map(([id, item]) => [id, { criterionId: item.criterionId, score: item.score, rationale: item.rationale }])));
+      onSuggestionsChange?.(
+        Object.fromEntries(
+          Object.entries(current)
+            .filter(([id]) => id !== criterionId)
+            .map(([id, item]) => [
+              id,
+              { criterionId: item.criterionId, score: item.score, rationale: item.rationale },
+            ]),
+        ),
+      );
       return {
         ...current,
         [criterionId]: { ...existing, status: "rejected" },

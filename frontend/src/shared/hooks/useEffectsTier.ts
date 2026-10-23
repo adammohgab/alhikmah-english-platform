@@ -85,6 +85,10 @@ export interface EffectsContextValue {
   canRender3D: boolean;
   /** Complex animation (GSAP, particle bursts, celebrations) may run: balanced and high. */
   canAnimateComplex: boolean;
+  /** User effect preferences (persisted via SettingsPage). */
+  preferences: { reducedMotion: boolean };
+  /** Persist a preference patch (reduced motion / effects tier). */
+  setPreferences: (patch: { reducedMotion?: boolean; tier?: EffectsTier }) => void;
 }
 
 export const EffectsContext = createContext<EffectsContextValue | null>(null);

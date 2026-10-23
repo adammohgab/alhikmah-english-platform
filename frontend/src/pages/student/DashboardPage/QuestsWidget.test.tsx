@@ -89,9 +89,10 @@ describe("QuestsWidget", () => {
     expect(screen.getByText("Play a game")).toBeVisible();
     expect(screen.getAllByText("3/3")).toHaveLength(2);
     expect(screen.getByText("1/3")).toBeVisible();
-    expect(
-      screen.getByRole("progressbar", { name: "Play a game progress" }),
-    ).toHaveAttribute("aria-valuenow", "1");
+    expect(screen.getByRole("progressbar", { name: "Play a game progress" })).toHaveAttribute(
+      "aria-valuenow",
+      "1",
+    );
     expect(screen.getByText("1 of 3 claimed")).toBeVisible();
   });
 

@@ -75,6 +75,39 @@ export interface Database {
         };
         Relationships: [];
       };
+      lesson_progress: {
+        Row: {
+          id: string;
+          student_id: string;
+          lesson_id: string;
+          is_completed: boolean;
+          completed_at: string | null;
+          last_accessed_at: string;
+          course_id: string | null;
+          notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          student_id: string;
+          lesson_id: string;
+          is_completed?: boolean;
+          completed_at?: string | null;
+          last_accessed_at?: string;
+          course_id?: string | null;
+          notes?: string | null;
+        };
+        Update: {
+          id?: string;
+          student_id?: string;
+          lesson_id?: string;
+          is_completed?: boolean;
+          completed_at?: string | null;
+          last_accessed_at?: string;
+          course_id?: string | null;
+          notes?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       v_public_settings: {
@@ -100,6 +133,43 @@ export interface Database {
       save_student_avatar: {
         Args: { p_avatar_url: string };
         Returns: undefined;
+      };
+      request_password_reset: {
+        Args: {
+          p_username: string;
+          p_full_name: string;
+          p_grade_class?: string;
+          p_note?: string;
+          p_device_key?: string;
+        };
+        Returns: Json;
+      };
+      complete_password_change: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+      award_xp: {
+        Args: {
+          student_id: string;
+          amount: number;
+          source: string;
+          ref_id: string;
+        };
+        Returns: Json;
+      };
+      add_words_to_library: {
+        Args: {
+          items: Array<{
+            word: string;
+            part_of_speech: string | null;
+            meaning: string;
+            arabic_meaning: string;
+            example: string | null;
+            vocab_item_id: string | null;
+          }>;
+          from: string;
+        };
+        Returns: Json;
       };
     };
     Enums: {

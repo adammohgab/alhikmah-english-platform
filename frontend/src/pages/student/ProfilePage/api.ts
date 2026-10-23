@@ -114,12 +114,20 @@ export async function fetchStudentProfile(studentId: string): Promise<StudentPro
         "Your learning stats",
       ),
       load(
-        db.from("lesson_progress").select("lesson_id").eq("student_id", studentId).eq("status", "completed"),
+        db
+          .from("lesson_progress")
+          .select("lesson_id")
+          .eq("student_id", studentId)
+          .eq("status", "completed"),
         z.array(lessonRow),
         "Your completed lessons",
       ),
       load(
-        db.from("quiz_attempts").select("score_pct").eq("student_id", studentId).eq("counted", true),
+        db
+          .from("quiz_attempts")
+          .select("score_pct")
+          .eq("student_id", studentId)
+          .eq("counted", true),
         z.array(quizRow),
         "Your quiz results",
       ),
@@ -138,7 +146,10 @@ export async function fetchStudentProfile(studentId: string): Promise<StudentPro
         "The badge catalog",
       ),
       load(
-        db.from("user_badges").select("badge_id, awarded_at, is_pinned").eq("student_id", studentId),
+        db
+          .from("user_badges")
+          .select("badge_id, awarded_at, is_pinned")
+          .eq("student_id", studentId),
         z.array(userBadgeRow),
         "Your badges",
       ),
@@ -165,8 +176,13 @@ export async function fetchStudentProfile(studentId: string): Promise<StudentPro
         pinned: earned?.is_pinned === true,
       };
     })
-    .sort((a, b) => Number(b.pinned) - Number(a.pinned) || (b.earnedAt ?? "").localeCompare(a.earnedAt ?? ""));
-  const scores = quizAttempts.map((attempt) => attempt.score_pct).filter((score): score is number => score !== null);
+    .sort(
+      (a, b) =>
+        Number(b.pinned) - Number(a.pinned) || (b.earnedAt ?? "").localeCompare(a.earnedAt ?? ""),
+    );
+  const scores = quizAttempts
+    .map((attempt) => attempt.score_pct)
+    .filter((score): score is number => score !== null);
 
   return {
     id: profile.id,
@@ -180,7 +196,9 @@ export async function fetchStudentProfile(studentId: string): Promise<StudentPro
     currentStreak: stats?.current_streak ?? 0,
     longestStreak: stats?.longest_streak ?? 0,
     lessonsCompleted: new Set(lessons.map((lesson) => lesson.lesson_id)).size,
-    quizAverage: scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null,
+    quizAverage: scores.length
+      ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+      : null,
     badges,
   };
 }
@@ -190,7 +208,10 @@ export async function updatePinnedBadges(studentId: string, badgeIds: string[]):
   if (badgeIds.length > 3 || new Set(badgeIds).size !== badgeIds.length) {
     throw new Error("Choose up to three different badges.");
   }
-  const { error } = await client().rpc("pin_badges", { student_id: studentId, badge_ids: badgeIds });
+  const { error } = await client().rpc("pin_badges", {
+    student_id: studentId,
+    badge_ids: badgeIds,
+  });
   if (error) throw new Error(normalizeApiError(error).message);
 }
 

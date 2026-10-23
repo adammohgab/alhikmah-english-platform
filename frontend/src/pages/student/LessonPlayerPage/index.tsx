@@ -95,7 +95,7 @@ const array = (value: unknown): Loose[] => (Array.isArray(value) ? value : []) a
 const blockType = (block: Loose) =>
   str(block.type ?? block.block_type, "text")
     .toLowerCase()
-    .replaceAll("-", "_");
+    .replace(/-/g, "_");
 const content = (block: Loose): Loose =>
   block.content && typeof block.content === "object" ? block.content : block;
 
@@ -594,7 +594,7 @@ export default function LessonPlayerPage() {
     }
     return (
       <section key={key} id={key} className="rounded-2xl border border-stroke bg-surface-0 p-5">
-        <h2 className="font-bold">{str(c.title, type.replaceAll("_", " "))}</h2>
+        <h2 className="font-bold">{str(c.title, type.replace(/_/g, " "))}</h2>
         <p className="mt-2 whitespace-pre-wrap leading-7">
           {str(c.text ?? c.html ?? c.description, "")}
         </p>
@@ -660,7 +660,7 @@ export default function LessonPlayerPage() {
               </span>
               {array(lesson.skills).map((skill, i) => (
                 <span key={i} className="border-primary/20 rounded-full border px-2 py-1">
-                  {str(skill).replaceAll("_", " ")}
+                  {str(skill).replace(/_/g, " ")}
                 </span>
               ))}
             </div>
@@ -725,8 +725,8 @@ export default function LessonPlayerPage() {
                 const label = str(
                   content(block).title ?? content(block).heading,
                   blockType(block)
-                    .replaceAll("_", " ")
-                    .replace(/^./, (s) => s.toUpperCase()),
+                    .replace(/_/g, " ")
+                    .replace(/^./, (s: string) => s.toUpperCase()),
                 );
                 return (
                   <button

@@ -174,9 +174,12 @@ describe("GradingScreenPage", () => {
     await screen.findByText("I went to the market with my family.");
     await user.click(screen.getByRole("button", { name: "Run AI Pre-Grade" }));
     expect(await screen.findByText("Accurate verb forms.")).toBeInTheDocument();
-    expect(invoke).toHaveBeenCalledWith("ai-grade-submission", expect.objectContaining({
-      body: expect.objectContaining({ attempt_id: "s1", question_id: "q2" }),
-    }));
+    expect(invoke).toHaveBeenCalledWith(
+      "ai-grade-submission",
+      expect.objectContaining({
+        body: expect.objectContaining({ attempt_id: "s1", question_id: "q2" }),
+      }),
+    );
     expect(screen.getByTestId("score-q2")).toHaveTextContent("— / 10");
     await user.click(screen.getByRole("button", { name: "Use in draft" }));
     expect(screen.getByTestId("score-q2")).toHaveTextContent("5 / 10");

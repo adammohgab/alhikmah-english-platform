@@ -97,7 +97,7 @@ function draftPrompt(keywords: string, tone: Tone, existing: DraftText | null): 
     "Arcade style: open the body with a bold game-style banner line (for example **🎮 LEVEL UP!** or **⏰ QUEST ALERT**), keep lines short, put the key details in a bullet list with an emoji at the start of each bullet, and end with a one-line call to action.",
     "Length: 40 to 120 words in clear, simple English.",
     "Use only facts that appear in the keywords. If a date, time or place is missing, write around it and do not invent one.",
-    "Never include personal names, phone numbers or emails. Say \"our class\" or \"a student\" instead.",
+    'Never include personal names, phone numbers or emails. Say "our class" or "a student" instead.',
   ];
   if (existing) {
     lines.push(
@@ -230,19 +230,23 @@ function errorMessageFrom(payload: unknown, fallback: string): string {
 async function openCopilotStream(message: string, signal: AbortSignal): Promise<Response> {
   const { data, error } = await supabase.auth.getSession();
   const token = data.session?.access_token;
-  if (error || !token) throw new Error("Your session has expired. Sign in again to use AI drafting.");
+  if (error || !token)
+    throw new Error("Your session has expired. Sign in again to use AI drafting.");
 
-  const response = await fetch(`${env.VITE_SUPABASE_URL.replace(/\/$/, "")}/functions/v1/ai-copilot`, {
-    method: "POST",
-    signal,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-      Authorization: `Bearer ${token}`,
-      apikey: env.VITE_SUPABASE_ANON_KEY,
+  const response = await fetch(
+    `${env.VITE_SUPABASE_URL.replace(/\/$/, "")}/functions/v1/ai-copilot`,
+    {
+      method: "POST",
+      signal,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+        Authorization: `Bearer ${token}`,
+        apikey: env.VITE_SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ message, workspace_state: { page: "announcements" } }),
     },
-    body: JSON.stringify({ message, workspace_state: { page: "announcements" } }),
-  });
+  );
 
   if (!response.ok) {
     let payload: unknown = null;
@@ -251,7 +255,9 @@ async function openCopilotStream(message: string, signal: AbortSignal): Promise<
     } catch {
       // Not JSON: the status fallback below is the message.
     }
-    throw new Error(errorMessageFrom(payload, `The AI assistant could not be reached (${response.status}).`));
+    throw new Error(
+      errorMessageFrom(payload, `The AI assistant could not be reached (${response.status}).`),
+    );
   }
   if (!response.body) throw new Error("The AI assistant returned an empty response.");
   return response;
@@ -278,11 +284,14 @@ function applySseBlock(block: string, text: string): string {
   if (event === "delta") return text + (readString(payload, "delta") ?? "");
   if (event === "safety" && payload["blocked"] === true) {
     throw new Error(
-      readString(payload, "message") ?? "This request cannot be drafted. Reword the keywords and try again.",
+      readString(payload, "message") ??
+        "This request cannot be drafted. Reword the keywords and try again.",
     );
   }
   if (event === "error") {
-    throw new Error(readString(payload, "message") ?? "The AI assistant ran into a problem. Try again.");
+    throw new Error(
+      readString(payload, "message") ?? "The AI assistant ran into a problem. Try again.",
+    );
   }
   return text;
 }
@@ -389,7 +398,9 @@ export function AiAnnouncementDrafter({ onUseDraft, className }: AiAnnouncementD
     } catch (caught) {
       if (controller.signal.aborted) return;
       setDraft(previous);
-      setError(caught instanceof Error ? caught.message : "The draft could not be created. Try again.");
+      setError(
+        caught instanceof Error ? caught.message : "The draft could not be created. Try again.",
+      );
     } finally {
       finish(controller);
     }
@@ -415,7 +426,11 @@ export function AiAnnouncementDrafter({ onUseDraft, className }: AiAnnouncementD
     } catch (caught) {
       if (controller.signal.aborted) return;
       setArabic(null);
-      setError(caught instanceof Error ? caught.message : "The translation could not be created. Try again.");
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The translation could not be created. Try again.",
+      );
     } finally {
       finish(controller);
     }
@@ -485,7 +500,11 @@ export function AiAnnouncementDrafter({ onUseDraft, className }: AiAnnouncementD
             <p id="ai-drafter-tone-label" className="text-sm font-bold">
               Tone
             </p>
-            <div role="group" aria-labelledby="ai-drafter-tone-label" className="flex flex-wrap gap-2">
+            <div
+              role="group"
+              aria-labelledby="ai-drafter-tone-label"
+              className="flex flex-wrap gap-2"
+            >
               {TONES.map((item) => (
                 <Chip
                   key={item}
@@ -504,12 +523,7 @@ export function AiAnnouncementDrafter({ onUseDraft, className }: AiAnnouncementD
           <div className="flex flex-wrap items-center gap-3">
             {hasDraft ? (
               <>
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={busy}
-                  onClick={() => void generate(true)}
-                >
+                <Button type="button" size="sm" disabled={busy} onClick={() => void generate(true)}>
                   {toneChanged ? `Rewrite in ${TONE_LABEL[tone]} tone` : "Rewrite"}
                 </Button>
                 <Button
@@ -558,7 +572,9 @@ export function AiAnnouncementDrafter({ onUseDraft, className }: AiAnnouncementD
                   aria-label="English draft"
                   className="space-y-2 rounded-[14px] border-2 border-stroke bg-surface-0 p-3"
                 >
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-muted">English</p>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-muted">
+                    English
+                  </p>
                   <h4 className="break-words font-heading text-base font-bold text-stroke">
                     {draft.title || "…"}
                   </h4>
@@ -576,7 +592,10 @@ export function AiAnnouncementDrafter({ onUseDraft, className }: AiAnnouncementD
                     <h4 className="break-words font-heading text-base font-bold text-stroke">
                       {arabic.title || "…"}
                     </h4>
-                    <div className={PREVIEW_BODY} dangerouslySetInnerHTML={{ __html: arabicHtml }} />
+                    <div
+                      className={PREVIEW_BODY}
+                      dangerouslySetInnerHTML={{ __html: arabicHtml }}
+                    />
                   </article>
                 )}
               </div>

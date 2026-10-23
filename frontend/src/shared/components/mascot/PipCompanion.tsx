@@ -45,8 +45,10 @@ export function PipCompanion({
   const advice = useMemo(() => {
     if (message?.trim()) return message.trim();
     if (typeof xpToNextLevel === "number" && xpToNextLevel >= 0) {
-      if (xpToNextLevel === 0) return "Level-up time! Check your progress and see what you've unlocked.";
-      if (xpToNextLevel <= 25) return `You're only ${xpToNextLevel} XP away from leveling up. One more little win!`;
+      if (xpToNextLevel === 0)
+        return "Level-up time! Check your progress and see what you've unlocked.";
+      if (xpToNextLevel <= 25)
+        return `You're only ${xpToNextLevel} XP away from leveling up. One more little win!`;
     }
     if (typeof streakDays === "number" && streakDays > 0) {
       return streakDays === 1
@@ -64,24 +66,36 @@ export function PipCompanion({
   return (
     <aside
       aria-label="Pip learning companion"
-      className={cn("fixed bottom-20 right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 sm:bottom-6 sm:right-6", className)}
+      className={cn(
+        "fixed bottom-20 right-4 z-40 flex max-w-[calc(100vw-2rem)] flex-col items-end gap-2 sm:bottom-6 sm:right-6",
+        className,
+      )}
     >
       {!collapsed && (
         <section
           aria-live="polite"
-          className="relative w-[min(19rem,calc(100vw-2rem))] rounded-2xl border-2 border-stroke bg-surface-0 p-3 text-ink shadow-[4px_5px_0_var(--color-stroke,rgba(25,25,25,0.9))] motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2"
+          className="text-ink motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 relative w-[min(19rem,calc(100vw-2rem))] rounded-2xl border-2 border-stroke bg-surface-0 p-3 shadow-[4px_5px_0_var(--color-stroke,rgba(25,25,25,0.9))]"
         >
-          <span aria-hidden="true" className="absolute -bottom-2 right-7 h-4 w-4 rotate-45 border-b-2 border-r-2 border-stroke bg-surface-0" />
+          <span
+            aria-hidden="true"
+            className="absolute -bottom-2 right-7 h-4 w-4 rotate-45 border-b-2 border-r-2 border-stroke bg-surface-0"
+          />
           <div className="relative flex items-start gap-3">
             <div className="rounded-xl border-2 border-stroke bg-[var(--world-tint,#fff1bd)] p-1.5 motion-safe:animate-[bounce_2.8s_ease-in-out_infinite] motion-reduce:animate-none">
               <PipAvatar size={42} />
             </div>
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-center gap-1.5 font-heading text-sm font-bold">
-                Pip <Sparkles aria-hidden="true" size={14} className="text-[var(--world-deep,#a85b13)]" />
+                Pip{" "}
+                <Sparkles
+                  aria-hidden="true"
+                  size={14}
+                  className="text-[var(--world-deep,#a85b13)]"
+                />
                 {typeof streakDays === "number" && streakDays > 0 && (
                   <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-stroke bg-[var(--world-soft,#fff1bd)] px-2 py-0.5 text-xs font-semibold">
-                    <Flame aria-hidden="true" size={12} /> {streakDays} day{streakDays === 1 ? "" : "s"}
+                    <Flame aria-hidden="true" size={12} /> {streakDays} day
+                    {streakDays === 1 ? "" : "s"}
                   </span>
                 )}
               </div>
@@ -91,7 +105,7 @@ export function PipCompanion({
               type="button"
               onClick={() => setDismissed(true)}
               aria-label="Dismiss Pip companion"
-              className="-mr-1 -mt-1 rounded-lg p-1 text-ink/70 transition hover:bg-surface-2 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke"
+              className="text-ink/70 hover:bg-surface-2 hover:text-ink -mr-1 -mt-1 rounded-lg p-1 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke"
             >
               <X size={16} />
             </button>
@@ -100,7 +114,7 @@ export function PipCompanion({
             <button
               type="button"
               onClick={() => setCollapsed(true)}
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-ink/70 transition hover:bg-surface-2 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke"
+              className="text-ink/70 hover:bg-surface-2 hover:text-ink inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke"
             >
               <ChevronDown size={14} /> Minimize
             </button>
@@ -113,7 +127,7 @@ export function PipCompanion({
           <button
             type="button"
             onClick={() => setCollapsed(false)}
-            className="inline-flex items-center gap-1 rounded-full border-2 border-stroke bg-surface-0 px-3 py-2 text-xs font-bold text-ink shadow-[2px_3px_0_var(--color-stroke,rgba(25,25,25,0.9))] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke"
+            className="text-ink inline-flex items-center gap-1 rounded-full border-2 border-stroke bg-surface-0 px-3 py-2 text-xs font-bold shadow-[2px_3px_0_var(--color-stroke,rgba(25,25,25,0.9))] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke"
           >
             <ChevronUp size={14} /> Pip's tip
           </button>
@@ -123,10 +137,15 @@ export function PipCompanion({
           onClick={() => setCollapsed((value) => !value)}
           aria-label={collapsed ? "Expand Pip companion" : "Minimize Pip companion"}
           title={collapsed ? "Open Pip's tip" : "Minimize Pip"}
-          className="relative grid h-14 w-14 place-items-center rounded-2xl border-2 border-stroke bg-[var(--world-soft,#fff1bd)] shadow-[3px_4px_0_var(--color-stroke,rgba(25,25,25,0.9))] transition hover:-translate-y-1 hover:rotate-2 active:translate-y-0 active:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke motion-reduce:transform-none"
+          className="relative grid h-14 w-14 place-items-center rounded-2xl border-2 border-stroke bg-[var(--world-soft,#fff1bd)] shadow-[3px_4px_0_var(--color-stroke,rgba(25,25,25,0.9))] transition hover:-translate-y-1 hover:rotate-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke active:translate-y-0 active:shadow-none motion-reduce:transform-none"
         >
           <PipAvatar size={42} />
-          {collapsed && <span aria-hidden="true" className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-stroke bg-[var(--world-pop,#ff6fa5)]" />}
+          {collapsed && (
+            <span
+              aria-hidden="true"
+              className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-stroke bg-[var(--world-pop,#ff6fa5)]"
+            />
+          )}
         </button>
       </div>
     </aside>

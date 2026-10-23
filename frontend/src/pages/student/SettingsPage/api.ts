@@ -144,10 +144,7 @@ export function toSettings(row: unknown): StudentSettings {
 }
 
 export async function fetchSettings(userId: string): Promise<StudentSettings> {
-  const { data, error } = await settingsTable()
-    .select(COLUMNS)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const { data, error } = await settingsTable().select(COLUMNS).eq("user_id", userId).maybeSingle();
   if (error) throw new Error(error.message);
   return data === null ? DEFAULT_SETTINGS : toSettings(data);
 }

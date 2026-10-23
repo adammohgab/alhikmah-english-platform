@@ -97,7 +97,7 @@ function firstText(...values: unknown[]): string | undefined {
 function normalizeQuestion(raw: RawQuestion): Question | null {
   const type = String(raw.type ?? raw.question_type ?? "")
     .toLowerCase()
-    .replaceAll("-", "_");
+    .replace(/-/g, "_");
   const base = { id: raw.id, prompt: asPrompt(raw.prompt), explanation: raw.explanation };
   const options = asRecord(raw.options);
   const answer = raw["answer"];

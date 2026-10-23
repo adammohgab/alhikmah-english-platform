@@ -12,7 +12,12 @@ import { Textarea } from "@/shared/components/ui/Textarea";
 import { AudioFeedbackRecorder } from "@/shared/components/teacher/AudioFeedbackRecorder";
 import { supabase } from "@/shared/api/supabase";
 import AiGradingAssistant from "./AiGradingAssistant";
-import type { AiCriterionSuggestion, AiPreGradeResult, DraftScores, RubricCriterion as AiRubricCriterion } from "./AiGradingAssistant";
+import type {
+  AiCriterionSuggestion,
+  AiPreGradeResult,
+  DraftScores,
+  RubricCriterion as AiRubricCriterion,
+} from "./AiGradingAssistant";
 import {
   addInlineComment,
   fetchSubmission,
@@ -201,7 +206,8 @@ function QuestionReader({
             <dt className="sr-only">Auto score</dt>
             <dd>
               <Chip size="sm" world="mint">
-                Auto score {formatPoints(question.auto_score ?? 0)} / {formatPoints(question.max_points)}
+                Auto score {formatPoints(question.auto_score ?? 0)} /{" "}
+                {formatPoints(question.max_points)}
               </Chip>
             </dd>
           </div>
@@ -275,7 +281,7 @@ function RubricEvaluator({
   return (
     <section className={PANEL} aria-label={`Score: ${question.prompt}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="min-w-0 truncate font-display font-extrabold">{question.prompt}</h3>
+        <h3 className="font-display min-w-0 truncate font-extrabold">{question.prompt}</h3>
         <output
           aria-live="polite"
           data-testid={`score-${question.question_id}`}
@@ -313,14 +319,19 @@ function RubricEvaluator({
                 {criterion.levels.map((level, levelIndex) => {
                   const selected = selection[criterion.id] === levelIndex;
                   const aiSuggestion = aiSuggestions[criterion.id];
-                  const aiMatchesLevel = aiSuggestion != null && Math.abs(aiSuggestion.score - level.points) < 0.001;
+                  const aiMatchesLevel =
+                    aiSuggestion != null && Math.abs(aiSuggestion.score - level.points) < 0.001;
                   return (
                     <button
                       key={`${criterion.id}-${levelIndex}`}
                       type="button"
                       role="radio"
                       aria-checked={selected}
-                      title={aiMatchesLevel ? `AI suggestion: ${aiSuggestion.score} points. ${aiSuggestion.rationale}` : level.description ?? undefined}
+                      title={
+                        aiMatchesLevel
+                          ? `AI suggestion: ${aiSuggestion.score} points. ${aiSuggestion.rationale}`
+                          : (level.description ?? undefined)
+                      }
                       onClick={() => onPick(criterion.id, levelIndex)}
                       className={cn(
                         "rounded-[10px] border-2 border-stroke px-2.5 py-1 text-sm font-bold",
@@ -328,11 +339,19 @@ function RubricEvaluator({
                         selected
                           ? "bg-[var(--world-main,#ffb84d)] shadow-retro-sm"
                           : aiMatchesLevel
-                            ? "border-violet-600 outline outline-2 outline-violet-400 outline-offset-1 bg-violet-50 hover:bg-violet-100"
+                            ? "border-violet-600 bg-violet-50 outline outline-2 outline-offset-1 outline-violet-400 hover:bg-violet-100"
                             : "bg-surface-0 hover:bg-surface-100",
                       )}
                     >
-                      {level.label} · {formatPoints(level.points)}{aiMatchesLevel && <span className="ml-1 text-xs font-extrabold" aria-label="AI suggested level">AI</span>}
+                      {level.label} · {formatPoints(level.points)}
+                      {aiMatchesLevel && (
+                        <span
+                          className="ml-1 text-xs font-extrabold"
+                          aria-label="AI suggested level"
+                        >
+                          AI
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -379,7 +398,9 @@ function GradingWorkspace({
   const rubric: Rubric | null = data.rubric ?? null;
   const [scores, setScores] = useState<Scores>(() => initialScores(data));
   const [selections, setSelections] = useState<Selections>({});
-  const [aiSuggestions, setAiSuggestions] = useState<Record<string, Record<string, AiCriterionSuggestion>>>({});
+  const [aiSuggestions, setAiSuggestions] = useState<
+    Record<string, Record<string, AiCriterionSuggestion>>
+  >({});
   const [overall, setOverall] = useState(data.submission.overall_comment ?? "");
   const [voiceAssetId, setVoiceAssetId] = useState<string | null>(null);
   const [comments, setComments] = useState<InlineComment[]>(data.comments);
@@ -551,7 +572,7 @@ function GradingWorkspace({
           <ArrowLeft size={16} aria-hidden="true" /> Queue
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-display text-xl font-extrabold">
+          <h1 className="font-display truncate text-xl font-extrabold">
             {data.submission.student.full_name}
           </h1>
           <p className="truncate text-sm text-muted">
@@ -577,7 +598,10 @@ function GradingWorkspace({
       </header>
 
       {lockedBy && (
-        <p role="alert" className="rounded-[12px] border-2 border-stroke bg-[var(--world-soft,#ffd93d)] p-3 text-sm font-bold">
+        <p
+          role="alert"
+          className="rounded-[12px] border-2 border-stroke bg-[var(--world-soft,#ffd93d)] p-3 text-sm font-bold"
+        >
           {lockedBy}
         </p>
       )}
@@ -635,56 +659,111 @@ function GradingWorkspace({
                   <AiGradingAssistant
                     submissionId={submissionId}
                     rubric={aiRubric}
-                    draftScores={Object.fromEntries(rubric.criteria.map((criterion) => [
-                      criterion.id,
-                      selections[q.question_id]?.[criterion.id] == null
-                        ? null
-                        : criterion.levels[selections[q.question_id][criterion.id]]?.points ?? null,
-                    ])) as DraftScores}
+                    draftScores={
+                      Object.fromEntries(
+                        rubric.criteria.map((criterion) => [
+                          criterion.id,
+                          selections[q.question_id]?.[criterion.id] == null
+                            ? null
+                            : (criterion.levels[selections[q.question_id][criterion.id]]?.points ??
+                              null),
+                        ]),
+                      ) as DraftScores
+                    }
                     onDraftScoresChange={(nextScores) => {
                       const nextSelection = selectionFromPoints(
                         rubric,
-                        Object.fromEntries(Object.entries(nextScores).filter((entry): entry is [string, number] => typeof entry[1] === "number")),
+                        Object.fromEntries(
+                          Object.entries(nextScores).filter(
+                            (entry): entry is [string, number] => typeof entry[1] === "number",
+                          ),
+                        ),
                       );
-                      setSelections((previous) => ({ ...previous, [q.question_id]: nextSelection }));
+                      setSelections((previous) => ({
+                        ...previous,
+                        [q.question_id]: nextSelection,
+                      }));
                       setScore(q.question_id, scoreFromRubric(rubric, nextSelection, q.max_points));
                     }}
                     draftComments={overall}
-                    onDraftCommentsChange={(next) => { setOverall(next); touch(); }}
-                    onSuggestionsChange={(next) => setAiSuggestions((previous) => ({ ...previous, [q.question_id]: next }))}
-                    invokeAiGradeSubmission={async ({ submissionId: attemptId, rubric: criteria }): Promise<AiPreGradeResult> => {
-                      const { data: response, error } = await supabase.functions.invoke("ai-grade-submission", {
-                        body: {
-                          attempt_id: attemptId,
-                          question_id: q.question_id,
-                          student_answer: q.student_answer ?? "",
-                          question_prompt: q.prompt,
-                          rubric_id: rubric.id ?? undefined,
-                          rubric_criteria: criteria.map((criterion) => ({
-                            id: criterion.id,
-                            name: criterion.label,
-                            description: rubric.criteria.find((item) => item.id === criterion.id)?.description ?? "Evaluate performance against this criterion.",
-                            max_score: criterion.maxPoints,
-                          })),
+                    onDraftCommentsChange={(next) => {
+                      setOverall(next);
+                      touch();
+                    }}
+                    onSuggestionsChange={(next) =>
+                      setAiSuggestions((previous) => ({ ...previous, [q.question_id]: next }))
+                    }
+                    invokeAiGradeSubmission={async ({
+                      submissionId: attemptId,
+                      rubric: criteria,
+                    }): Promise<AiPreGradeResult> => {
+                      const { data: response, error } = await supabase.functions.invoke(
+                        "ai-grade-submission",
+                        {
+                          body: {
+                            attempt_id: attemptId,
+                            question_id: q.question_id,
+                            student_answer: q.student_answer ?? "",
+                            question_prompt: q.prompt,
+                            rubric_id: rubric.id ?? undefined,
+                            rubric_criteria: criteria.map((criterion) => ({
+                              id: criterion.id,
+                              name: criterion.label,
+                              description:
+                                rubric.criteria.find((item) => item.id === criterion.id)
+                                  ?.description ?? "Evaluate performance against this criterion.",
+                              max_score: criterion.maxPoints,
+                            })),
+                          },
                         },
-                      });
+                      );
                       if (error) throw new Error(error.message || "AI pre-grade request failed.");
-                      const payload = response as { success?: boolean; draft_grade?: { criteria_evaluations?: Array<{ criterion_id?: string; criterion_name?: string; score?: number; explanation?: string }>; suggested_teacher_comment?: string; overall_feedback?: string }; error?: { message?: string } } | null;
+                      const payload = response as {
+                        success?: boolean;
+                        draft_grade?: {
+                          criteria_evaluations?: Array<{
+                            criterion_id?: string;
+                            criterion_name?: string;
+                            score?: number;
+                            explanation?: string;
+                          }>;
+                          suggested_teacher_comment?: string;
+                          overall_feedback?: string;
+                        };
+                        error?: { message?: string };
+                      } | null;
                       if (!payload?.success || !payload.draft_grade) {
-                        throw new Error(payload?.error?.message ?? "The AI grading service returned an unexpected response.");
+                        throw new Error(
+                          payload?.error?.message ??
+                            "The AI grading service returned an unexpected response.",
+                        );
                       }
-                      const suggestions = (payload.draft_grade.criteria_evaluations ?? []).map((item) => {
-                        const matched = criteria.find((criterion) => criterion.id === item.criterion_id)
-                          ?? criteria.find((criterion) => criterion.label.toLowerCase() === (item.criterion_name ?? "").toLowerCase());
-                        return matched && typeof item.score === "number" ? {
-                          criterionId: matched.id,
-                          score: item.score,
-                          rationale: item.explanation ?? "Review this criterion against the student's answer.",
-                        } : null;
-                      }).filter((item): item is NonNullable<typeof item> => item !== null);
+                      const suggestions = (payload.draft_grade.criteria_evaluations ?? [])
+                        .map((item) => {
+                          const matched =
+                            criteria.find((criterion) => criterion.id === item.criterion_id) ??
+                            criteria.find(
+                              (criterion) =>
+                                criterion.label.toLowerCase() ===
+                                (item.criterion_name ?? "").toLowerCase(),
+                            );
+                          return matched && typeof item.score === "number"
+                            ? {
+                                criterionId: matched.id,
+                                score: item.score,
+                                rationale:
+                                  item.explanation ??
+                                  "Review this criterion against the student's answer.",
+                              }
+                            : null;
+                        })
+                        .filter((item): item is NonNullable<typeof item> => item !== null);
                       return {
                         suggestions,
-                        feedback: payload.draft_grade.suggested_teacher_comment ?? payload.draft_grade.overall_feedback ?? "",
+                        feedback:
+                          payload.draft_grade.suggested_teacher_comment ??
+                          payload.draft_grade.overall_feedback ??
+                          "",
                       };
                     }}
                   />
@@ -715,7 +794,9 @@ function GradingWorkspace({
               setVoiceAssetId(null);
               touch();
             }}
-            onError={(message) => toast.show({ type: "error", title: "Audio feedback", description: message })}
+            onError={(message) =>
+              toast.show({ type: "error", title: "Audio feedback", description: message })
+            }
           />
         </aside>
       </div>
