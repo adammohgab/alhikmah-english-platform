@@ -3,7 +3,6 @@ import { createClient } from "@supabase/supabase-js";
 const required = [
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
-  "SUPERADMIN_EMAIL",
   "SUPERADMIN_PASSWORD",
   "SUPERADMIN_USERNAME",
   "SUPERADMIN_DISPLAY_NAME",
@@ -14,20 +13,21 @@ for (const name of required) {
   }
 }
 
-const email = process.env.SUPERADMIN_EMAIL.trim().toLowerCase();
-const password = process.env.SUPERADMIN_PASSWORD;
-const username = process.env.SUPERADMIN_USERNAME.trim();
+const username = process.env.SUPERADMIN_USERNAME.trim().toLowerCase();
 const displayName = process.env.SUPERADMIN_DISPLAY_NAME.trim();
+const password = process.env.SUPERADMIN_PASSWORD;
 
+// The app's login flow maps usernames to this synthetic Auth email domain.
+if (!/^[a-z0-9._-]{3,32}$/.test(username)) {
+  throw new Error("Username must be 3–32 lowercase letters, digits, dots, underscores, or hyphens.");
+}
 if (password.length < 14) {
   throw new Error("SUPERADMIN_PASSWORD must be at least 14 characters long.");
 }
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-  throw new Error("SUPERADMIN_EMAIL is not a valid email address.");
+if (!displayName) {
+  throw new Error("Display name must not be empty.");
 }
-if (!username || !displayName) {
-  throw new Error("Username and display name must not be empty.");
-}
+const authEmail = `${username}@accounts.invalid`;
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -41,8 +41,6 @@ const supabase = createClient(
 );
 
 async function findUserByEmail(targetEmail) {
-  // Auth admin listUsers is paginated; scan pages instead of assuming the
-  // configured account is among the first users.
   for (let page = 1; page <= 100; page += 1) {
     const { data, error } = await supabase.auth.admin.listUsers({
       page,
@@ -67,10 +65,11 @@ const { data: existingAdmins, error: adminCheckError } = await supabase
 if (adminCheckError) {
   throw new Error(`Unable to verify existing Super Admins: ${adminCheckError.message}`);
 }
+
+let user = await findUserByEmail(authEmail);
 if (existingAdmins?.length) {
-  const existingUser = await findUserByEmail(email);
-  if (existingUser && existingAdmins.some((admin) => admin.id === existingUser.id)) {
-    console.log("The configured email already has a Super Admin profile. No changes made.");
+  if (user && existingAdmins.some((admin) => admin.id === user.id)) {
+    console.log("The configured username already has a Super Admin profile. No changes made.");
     process.exit(0);
   }
   throw new Error(
@@ -78,19 +77,15 @@ if (existingAdmins?.length) {
   );
 }
 
-let user = await findUserByEmail(email);
-
 if (!user) {
   const { data, error } = await supabase.auth.admin.createUser({
-    email,
+    email: authEmail,
     password,
     email_confirm: true,
   });
   if (error) throw new Error(`Unable to create Auth user: ${error.message}`);
   user = data.user;
 } else {
-  // The email is configured as a repository secret by an owner. Update only
-  // this explicitly configured account, never an email supplied at dispatch.
   const { data, error } = await supabase.auth.admin.updateUserById(user.id, {
     password,
     email_confirm: true,
@@ -113,11 +108,11 @@ const { error: profileError } = await supabase.from("profiles").upsert(
 
 if (profileError) {
   throw new Error(
-    `Auth user was created/updated, but profile promotion failed: ${profileError.message}. Rerun this workflow after fixing the profile issue.`,
+    `Auth user was created/updated, but profile creation failed: ${profileError.message}. Fix the profile issue before rerunning.`,
   );
 }
 
 console.log("Super Admin bootstrap completed.");
-console.log(`Email: ${email}`);
 console.log(`Username: ${username}`);
-console.log("A password change is required by the profile flag; use the app's supported password-change flow if enabled.");
+console.log("Password: stored only as a GitHub Actions secret; it is not printed.");
+console.log("Sign in with the username and configured password.");
