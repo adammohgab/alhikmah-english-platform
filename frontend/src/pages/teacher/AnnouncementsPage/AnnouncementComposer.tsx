@@ -11,8 +11,6 @@ import { SegmentedControl } from "@/shared/components/ui/SegmentedControl";
 import { Select } from "@/shared/components/ui/Select";
 import { useToast } from "@/shared/hooks/useToast";
 import { cn } from "@/shared/lib/utils/cn";
-import { AiAnnouncementDrafter } from "./AiAnnouncementDrafter";
-import type { AnnouncementDraft } from "./AiAnnouncementDrafter";
 import { ANNOUNCEMENTS_KEY, publishAnnouncement } from "./api";
 import type { TeacherClass } from "./api";
 import {
@@ -186,17 +184,6 @@ function ComposerForm({ classes, onDone }: { classes: TeacherClass[]; onDone: ()
     setLinkError("");
   };
 
-  /* An AI draft only fills the fields; the teacher still reviews and sends. */
-  const applyDraft = (draft: AnnouncementDraft) => {
-    editor?.commands.setContent(draft.bodyHtml, { emitUpdate: true });
-    patch({ title: draft.title, bodyHtml: draft.bodyHtml });
-    toast.show({
-      type: "success",
-      title: "AI draft added",
-      description: "Check the title and message, then review and send.",
-    });
-  };
-
   const removeLink = () => {
     editor?.chain().focus().extendMarkRange("link").unsetLink().run();
   };
@@ -204,8 +191,6 @@ function ComposerForm({ classes, onDone }: { classes: TeacherClass[]; onDone: ()
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
       <div className="space-y-4">
-        <AiAnnouncementDrafter onUseDraft={applyDraft} />
-
         <Input
           label="Title"
           value={values.title}

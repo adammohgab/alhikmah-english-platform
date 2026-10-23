@@ -34,15 +34,16 @@ export const router = createBrowserRouter(
       path: "/forgot-password",
       element: (
         <PublicOnlyRoute>
-          <PlaceholderView title="Reset Password Request" />
+          <Outlet />
         </PublicOnlyRoute>
       ),
+      children: [{ index: true, ...page(() => import("@/pages/public/ForgotPasswordPage")) }],
     },
 
     // Special System States
     {
       path: "/set-new-password",
-      element: <PlaceholderView title="Set a New Password" />,
+      ...page(() => import("@/pages/public/SetNewPasswordPage")),
     },
     {
       path: "/account-not-active",
@@ -91,50 +92,6 @@ export const router = createBrowserRouter(
         {
           path: "ai-tutor",
           ...page(() => import("@/pages/student/AiTutorPage")),
-        },
-        {
-          path: "practice/translation",
-          ...page(() => import("@/pages/student/TranslationPracticePage")),
-        },
-        {
-          path: "practice/reading",
-          ...page(() => import("@/pages/student/ReadingPracticePage")),
-        },
-        {
-          path: "lessons/:lessonId",
-          ...page(() => import("@/pages/student/LessonPlayerPage")),
-        },
-        {
-          path: "lessons/:lessonId/activities/:activityId",
-          ...page(() => import("@/pages/student/ActivityPage")),
-        },
-        {
-          path: "quizzes/:quizId/result/:attemptId",
-          ...page(() => import("@/pages/student/QuizResultPage")),
-        },
-        {
-          path: "quizzes/:quizId/attempt/:attemptId",
-          ...page(() => import("@/pages/student/QuizAttemptPage")),
-        },
-        {
-          path: "quizzes/:quizId",
-          ...page(() => import("@/pages/student/QuizStartPage")),
-        },
-        {
-          path: "quizzes",
-          ...page(() => import("@/pages/student/QuizzesHubPage")),
-        },
-        {
-          path: "courses/:courseId",
-          ...page(() => import("@/pages/student/CourseDetailsPage")),
-        },
-        {
-          path: "courses/:courseId/units/:unitId",
-          ...page(() => import("@/pages/student/UnitPage")),
-        },
-        {
-          path: "certificates",
-          ...page(() => import("@/pages/student/CertificatesPage")),
         },
         {
           path: "quests",

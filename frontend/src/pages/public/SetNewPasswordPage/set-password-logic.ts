@@ -181,7 +181,9 @@ export async function saveNewPassword(password: string): Promise<SaveOutcome> {
 
     const cleared = await supabase.rpc("complete_password_change");
     if (cleared.error) {
-      return isNetworkError(cleared.error) ? { kind: "network" } : { kind: "failed" };
+      return isNetworkError(cleared.error as AuthErrorLike)
+        ? { kind: "network" }
+        : { kind: "failed" };
     }
 
     // A new session makes the app read the profile again, so the old flag is dropped. If this

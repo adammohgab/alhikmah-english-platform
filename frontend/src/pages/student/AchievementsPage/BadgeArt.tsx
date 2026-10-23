@@ -47,7 +47,7 @@ export function BadgeArt({ badge, size }: { badge: Badge; size: "md" | "lg" }) {
           alt=""
           className={cn(
             "h-3/4 w-3/4 object-contain",
-            !unlocked && "brightness-0 opacity-30 grayscale",
+            !unlocked && "opacity-30 brightness-0 grayscale",
           )}
         />
       ) : (
