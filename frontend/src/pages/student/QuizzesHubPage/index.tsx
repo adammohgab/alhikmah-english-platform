@@ -187,8 +187,10 @@ function List({ tab, source, empty }: { tab: Tab; source: QuizSource; empty: str
       tab === "upcoming" ? open.filter(isUpcoming) : open.filter((row) => !isUpcoming(row));
     // Quizzes closing soonest come first, so the urgent ones lead the list.
     return [...rows].sort((a, b) => {
-      const aTime = a.closes_at ? Date.parse(a.closes_at) : Number.POSITIVE_INFINITY;
-      const bTime = b.closes_at ? Date.parse(b.closes_at) : Number.POSITIVE_INFINITY;
+      const aCloses = closingTime(a);
+      const bCloses = closingTime(b);
+      const aTime = aCloses ? Date.parse(aCloses) : Number.POSITIVE_INFINITY;
+      const bTime = bCloses ? Date.parse(bCloses) : Number.POSITIVE_INFINITY;
       return aTime - bTime;
     });
   }, [query.data, tab]);
