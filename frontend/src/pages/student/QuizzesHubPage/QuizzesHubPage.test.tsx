@@ -80,6 +80,7 @@ function availableRow(overrides: Record<string, unknown>) {
   return {
     id: "q",
     title: "Quiz",
+    status: "ready",
     course: "Grade 7 English",
     class_name: "7A",
     unit: "Greetings",
@@ -89,7 +90,7 @@ function availableRow(overrides: Record<string, unknown>) {
     attempts_allowed: 2,
     best_score_pct: null,
     opens_at: null,
-    due_at: null,
+    closes_at: null,
     lock: open,
     ...overrides,
   };
@@ -102,11 +103,12 @@ beforeEach(() => {
     data: {
       next_cursor: null,
       items: [
-        availableRow({ id: "q-later", title: "Vocabulary Check", due_at: hoursFromNow(72) }),
-        availableRow({ id: "q-soon", title: "Grammar Basics", due_at: hoursFromNow(5) }),
+        availableRow({ id: "q-later", title: "Vocabulary Check", closes_at: hoursFromNow(72) }),
+        availableRow({ id: "q-soon", title: "Grammar Basics", closes_at: hoursFromNow(5) }),
         availableRow({
           id: "q-future",
           title: "Reading Test",
+          status: "upcoming",
           opens_at: hoursFromNow(48),
           lock: { locked: true, reason: "Opens soon" },
         }),
@@ -119,6 +121,7 @@ beforeEach(() => {
       next_cursor: null,
       items: [
         {
+          id: "q-old",
           attempt_id: "a1",
           quiz_id: "q-old",
           title: "Greetings Quiz",
@@ -147,7 +150,7 @@ describe("QuizzesHubPage", () => {
 
   it("highlights a quiz that closes within 24 hours and lists it first", async () => {
     renderPage();
-    const soon = (await screen.findByRole("article", { name: "Grammar Basics" })) as HTMLElement;
+    const soon = await screen.findByRole<HTMLElement>("article", { name: "Grammar Basics" });
     expect(soon).toHaveAttribute("data-urgent", "true");
     expect(within(soon).getByText("Due soon")).toBeVisible();
     const later = screen.getByRole("article", { name: "Vocabulary Check" });
@@ -159,7 +162,7 @@ describe("QuizzesHubPage", () => {
   it("starts the right quiz", async () => {
     const user = userEvent.setup();
     renderPage();
-    await user.click(await screen.findByRole("button", { name: "Start quiz: Grammar Basics" }));
+    await user.click(await screen.findByRole("link", { name: "Start quiz: Grammar Basics" }));
     await waitFor(() =>
       expect(screen.getByTestId("where")).toHaveTextContent("/student/quizzes/q-soon"),
     );
@@ -171,7 +174,7 @@ describe("QuizzesHubPage", () => {
     await user.click(await screen.findByRole("tab", { name: "Upcoming (1)" }));
     const card = await screen.findByRole("article", { name: "Reading Test" });
     expect(within(card).getByText(/Opens soon/)).toBeVisible();
-    expect(within(card).getByRole("button", { name: /not open yet/ })).toBeDisabled();
+    expect(within(card).queryByRole("link")).not.toBeInTheDocument();
   });
 
   it("shows the earned grade on completed quizzes and opens the result", async () => {
@@ -179,9 +182,9 @@ describe("QuizzesHubPage", () => {
     renderPage();
     await user.click(await screen.findByRole("tab", { name: "Completed (1)" }));
     const card = await screen.findByRole("article", { name: "Greetings Quiz" });
-    expect(within(card).getByText("80%")).toBeVisible();
+    expect(within(card).getByText(/80\s*%/)).toBeVisible();
     expect(within(card).getByText("Passed")).toBeVisible();
-    await user.click(within(card).getByRole("button", { name: /View result/ }));
+    await user.click(within(card).getByRole("link", { name: /View result/ }));
     await waitFor(() =>
       expect(screen.getByTestId("where")).toHaveTextContent("/student/quizzes/q-old/result/a1"),
     );

@@ -4,11 +4,21 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext, type AuthContextValue } from "@/app/providers/auth-context";
+import { SoundContext, type SoundContextValue } from "@/shared/hooks/useSound";
 import { DeadlinesWidget } from "./DeadlinesWidget";
 
 const rpc = vi.hoisted(() => vi.fn());
 
 vi.mock("@/shared/api/supabase", () => ({ supabase: { rpc } }));
+
+const sound: SoundContextValue = {
+  play: vi.fn(),
+  volume: 0.35,
+  setVolume: vi.fn(),
+  muted: false,
+  setMuted: vi.fn(),
+  toggleMute: vi.fn(),
+};
 
 const auth: AuthContextValue = {
   isAuthenticated: true,
@@ -34,12 +44,14 @@ function renderWidget() {
   return render(
     <QueryClientProvider client={client}>
       <AuthContext.Provider value={auth}>
-        <MemoryRouter initialEntries={["/student"]}>
-          <Routes>
-            <Route path="/student" element={<DeadlinesWidget />} />
-            <Route path="*" element={<Where />} />
-          </Routes>
-        </MemoryRouter>
+        <SoundContext.Provider value={sound}>
+          <MemoryRouter initialEntries={["/student"]}>
+            <Routes>
+              <Route path="/student" element={<DeadlinesWidget />} />
+              <Route path="*" element={<Where />} />
+            </Routes>
+          </MemoryRouter>
+        </SoundContext.Provider>
       </AuthContext.Provider>
     </QueryClientProvider>,
   );
@@ -73,7 +85,7 @@ const rows = [
     kind: "assignment",
     id: "a-late",
     title: "Essay draft",
-    course: { title: "Grade 7 English" },
+    course: "Grade 7 English",
     due_at: hoursFromNow(-30),
     status: "not_started",
     action: "start",
@@ -98,7 +110,7 @@ describe("DeadlinesWidget", () => {
     const list = await screen.findByRole("list");
     const titles = within(list)
       .getAllByRole("link")
-      .map((link) => link.querySelector("p")?.textContent);
+      .map((link) => link.querySelector("span.font-bold")?.textContent);
     expect(titles).toEqual(["Essay draft", "Grammar quiz", "Reading journal"]);
   });
 
@@ -107,7 +119,7 @@ describe("DeadlinesWidget", () => {
     const overdue = (await screen.findByText("Essay draft")).closest("a");
     expect(overdue).toHaveAttribute("data-overdue", "true");
     expect(within(overdue as HTMLElement).getByText("Overdue by 1 day")).toBeVisible();
-    expect(screen.getByText("1 assignment is overdue and not submitted.")).toBeVisible();
+    expect(screen.getByText(/1 assignment is overdue and not submitted/)).toBeVisible();
   });
 
   it("tags items due within 24 hours with a pulsing clock", async () => {
@@ -115,7 +127,7 @@ describe("DeadlinesWidget", () => {
     const soon = (await screen.findByText("Grammar quiz")).closest("a") as HTMLElement;
     expect(soon).toHaveAttribute("data-due-soon", "true");
     const tag = within(soon).getByText("Due soon");
-    expect(tag.className).toContain("animate-pulse");
+    expect(tag.parentElement?.className).toContain("animate-pulse");
     const later = screen.getByText("Reading journal").closest("a");
     expect(later).not.toHaveAttribute("data-due-soon");
   });

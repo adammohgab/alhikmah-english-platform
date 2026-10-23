@@ -215,10 +215,14 @@ function StatsGroup({ stats, className }: StatsGroupProps) {
     stats === null
       ? "Streak: loading"
       : `Streak: ${stats.streakDays} ${stats.streakDays === 1 ? "day" : "days"}`;
+<<<<<<< HEAD
   const announcement = [
     xpGain !== null ? `You earned ${xpGain.amount} XP.` : "",
     coinGain !== null ? `You earned ${coinGain.amount} coins.` : "",
   ]
+=======
+  const announcement = [xpGain !== null ? `You earned ${xpGain.amount} XP.` : ""]
+>>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
     .filter(Boolean)
     .join(" ");
 

@@ -122,12 +122,12 @@ describe("splitQuizzes", () => {
 
 describe("copy", () => {
   it("explains a lesson lock and falls back to the server reason", () => {
-    expect(
-      lockMessage({ locked: true, reason: null, lessonsRemaining: 2, unlocksOn: null }),
-    ).toBe("Finish 2 more lessons in this unit");
-    expect(
-      lockMessage({ locked: true, reason: null, lessonsRemaining: 1, unlocksOn: null }),
-    ).toBe("Finish 1 more lesson in this unit");
+    expect(lockMessage({ locked: true, reason: null, lessonsRemaining: 2, unlocksOn: null })).toBe(
+      "Finish 2 more lessons in this unit",
+    );
+    expect(lockMessage({ locked: true, reason: null, lessonsRemaining: 1, unlocksOn: null })).toBe(
+      "Finish 1 more lesson in this unit",
+    );
     expect(
       lockMessage({
         locked: true,
@@ -189,7 +189,7 @@ describe("filters", () => {
     expect(ids("passed")).toEqual(["new"]);
     expect(ids("not_passed")).toEqual(["old"]);
     expect(ids("pending")).toEqual(["wait"]);
-    expect(historyStatusOf(items[2] as HistoryAttempt)).toBe("pending");
+    expect(historyStatusOf(items[2]!)).toBe("pending");
   });
 
   it("lists each course once, sorted", () => {

@@ -1,13 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_NOTIFICATION_PREFS, DEFAULT_SETTINGS, parseNotificationPrefs, toSettings } from "./api";
+import {
+  DEFAULT_NOTIFICATION_PREFS,
+  DEFAULT_SETTINGS,
+  parseNotificationPrefs,
+  toSettings,
+} from "./api";
 import { validateChangeAll, validateChangeField } from "./change-password";
 
 describe("ST-31 settings parsing", () => {
   it("keeps defaults for a missing or malformed JSON bag", () => {
     expect(parseNotificationPrefs(null)).toEqual(DEFAULT_NOTIFICATION_PREFS);
-    expect(parseNotificationPrefs({ notifications: { streakReminders: "no", reminderTime: "25:00" } })).toEqual(
-      DEFAULT_NOTIFICATION_PREFS,
-    );
+    expect(
+      parseNotificationPrefs({ notifications: { streakReminders: "no", reminderTime: "25:00" } }),
+    ).toEqual(DEFAULT_NOTIFICATION_PREFS);
   });
 
   it("reads saved switches, reminder time and volume", () => {
@@ -43,13 +48,20 @@ describe("ST-31 change password validation", () => {
   });
 
   it("requires the current password and a matching confirmation", () => {
-    const errors = validateChangeAll({ current: "", password: "New#pass22", confirm: "other" }, "student1");
+    const errors = validateChangeAll(
+      { current: "", password: "New#pass22", confirm: "other" },
+      "student1",
+    );
     expect(errors.current).toBeDefined();
     expect(errors.confirm).toBeDefined();
   });
 
   it("rejects weak passwords and reuse of the current one", () => {
-    expect(validateChangeField("password", { ...good, password: "short" }, "student1")).toBeDefined();
-    expect(validateChangeField("password", { ...good, password: good.current }, "student1")).toBeDefined();
+    expect(
+      validateChangeField("password", { ...good, password: "short" }, "student1"),
+    ).toBeDefined();
+    expect(
+      validateChangeField("password", { ...good, password: good.current }, "student1"),
+    ).toBeDefined();
   });
 });

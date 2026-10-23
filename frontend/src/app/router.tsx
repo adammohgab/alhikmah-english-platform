@@ -94,6 +94,65 @@ export const router = createBrowserRouter(
           ...page(() => import("@/pages/student/AiTutorPage")),
         },
         {
+<<<<<<< HEAD
+=======
+          path: "assignments",
+          ...page(() => import("@/pages/student/AssignmentsListPage")),
+        },
+        {
+          path: "assignments/:assignmentId",
+          ...page(() => import("@/pages/student/AssignmentDetailsPage")),
+        },
+        {
+          path: "assignments/:assignmentId/solve",
+          ...page(() => import("@/pages/student/AssignmentSolvePage")),
+        },
+        {
+          path: "practice/translation",
+          ...page(() => import("@/pages/student/TranslationPracticePage")),
+        },
+        {
+          path: "practice/reading",
+          ...page(() => import("@/pages/student/ReadingPracticePage")),
+        },
+        {
+          path: "lessons/:lessonId",
+          ...page(() => import("@/pages/student/LessonPlayerPage")),
+        },
+        {
+          path: "lessons/:lessonId/activities/:activityId",
+          ...page(() => import("@/pages/student/ActivityPage")),
+        },
+        {
+          path: "quizzes/:quizId/result/:attemptId",
+          ...page(() => import("@/pages/student/QuizResultPage")),
+        },
+        {
+          path: "quizzes/:quizId/attempt/:attemptId",
+          ...page(() => import("@/pages/student/QuizAttemptPage")),
+        },
+        {
+          path: "quizzes/:quizId",
+          ...page(() => import("@/pages/student/QuizStartPage")),
+        },
+        {
+          path: "quizzes",
+          ...page(() => import("@/pages/student/QuizzesHubPage")),
+        },
+        {
+          path: "courses/:courseId",
+          ...page(() => import("@/pages/student/CourseDetailsPage")),
+        },
+        {
+          path: "courses/:courseId/units/:unitId",
+          ...page(() => import("@/pages/student/UnitPage")),
+        },
+        {
+          path: "certificates",
+          ...page(() => import("@/pages/student/CertificatesPage")),
+        },
+        {
+>>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
           path: "quests",
           ...page(() => import("@/pages/student/QuestsPage")),
         },

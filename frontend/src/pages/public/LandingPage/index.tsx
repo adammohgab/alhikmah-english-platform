@@ -2,9 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import Lenis from "lenis";
+<<<<<<< HEAD
 import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
+=======
+>>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
 import { getRoleHomePath } from "@/app/guards/guard-utils";
 import { useAuth } from "@/app/providers/auth-context";
+import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
 import { PublicFooter } from "@/shared/components/layout/PublicFooter";
 import { PublicHeader } from "@/shared/components/layout/PublicHeader";
 import { Button } from "@/shared/components/ui/Button";

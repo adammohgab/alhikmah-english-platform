@@ -1,4 +1,4 @@
--- Migration: 018_ops_20_action_cards.sql
+-- Migration: 019_ops_20_action_cards.sql
 -- Task: BE-OPS-20
 -- Supported entities: questions, assessments, lessons, lesson_blocks, class_enrollments.
 

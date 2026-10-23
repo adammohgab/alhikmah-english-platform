@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { SCHOOL_LOGO_SRC } from "@/shared/config/branding";
 import { SoundContext } from "@/shared/hooks/useSound";
 import type { SoundContextValue } from "@/shared/hooks/useSound";
 import LandingPage from "./index";
@@ -151,8 +152,13 @@ describe("PUB-03: LandingPage assembly (SH-01)", () => {
     expect(meta("property", "og:description")?.getAttribute("content")).toBe(
       meta("name", "description")?.getAttribute("content"),
     );
-    expect(meta("property", "og:image")?.getAttribute("content")).toMatch(/^https?:\/\//);
-    expect(meta("property", "og:image:alt")?.getAttribute("content")).toBeTruthy();
+    if (SCHOOL_LOGO_SRC === null) {
+      expect(meta("property", "og:image")).toBeNull();
+      expect(meta("property", "og:image:alt")).toBeNull();
+    } else {
+      expect(meta("property", "og:image")?.getAttribute("content")).toMatch(/^https?:\/\//);
+      expect(meta("property", "og:image:alt")?.getAttribute("content")).toBeTruthy();
+    }
     expect(meta("name", "twitter:card")?.getAttribute("content")).toBe("summary");
     expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(1);
 

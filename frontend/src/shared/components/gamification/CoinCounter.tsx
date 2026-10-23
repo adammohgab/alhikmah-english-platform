@@ -76,7 +76,11 @@ export function CoinCounter({ balance, className, compact = false }: CoinCounter
         className="shrink-0 fill-[#ffd93d] stroke-stroke"
       />
       <span
+<<<<<<< HEAD
         key={displayBalance ?? "loading"}
+=======
+        key={balance ?? "loading"}
+>>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
         aria-hidden="true"
         className="inline-block animate-[coin-roll_260ms_ease-out] motion-reduce:animate-none"
       >
@@ -92,8 +96,13 @@ export function CoinCounter({ balance, className, compact = false }: CoinCounter
         </span>
       )}
       <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+<<<<<<< HEAD
         {gain !== null && displayBalance !== null
           ? `You earned ${NUMBER_FORMAT.format(gain.amount)} coins. New balance: ${NUMBER_FORMAT.format(displayBalance)} coins.`
+=======
+        {gain !== null
+          ? `You earned ${NUMBER_FORMAT.format(gain.amount)} coins. New balance: ${NUMBER_FORMAT.format(balance ?? 0)} coins.`
+>>>>>>> 7b774a56829125da7626a5f705f17f62f540944d
           : ""}
       </span>
       <style>{`

@@ -99,6 +99,7 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
                   <Button
                     size="sm"
                     sound="coin"
+                    aria-label={`Claim reward: ${quest.title}`}
                     disabled={quest.state !== "ready"}
                     loading={busyId === quest.id}
                     onClick={() => claim.mutate(quest)}
@@ -135,7 +136,7 @@ export function QuestsWidget({ className }: { className?: string | undefined }) 
         to="/student/quests"
         className="mt-3 inline-block text-[14px] font-bold text-stroke underline"
       >
-        See all quests
+        All quests
       </Link>
     </section>
   );
