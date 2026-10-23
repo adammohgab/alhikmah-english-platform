@@ -20,6 +20,7 @@ $$;
 create schema if not exists extensions;
 create schema if not exists auth;
 create schema if not exists realtime;
+create schema if not exists storage;
 
 grant usage on schema extensions to anon, authenticated, service_role;
 
@@ -72,6 +73,36 @@ as $$
     (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role')
   )::text
 $$;
+
+create table if not exists auth.sessions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade
+);
+
+-- Minimal Storage API tables/functions for applying migrations in plain PostgreSQL CI.
+create table if not exists storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets(id) on delete cascade,
+  name text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create or replace function storage.foldername(name text)
+returns text[]
+language sql
+immutable
+as $ select string_to_array(name, '/') $;
+
+grant usage on schema storage to anon, authenticated, service_role;
+grant all on storage.buckets, storage.objects to anon, authenticated, service_role;
+grant execute on all functions in schema storage to anon, authenticated, service_role;
 
 create table if not exists realtime.messages (
   id uuid primary key default gen_random_uuid(),
