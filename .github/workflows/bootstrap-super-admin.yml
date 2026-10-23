@@ -38,7 +38,7 @@ jobs:
           node-version: '22'
 
       - name: Install temporary Supabase client
-        run: npm install --no-save --package-lock=false @supabase/supabase-js@2
+        run: npm install --no-save --package-lock=false @supabase/supabase-js@2.117.3
 
       - name: Create or promote the configured Super Admin
         env:
